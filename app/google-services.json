@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "349060156621",
+    "firebase_url": "https://discotest-c3cc6-default-rtdb.firebaseio.com",
+    "project_id": "discotest-c3cc6",
+    "storage_bucket": "discotest-c3cc6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349060156621:android:be3b69923aa43a914a2d84",
+        "android_client_info": {
+          "package_name": "com.example.dispensadorfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "349060156621-av8u01iiroapkj52adc82ts0ckgono44.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCogczG_WQpxP4OwivLxbb3uSvWrkHcyr8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "349060156621-av8u01iiroapkj52adc82ts0ckgono44.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.dispensadorfirebase">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.hardware.usb.host" />
+
+    <application
+        android:name=".app.Myapp"
+        android:allowBackup="true"
+        android:icon="@mipmap/logotipo"
+        android:label="Notificación Disco"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DispensadorFirebase">
+        <activity
+            android:name=".administrador.Administrador"
+            android:exported="false" />
+
+        <service
+            android:name=".principal.notificador.MyIntentService"
+            android:exported="false" />
+
+        <activity
+            android:name=".principal.notificador.FlashSupervisor"
+            android:exported="true"></activity>
+        <activity
+            android:name=".principal.Menu"
+            android:exported="true" />
+        <activity
+            android:name=".principal.Dispensador"
+            android:exported="true" />
+        <activity
+            android:name=".principal.Tablet"
+            android:exported="true"></activity>
+        <activity
+            android:name=".principal.Display"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".principal.MensajeActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity android:name=".principal.notificador.Supervisor" />
+    </application>
+
+</manifest>
