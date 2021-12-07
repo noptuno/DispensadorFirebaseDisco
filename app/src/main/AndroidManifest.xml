@@ -23,7 +23,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DispensadorFirebase">
         <activity
-            android:name=".administrador.Administrador"
+            android:name=".administrador.RegistroLocalDialog"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.RegistroLocales"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.Menu"
             android:exported="false" />
 
         <service
@@ -32,7 +38,7 @@
 
         <activity
             android:name=".principal.notificador.FlashSupervisor"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".principal.Menu"
             android:exported="true" />
@@ -41,7 +47,7 @@
             android:exported="true" />
         <activity
             android:name=".principal.Tablet"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".principal.Display"
             android:exported="true">

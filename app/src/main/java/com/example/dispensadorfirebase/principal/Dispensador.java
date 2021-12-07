@@ -69,6 +69,9 @@ public class Dispensador extends AppCompatActivity {
     static final int MENSAJERESULT = 0;
     MediaPlayer click, click2;
 
+    String Local = "Datos";
+    String Dispensador = "dispensador1";
+
     ConstraintLayout constrain;
     ActionBar actionBar;
 
@@ -308,10 +311,8 @@ public class Dispensador extends AppCompatActivity {
                         datos.setNotificaciondeshabilitar(0);
 
                     }
-
-
-                    databaseReference.child("Datos").child("dispensador1").setValue(datos);
-
+                    
+                    databaseReference.child(Local).child(Dispensador).setValue(datos);
 
                 } else {
                     Toast.makeText(Dispensador.this, "ERROR A: imprimir", Toast.LENGTH_LONG).show();
