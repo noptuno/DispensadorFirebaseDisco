@@ -8,7 +8,7 @@
     tools:context=".administrador.Menu">
 
     <Button
-        android:id="@+id/btnLocal"
+        android:id="@+id/btnRegistroLocales"
         android:layout_width="250dp"
         android:layout_height="80dp"
         android:layout_marginStart="16dp"
@@ -23,16 +23,16 @@
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <Button
-        android:id="@+id/btnreporte"
+        android:id="@+id/btnReportes"
         android:layout_width="250dp"
         android:layout_height="80dp"
         android:layout_marginTop="32dp"
         android:text="Reportes"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/btnLocal"
-        app:layout_constraintStart_toStartOf="@+id/btnLocal"
-        app:layout_constraintTop_toBottomOf="@+id/btnLocal" />
+        app:layout_constraintEnd_toEndOf="@+id/btnRegistroLocales"
+        app:layout_constraintStart_toStartOf="@+id/btnRegistroLocales"
+        app:layout_constraintTop_toBottomOf="@+id/btnRegistroLocales" />
 
     <ImageView
         android:id="@+id/imageView6"

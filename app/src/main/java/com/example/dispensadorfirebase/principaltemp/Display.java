@@ -1,4 +1,4 @@
-package com.example.dispensadorfirebase.principal;
+package com.example.dispensadorfirebase.principaltemp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -6,13 +6,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -25,7 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.clase.Datos;
 import com.google.firebase.FirebaseApp;
@@ -85,7 +80,9 @@ public class Display extends AppCompatActivity {
 
     }
     void conectarFirebase(){
+
         inicializarFirebase();
+
         setProgressDialog();
         databaseReference.child("Datos").addValueEventListener(new ValueEventListener() {
             @Override

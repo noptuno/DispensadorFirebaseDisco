@@ -1,4 +1,4 @@
-package com.example.dispensadorfirebase.principal;
+package com.example.dispensadorfirebase.principaltemp;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,8 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.dispensadorfirebase.R;
-import com.example.dispensadorfirebase.principal.notificador.FlashSupervisor;
-import com.example.dispensadorfirebase.principal.notificador.Supervisor;
+import com.example.dispensadorfirebase.principaltemp.notificador.FlashSupervisor;
 
 public class Menu extends AppCompatActivity {
 

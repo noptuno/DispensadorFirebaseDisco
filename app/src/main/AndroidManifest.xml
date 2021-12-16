@@ -23,34 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DispensadorFirebase">
         <activity
-            android:name=".administrador.RegistroLocalDialog"
+            android:name=".inicio.InicioOpcionSectores"
             android:exported="true" />
         <activity
-            android:name=".administrador.RegistroLocales"
-            android:exported="true" />
-        <activity
-            android:name=".administrador.Menu"
-            android:exported="false" />
+            android:name=".inicio.InicioOpcionDispositivo"
+            android:exported="true" >
 
-        <service
-            android:name=".principal.notificador.MyIntentService"
-            android:exported="false" />
-
-        <activity
-            android:name=".principal.notificador.FlashSupervisor"
-            android:exported="true" />
-        <activity
-            android:name=".principal.Menu"
-            android:exported="true" />
-        <activity
-            android:name=".principal.Dispensador"
-            android:exported="true" />
-        <activity
-            android:name=".principal.Tablet"
-            android:exported="true" />
-        <activity
-            android:name=".principal.Display"
-            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,10 +36,54 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".principal.MensajeActivity"
+            android:name=".inicio.InicioOpcionLocal"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.AsignarSectoress"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.CrearSectores"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.CrearLocalDialog"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.ListaLocales"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.Menu"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".principaltemp.notificador.MyIntentService"
+            android:exported="false" />
+
+        <activity
+            android:name=".principaltemp.notificador.FlashSupervisor"
+            android:exported="true" />
+        <activity
+            android:name=".principaltemp.Menu"
+            android:exported="true" />
+        <activity
+            android:name=".principaltemp.Dispensador"
+            android:exported="true" />
+        <activity
+            android:name=".principaltemp.Tablet"
+            android:exported="true" />
+        <activity
+            android:name=".principaltemp.Display"
+            android:exported="true" />
+        <activity
+            android:name=".principaltemp.MensajeActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".principal.notificador.Supervisor" />
+        <activity android:name=".principaltemp.notificador.Supervisor" />
     </application>
 
 </manifest>

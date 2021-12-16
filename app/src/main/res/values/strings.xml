@@ -3,4 +3,23 @@
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+
+    <string-array name="SECTORES">
+        <item>Seleccione</item>
+        <item>FIAMBRERIA</item>
+        <item>PANADERIA</item>
+        <item>CARRO COMIDA</item>
+    </string-array>
+
+    <string-array name="DISPOSITIVOS">
+        <item>Seleccione</item>
+        <item>DISPLAY 21PLG</item>
+        <item>DISPLAY 15PLG</item>
+        <item>TABLET 10PLG</item>
+        <item>DISPENSADOR</item>
+    </string-array>
+
+
+
 </resources>

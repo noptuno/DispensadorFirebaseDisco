@@ -1,4 +1,4 @@
-package com.example.dispensadorfirebase.principal.notificador;
+package com.example.dispensadorfirebase.principaltemp.notificador;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;

@@ -1,4 +1,4 @@
-package com.example.dispensadorfirebase.principal;
+package com.example.dispensadorfirebase.principaltemp;
 
 import android.graphics.Color;
 import android.os.Bundle;

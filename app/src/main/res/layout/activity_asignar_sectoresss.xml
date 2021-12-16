@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondodisplay"
-    tools:context=".administrador.RegistroLocales">
+    tools:context=".administrador.ListaLocales">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerLocal"
+        android:id="@+id/recyclerSector"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,23 +25,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:text="Lista de Locales"
+        android:text="Lista de Sectores: "
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAsignar" />
+
+    <Button
+        android:id="@+id/btnCrearSector"
+        android:layout_width="172dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="4dp"
+        android:text="Crear Nuevo Sector"
+        android:textStyle="bold"
+        app:icon="@android:drawable/ic_menu_save"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnCrearLocal"
+        android:id="@+id/btnAsignar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Crear Local"
-        android:textStyle="bold"
-        app:icon="@android:drawable/ic_menu_save"
-        app:layout_constraintBottom_toBottomOf="@+id/textView6"
+        android:layout_marginTop="8dp"
+        android:text="Asignar Lista de Sectores"
+        app:icon="@android:drawable/ic_menu_more"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView6" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnCrearSector" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

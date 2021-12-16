@@ -1,4 +1,4 @@
-package com.example.dispensadorfirebase.principal.notificador;
+package com.example.dispensadorfirebase.principaltemp.notificador;
 
 /**
  * Contiene las constantes de las acciones de los servicios y sus parámetros

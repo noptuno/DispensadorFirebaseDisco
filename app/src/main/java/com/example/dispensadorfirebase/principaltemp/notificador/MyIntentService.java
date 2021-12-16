@@ -1,22 +1,10 @@
-package com.example.dispensadorfirebase.principal.notificador;
+package com.example.dispensadorfirebase.principaltemp.notificador;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Intent;
-import android.content.Context;
-import android.graphics.Color;
-import android.os.Build;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
-import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.clase.Datos;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;

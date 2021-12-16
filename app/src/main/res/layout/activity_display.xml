@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/fondodisplay"
     android:visibility="visible"
-    tools:context=".principal.Display">
+    tools:context=".principaltemp.Display">
 
     <ImageView
         android:id="@+id/imageView2"
