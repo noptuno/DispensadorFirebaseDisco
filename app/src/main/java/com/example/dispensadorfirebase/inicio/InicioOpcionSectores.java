@@ -31,9 +31,11 @@ import com.example.dispensadorfirebase.adapter.AdapterSectorLocal;
 import com.example.dispensadorfirebase.administrador.AsignarSectoress;
 import com.example.dispensadorfirebase.administrador.CrearLocalDialog;
 import com.example.dispensadorfirebase.administrador.ListaLocales;
+import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.Sectores;
+import com.example.dispensadorfirebase.clase.SectoresElegidos;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,6 +54,11 @@ public class InicioOpcionSectores extends AppCompatActivity {
     AlertDialog Adialog;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    private SectorDB db;
+
+    private int cantidadelegida = 0;
+
+    private TextView maximoSectores,cantidadsectoreselegidos;
 
 private TextView localseleccionado, dispositivoseleccionado;
     String NOMBRELOCALSELECCIONADO=null;
@@ -73,10 +80,21 @@ private TextView localseleccionado, dispositivoseleccionado;
         localseleccionado.setText(NOMBRELOCALSELECCIONADO);
         dispositivoseleccionado.setText(NOMBREDELDISPOSITIVO);
 
+
+        maximoSectores = findViewById(R.id.txtmaximosectores);
+        cantidadsectoreselegidos= findViewById(R.id.txtcantelegidos);
+
+
         listnombresectores = new ArrayList<>();
         listsectoreslocal = new ArrayList<>();
 
         adapter = new AdapterSectorLocal();
+
+
+        //eliminar base datos local
+        eliminarSectoresElegidos();
+
+
 
         adapter.setOnNoteSelectedListener(new AdapterSectorLocal.OnNoteSelectedListener() {
             @Override
@@ -89,6 +107,15 @@ private TextView localseleccionado, dispositivoseleccionado;
         adapter.setOnDetailListener(new AdapterSectorLocal.OnNoteDetailListener() {
             @Override
             public void onDetail(SectorLocal note) {
+
+
+                //crear base datos local
+
+                SectoresElegidos sector = new SectoresElegidos();
+                sector.setNombre(note.getNombreSector());
+                registrarSectorElegido(sector);
+                mostrarBaseLocalSectoresElegidos();
+
 
 
                 //aqui uso el habilitador para guardar en el dispositivo los sectores que va a utilizar
@@ -122,11 +149,24 @@ private TextView localseleccionado, dispositivoseleccionado;
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 listsectoreslocal.clear();
+                eliminarSectoresElegidos();
+                cantidadelegida=0;
 
                 for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
 
                     SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
-                    listsectoreslocal.add(sectores);
+                    if (sectores.getEstado()==1){
+
+                        SectoresElegidos sector = new SectoresElegidos();
+                        sector.setNombre(sectores.getNombreSector());
+                        registrarSectorElegido(sector);
+
+
+                        mostrarBaseLocalSectoresElegidos();
+
+                        listsectoreslocal.add(sectores);
+                    }
+
                 }
 
                 Adialog.dismiss();
@@ -143,7 +183,61 @@ private TextView localseleccionado, dispositivoseleccionado;
 
     }
 
+    public boolean registrarSectorElegido(SectoresElegidos sector) {
 
+        try {
+            db = new SectorDB(this);
+
+            if (db.validar(sector.getNombre())){
+                db.eliminarSector(sector.getNombre());
+                cantidadelegida--;
+            }else{
+                cantidadelegida++;
+                db.insertarSector(sector);
+            }
+            cantidadsectoreselegidos.setText(cantidadelegida);
+            return true;
+
+        } catch (Exception e) {
+            Log.e("error", "mensajeb");
+            return false;
+        }
+
+    }
+    public boolean eliminarSectoresElegidos() {
+
+        try {
+            db = new SectorDB(this);
+
+
+                db.eliminarAll();
+
+            return true;
+
+        } catch (Exception e) {
+            Log.e("error", "mensajeb");
+            return false;
+        }
+
+    }
+
+
+    void mostrarBaseLocalSectoresElegidos(){
+
+        try {
+            db = new SectorDB(this);
+            ArrayList<SectoresElegidos> list = db.loadSector();
+            for (SectoresElegidos sectores : list) {
+
+                Log.i("---> Base de datos: ", sectores.toString());
+
+            }
+
+
+        } catch (Exception e) {
+            Log.e("error", "mensajec");
+        }
+    }
 
     public void actualizarReciclerView() {
         adapter.setNotes(listsectoreslocal);

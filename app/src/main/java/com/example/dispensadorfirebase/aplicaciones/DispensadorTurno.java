@@ -68,22 +68,18 @@ public class DispensadorTurno extends AppCompatActivity {
     private AlertDialog Adialog;
     static final int MENSAJERESULT = 0;
     MediaPlayer click, click2;
-
     String Local = "Datos";
     String Dispensador = "dispensador1";
-
     ConstraintLayout constrain;
     ActionBar actionBar;
-
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     TextView txt_numeroActualDispensdor,txt_nombresector;
     int baselimite;
     Datos datos ;
-
     private UsbManager usbManager;
-
     int numeroactual;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +87,10 @@ public class DispensadorTurno extends AppCompatActivity {
         setContentView(R.layout.activity_dispensador_turno);
 
         inicializarFirebase();
+
+
+        //valdiar que el los nombres de sectores en firebase coincidan con los nombres de sercotres locales
+        //el que no exista que lo elimine
 
 
         click = MediaPlayer.create(DispensadorTurno.this, R.raw.fin);

@@ -9,7 +9,7 @@ import android.widget.Button;
 
 import com.example.dispensadorfirebase.R;
 
-public class Menu extends AppCompatActivity {
+public class  Menu extends AppCompatActivity {
 
 
     Button btnRegistroLocales, btnReportes;
