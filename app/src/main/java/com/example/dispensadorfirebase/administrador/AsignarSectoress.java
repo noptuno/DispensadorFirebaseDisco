@@ -43,12 +43,11 @@ public class AsignarSectoress extends AppCompatActivity {
 
         ArrayList<Sectores> listnombresectores;
          ArrayList<SectorLocal> listsectoreslocal;
-        Button RegistroSectores,btnAsignar;
+        Button RegistroSectores,btnAsignar,guardar;
         AdapterSectorLocal adapter;
         AlertDialog Adialog;
         FirebaseDatabase firebaseDatabase;
         DatabaseReference databaseReference;
-
 
        String NOMBRELOCALSELECCIONADO=null;
         @Override
@@ -72,7 +71,7 @@ public class AsignarSectoress extends AppCompatActivity {
             //varaibles layout
             RegistroSectores = findViewById(R.id.btnCrearSector);
             btnAsignar = findViewById(R.id.btnAsignar);
-
+            guardar = findViewById(R.id.btnGuardarConfigPrincipal);
 
             //variables lcoales
 
@@ -103,7 +102,13 @@ public class AsignarSectoress extends AppCompatActivity {
                         Toast.makeText(AsignarSectoress.this, "No selecciono un local", Toast.LENGTH_LONG).show();
                     }
 
+                }
+            });
 
+            guardar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
                 }
             });
 

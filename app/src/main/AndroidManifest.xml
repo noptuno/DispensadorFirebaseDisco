@@ -24,35 +24,47 @@
         android:theme="@style/Theme.DispensadorFirebase">
         <activity
             android:name=".inicio.InicioOpcionSectores"
+            android:label="Asignar Sectores"
             android:exported="true" />
         <activity
             android:name=".inicio.InicioOpcionDispositivo"
+            android:label="Seleccionar Dispositivo"
             android:exported="true" >
+
+
+
+        </activity>
+        <activity
+            android:name=".inicio.InicioOpcionLocal"
+            android:label="Seleccionar Local"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.AsignarSectoress"
+            android:label="Asignacion de Sectores"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.CrearSectores"
+            android:label="Crear Sectores"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.CrearLocalDialog"
+            android:label="Crear Local"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.ListaLocales"
+            android:label="Lista de Locales"
+            android:exported="true" />
+        <activity
+            android:name=".administrador.Menu"
+            android:label="Menu Principal"
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".inicio.InicioOpcionLocal"
-            android:exported="true" />
-        <activity
-            android:name=".administrador.AsignarSectoress"
-            android:exported="true" />
-        <activity
-            android:name=".administrador.CrearSectores"
-            android:exported="true" />
-        <activity
-            android:name=".administrador.CrearLocalDialog"
-            android:exported="true" />
-        <activity
-            android:name=".administrador.ListaLocales"
-            android:exported="true" />
-        <activity
-            android:name=".administrador.Menu"
-            android:exported="true">
+
 
         </activity>
 

@@ -55,10 +55,11 @@ public class InicioOpcionSectores extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     private SectorDB db;
-
+private Button configurar;
+    TextView cantidadsectoreselegidos;
     private int cantidadelegida = 0;
-
-    private TextView maximoSectores,cantidadsectoreselegidos;
+    private int cantidadmaxima = 0;
+    private TextView maximoSectores;
 
 private TextView localseleccionado, dispositivoseleccionado;
     String NOMBRELOCALSELECCIONADO=null;
@@ -72,17 +73,23 @@ private TextView localseleccionado, dispositivoseleccionado;
         //FIREBASE
         inicializarFirebase();
 
+
+
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
         NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
 
+
+
+
+        configurar = findViewById(R.id.btnGuardarConfig);
         localseleccionado = findViewById(R.id.txtlocal);
         dispositivoseleccionado= findViewById(R.id.txtdispositivo);
         localseleccionado.setText(NOMBRELOCALSELECCIONADO);
         dispositivoseleccionado.setText(NOMBREDELDISPOSITIVO);
 
+        maximoSectores= findViewById(R.id.txtmaximosectores);
 
-        maximoSectores = findViewById(R.id.txtmaximosectores);
-        cantidadsectoreselegidos= findViewById(R.id.txtcantelegidos);
+       cantidadsectoreselegidos= findViewById(R.id.txtcantelegidos);
 
 
         listnombresectores = new ArrayList<>();
@@ -94,7 +101,18 @@ private TextView localseleccionado, dispositivoseleccionado;
         //eliminar base datos local
         eliminarSectoresElegidos();
 
+        configurar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (cantidadmaxima>= cantidadelegida){
 
+                }else{
+                    Toast.makeText(InicioOpcionSectores.this, "Debe Elegir menos Sectores para Este Dispositivo", Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+        });
 
         adapter.setOnNoteSelectedListener(new AdapterSectorLocal.OnNoteSelectedListener() {
             @Override
@@ -108,7 +126,6 @@ private TextView localseleccionado, dispositivoseleccionado;
             @Override
             public void onDetail(SectorLocal note) {
 
-
                 //crear base datos local
 
                 SectoresElegidos sector = new SectoresElegidos();
@@ -116,17 +133,12 @@ private TextView localseleccionado, dispositivoseleccionado;
                 registrarSectorElegido(sector);
                 mostrarBaseLocalSectoresElegidos();
 
-
-
                 //aqui uso el habilitador para guardar en el dispositivo los sectores que va a utilizar
-
 
                // databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
 
             }
         });
-
-
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerelegirsector);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -137,9 +149,22 @@ private TextView localseleccionado, dispositivoseleccionado;
         // crear todos los sectores en la tabla del lcoal en firebase
 
         cargarListaSectoresLocales();
+        limitesectores();
+    }
 
+    private void limitesectores() {
+
+        if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")){
+            cantidadmaxima = 1;
+            maximoSectores.setText("1");
+
+        }else{
+            cantidadmaxima = 3;
+            maximoSectores.setText("3");
+        }
 
     }
+
     private void cargarListaSectoresLocales() {
 
         setProgressDialog();
@@ -161,9 +186,7 @@ private TextView localseleccionado, dispositivoseleccionado;
                         sector.setNombre(sectores.getNombreSector());
                         registrarSectorElegido(sector);
 
-
                         mostrarBaseLocalSectoresElegidos();
-
                         listsectoreslocal.add(sectores);
                     }
 
@@ -195,11 +218,12 @@ private TextView localseleccionado, dispositivoseleccionado;
                 cantidadelegida++;
                 db.insertarSector(sector);
             }
-            cantidadsectoreselegidos.setText(cantidadelegida);
+            cantidadsectoreselegidos.setText("" + cantidadelegida);
+
             return true;
 
         } catch (Exception e) {
-            Log.e("error", "mensajeb");
+            Log.e("error", "mensaje registro o eliminar");
             return false;
         }
 
@@ -215,7 +239,7 @@ private TextView localseleccionado, dispositivoseleccionado;
             return true;
 
         } catch (Exception e) {
-            Log.e("error", "mensajeb");
+            Log.e("error", "mensaje eliminar all");
             return false;
         }
 
@@ -235,11 +259,13 @@ private TextView localseleccionado, dispositivoseleccionado;
 
 
         } catch (Exception e) {
-            Log.e("error", "mensajec");
+            Log.e("error", "mensaje mostrar bse local");
         }
     }
 
     public void actualizarReciclerView() {
+
+        cantidadsectoreselegidos.setText("" + cantidadelegida);
         adapter.setNotes(listsectoreslocal);
         adapter.notifyDataSetChanged();
     }
