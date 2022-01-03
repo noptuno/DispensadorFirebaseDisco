@@ -46,7 +46,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class InicioOpcionSectores extends AppCompatActivity {
-
+//TODO Modificado 3/1/22/15:15
     ArrayList<Sectores> listnombresectores;
     ArrayList<SectorLocal> listsectoreslocal;
     Button RegistroSectores,btnAsignar;
