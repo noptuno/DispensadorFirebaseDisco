@@ -1,4 +1,21 @@
-package com.example.dispensadorfirebase.principaltemp;
+package com.example.dispensadorfirebase.aplicaciones;
+
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -6,23 +23,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.content.DialogInterface;
-import android.graphics.Color;
-import android.media.MediaPlayer;
-import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.dispensadorfirebase.R;
+import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Datos;
+import com.example.dispensadorfirebase.clase.SectorLocal;
+import com.example.dispensadorfirebase.clase.SectoresElegidos;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,7 +35,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class Display extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class DisplayPequeño extends AppCompatActivity {
 
 
     FirebaseDatabase firebaseDatabase;
@@ -39,26 +47,38 @@ public class Display extends AppCompatActivity {
 
     ActionBar actionBar;
 
-    Datos datos;
+    SectorLocal datos = new SectorLocal();
 
     ConstraintLayout constrain;
 
     TextView txtnumero_actual, txtnombre_sector;
     private AlertDialog Adialog;
     MediaPlayer click, click2;
- private ImageView gif;
 
+    private SectorDB db;
+
+    String NOMBRELOCALSELECCIONADO=null;
+    String NOMBREDELDISPOSITIVO=null;
+
+    ArrayList<SectoresElegidos> listtemp;
+    List<String> sectoreselegidos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display);
+        setContentView(R.layout.activity_display_pequeno);
+
+
+
+        NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
+        NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
+
 
 
         actionBar = getSupportActionBar();
 
-        click = MediaPlayer.create(Display.this, R.raw.fin);
-        click2 = MediaPlayer.create(Display.this, R.raw.notidos);
+        click = MediaPlayer.create(DisplayPequeño.this, R.raw.fin);
+        click2 = MediaPlayer.create(DisplayPequeño.this, R.raw.notidos);
 
 
         constrain = findViewById(R.id.constrainlayoutpeque);
@@ -73,34 +93,68 @@ public class Display extends AppCompatActivity {
        // String EDteamImage = "https://geant.vteximg.com.br/arquivos/ids/275434/m-pizzas-disco-2021.gif?v=637595480814100000";
        // Glide.with(getApplicationContext()).load(EDteamImage).into(gif);
 
-        datos = new Datos(0,0,0,8,1,"Comidas","#2196F3",0,0,0);
 
         hidebarras();
+        leerSectoresLocales();
         conectarFirebase();
 
     }
+
+    private void leerSectoresLocales() {
+
+        db = new SectorDB(this);
+
+        try {
+            db = new SectorDB(this);
+            listtemp = db.loadSector();
+
+            for (SectoresElegidos sectores : listtemp) {
+               // sectoreselegidos.add(sectores.getNombre());
+                Log.i("---> Base de ds: ", sectores.toString());
+
+            }
+
+        } catch (Exception e) {
+            Log.e("error", "mensaje mostrar bse local");
+        }
+
+
+    }
+
     void conectarFirebase(){
 
         inicializarFirebase();
 
         setProgressDialog();
-        databaseReference.child("Datos").addValueEventListener(new ValueEventListener() {
+
+
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
 
-                    datos = objSnaptshot.getValue(Datos.class);
+                    SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
 
-                    Actualizar();
-                    Adialog.dismiss();
+                    if (sectores.getEstado()==1){
+
+                        for (SectoresElegidos sec : listtemp) {
+                            if (sec.getNombre().equals(sectores.getNombreSector())){
+                                datos = sectores;
+                                break;
+                            }
+                            Log.i("---> Base de ds: ", sectores.toString());
+                        }
+                    }
                 }
-
-
+                Actualizar();
+                Adialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Display.this, "Hubo un Problema con la red", Toast.LENGTH_LONG).show();
+                Toast.makeText(DisplayPequeño.this, "Hubo un Problema con la red", Toast.LENGTH_LONG).show();
                 Adialog.dismiss();
             }
 

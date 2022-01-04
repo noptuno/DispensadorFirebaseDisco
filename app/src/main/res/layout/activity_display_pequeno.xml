@@ -9,50 +9,34 @@
     android:visibility="visible"
     tools:context=".principaltemp.Display">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="150dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logodisco" />
-
-    <TextView
-        android:id="@+id/txtNombre_Sector"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="#FF5722"
-        android:text="CARRO COMIDA"
-        android:textAlignment="center"
-        android:textColor="@android:color/background_light"
-        android:textSize="80sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
-        android:layout_weight="1"
         android:background="@drawable/fondoturnoblanco"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtNombre_Sector">
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            app:srcCompat="@drawable/logodisco" />
+
+        <TextView
+            android:id="@+id/txtNombre_Sector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FF5722"
+            android:text="CARRO COMIDA"
+            android:textAlignment="center"
+            android:textColor="#212121"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
@@ -60,7 +44,7 @@
             android:gravity="center"
             android:text="TURNO"
             android:textColor="@color/black"
-            android:textSize="48sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -68,12 +52,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
-            android:layout_weight="1"
             android:gravity="center"
             android:text="00"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="400sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
     </LinearLayout>

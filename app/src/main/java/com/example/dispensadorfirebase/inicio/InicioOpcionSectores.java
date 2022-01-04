@@ -31,6 +31,7 @@ import com.example.dispensadorfirebase.adapter.AdapterSectorLocal;
 import com.example.dispensadorfirebase.administrador.AsignarSectoress;
 import com.example.dispensadorfirebase.administrador.CrearLocalDialog;
 import com.example.dispensadorfirebase.administrador.ListaLocales;
+import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorLocal;
@@ -105,6 +106,13 @@ private TextView localseleccionado, dispositivoseleccionado;
             @Override
             public void onClick(View view) {
                 if (cantidadmaxima>= cantidadelegida){
+
+                    Intent intent = new Intent(InicioOpcionSectores.this, DisplayPequeño.class);
+
+                    intent.putExtra("LOCAL", NOMBRELOCALSELECCIONADO);
+                    intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
                 }else{
                     Toast.makeText(InicioOpcionSectores.this, "Debe Elegir menos Sectores para Este Dispositivo", Toast.LENGTH_LONG).show();
@@ -232,8 +240,6 @@ private TextView localseleccionado, dispositivoseleccionado;
 
         try {
             db = new SectorDB(this);
-
-
                 db.eliminarAll();
 
             return true;

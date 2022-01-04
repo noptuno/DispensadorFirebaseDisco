@@ -60,7 +60,7 @@ String dispositivo_seleccionado= null;
         validar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                btnconfirmar.setEnabled(true);
                 if (!numeroserie.getText().toString().equals("")){
                     btnconfirmar.setEnabled(true);
                 }else {
