@@ -68,7 +68,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 public class DispensadorTurno extends AppCompatActivity {
-
+    //TODO Modificado 5/1/22/12:00
     public static boolean isConnected = false;
     private Handler m_handler = new Handler(); // Main thread
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
@@ -224,7 +224,6 @@ public class DispensadorTurno extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
                 list.clear();
 
                 for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
@@ -379,26 +378,7 @@ public class DispensadorTurno extends AppCompatActivity {
     }
 
 
-    private void cargarLista2() {
-
-        m_handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-
-
-
-                } catch (Exception e) {
-                    Log.e("errorW", "mensaje");
-                }
-            }
-        });
-
-    }
-
-
-
-    private void usb() {
+     private void usb() {
 
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
