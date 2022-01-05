@@ -1,5 +1,7 @@
 package com.example.dispensadorfirebase.aplicaciones;
 
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,9 +35,20 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dispensadorfirebase.R;
+import com.example.dispensadorfirebase.adapter.AdapterDispensador;
+import com.example.dispensadorfirebase.adapter.AdapterLocal;
+import com.example.dispensadorfirebase.adapter.AdapterSectorLocal;
+import com.example.dispensadorfirebase.administrador.AsignarSectoress;
+import com.example.dispensadorfirebase.administrador.ListaLocales;
+import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Datos;
+import com.example.dispensadorfirebase.clase.Local;
+import com.example.dispensadorfirebase.clase.SectorLocal;
+import com.example.dispensadorfirebase.clase.SectoresElegidos;
 import com.example.dispensadorfirebase.principaltemp.MensajeActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -48,6 +61,7 @@ import com.starmicronics.starioextension.StarIoExt;
 
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -68,24 +82,38 @@ public class DispensadorTurno extends AppCompatActivity {
     private AlertDialog Adialog;
     static final int MENSAJERESULT = 0;
     MediaPlayer click, click2;
-    String Local = "Datos";
-    String Dispensador = "dispensador1";
+
     ConstraintLayout constrain;
     ActionBar actionBar;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     TextView txt_numeroActualDispensdor,txt_nombresector;
-    int baselimite;
-    Datos datos ;
+
     private UsbManager usbManager;
     int numeroactual;
+    String NOMBRELOCALSELECCIONADO=null;
+    String NOMBREDELDISPOSITIVO=null;
 
+    AdapterDispensador adapter;
+
+    ArrayList<SectorLocal> list;
+    ArrayList<SectoresElegidos> listtemp;
+    private SectorDB db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dispensador_turno);
+        setContentView(R.layout.activity_dispensador_turno_recicler);
 
+
+        NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
+        NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
+
+
+        list = new ArrayList<>();
+        adapter = new AdapterDispensador();
+
+        leerSectoresLocales();
         inicializarFirebase();
 
 
@@ -108,12 +136,23 @@ public class DispensadorTurno extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                click2.start();
-                mostrarEspera();
-                sumar();
+
             }
         });
         */
+
+        adapter.setOnNoteSelectedListener(new AdapterDispensador.OnNoteSelectedListener() {
+            @Override
+            public void onClick(SectorLocal note) {
+
+                click2.start();
+                mostrarEspera(note);
+                sumar(note);
+
+            }
+
+        });
+
 
         actionBar = getSupportActionBar();
         hidebarras();
@@ -124,6 +163,14 @@ public class DispensadorTurno extends AppCompatActivity {
             }
         });
         context = getApplicationContext();
+
+
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.reciclerviewprincipal);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(adapter);
+
+
 
         usb();
 
@@ -136,38 +183,70 @@ public class DispensadorTurno extends AppCompatActivity {
 
 
 
-    private void mostrarEspera() {
+    private void mostrarEspera(SectorLocal note) {
         Intent v = new Intent(DispensadorTurno.this, MensajeActivity.class);
-        v.putExtra("numeroSector", datos.getNumeroDispensador());
-        v.putExtra("nombreSector", datos.getNombreSector());
-        v.putExtra("colorSector", datos.getColorSector());
+        v.putExtra("numeroSector", note.getNumeroDispensador());
+        v.putExtra("nombreSector", note.getNombreSector());
+        v.putExtra("colorSector", note.getColorSector());
         startActivityForResult(v, MENSAJERESULT);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
     }
 
+    void sumar(SectorLocal note){
 
+        imprimirNumero(note);
+
+    }
+
+    private void leerSectoresLocales() {
+
+        db = new SectorDB(this);
+
+        try {
+            db = new SectorDB(this);
+            listtemp = db.loadSector();
+            for (SectoresElegidos sectores : listtemp) {
+                Log.i("---> Base de ds: ", sectores.toString());
+            }
+
+        } catch (Exception e) {
+            Log.e("error", "mensaje mostrar bse local");
+        }
+
+
+    }
 
     private void CargarDatos() {
 
         setProgressDialog();
-        databaseReference.child("Datos").addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-              //  EnableDialog(true,"true");
-                        for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()) {
 
-                            datos = objSnaptshot.getValue(Datos.class);
-                            baselimite = datos.getLimite();
-                            txt_nombresector.setText(""+datos.getNombreSector());
-                            txt_numeroActualDispensdor.setText(""+datos.getNumeroDispensador());
-                            //layout.setBackgroundColor(Color.parseColor(datos.getColorSector()));
+                list.clear();
 
+                for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
+
+                    SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
+
+                    if (sectores.getEstado()==1){
+
+                        for (SectoresElegidos sec : listtemp) {
+                            if (sec.getNombre().equals(sectores.getNombreSector())){
+
+                                list.add(sectores);
+
+                            }
+                            Log.i("---> Base de ds: ", sectores.toString());
                         }
+                    }
+                }
+
 
           Adialog.dismiss();
-
+                actualizarReciclerView();
             }
 
             @Override
@@ -181,36 +260,12 @@ public class DispensadorTurno extends AppCompatActivity {
 
     }
 
-    void ajustarclase (){
-
-
-    }
-
-    void sumar(){
-
-        imprimirNumero();
-
+    public void actualizarReciclerView() {
+        adapter.setNotes(list);
+        adapter.notifyDataSetChanged();
     }
 
 
-    void registrar(){
-
-        m_handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-
-
-                } catch (Exception e) {
-                    Log.e("errorW", "mensaje");
-                }
-            }
-        });
-
-
-
-
-    }
 
     private void inicializarFirebase() {
         FirebaseApp.initializeApp(this);
@@ -235,7 +290,7 @@ public class DispensadorTurno extends AppCompatActivity {
         }
     }
 
-    private void imprimirNumero() {
+    private void imprimirNumero(SectorLocal datos) {
 
         byte[] printData = {0};
 
@@ -243,7 +298,7 @@ public class DispensadorTurno extends AppCompatActivity {
         Date date = new Date();
 
         String fecha = dateFormat.format(date);
-
+        int limite = datos.getLimite();
 
         Charset encoding = Charset.forName("CP437");
         byte[] nombresector= datos.getNombreSector().getBytes(encoding);
@@ -294,9 +349,9 @@ public class DispensadorTurno extends AppCompatActivity {
 
 
                     datos.sumarDispensdor();
-                    txt_numeroActualDispensdor.setText(datos.getNumeroDispensador()+"");
+                    //txt_numeroActualDispensdor.setText(datos.getNumeroDispensador()+"");
 
-                    if (datos.getCantidadEspera()>baselimite){
+                    if (datos.getCantidadEspera()>limite){
 
                         datos.setNotificacion(1);
 
@@ -306,8 +361,8 @@ public class DispensadorTurno extends AppCompatActivity {
                         datos.setNotificaciondeshabilitar(0);
 
                     }
-                    
-                    databaseReference.child(Local).child(Dispensador).setValue(datos);
+
+                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
                 } else {
                     Toast.makeText(DispensadorTurno.this, "ERROR A: imprimir", Toast.LENGTH_LONG).show();

@@ -90,7 +90,9 @@
         <activity
             android:name=".principaltemp.Display"
             android:exported="true" />
-
+        <activity
+            android:name=".aplicaciones.DispensadorTurno"
+            android:exported="true" />
         <activity
             android:name=".principaltemp.MensajeActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"

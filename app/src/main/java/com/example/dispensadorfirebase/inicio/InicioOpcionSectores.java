@@ -31,6 +31,7 @@ import com.example.dispensadorfirebase.adapter.AdapterSectorLocal;
 import com.example.dispensadorfirebase.administrador.AsignarSectoress;
 import com.example.dispensadorfirebase.administrador.CrearLocalDialog;
 import com.example.dispensadorfirebase.administrador.ListaLocales;
+import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
 import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Local;
@@ -107,7 +108,7 @@ private TextView localseleccionado, dispositivoseleccionado;
             public void onClick(View view) {
                 if (cantidadmaxima>= cantidadelegida){
 
-                    Intent intent = new Intent(InicioOpcionSectores.this, DisplayPequeño.class);
+                    Intent intent = new Intent(InicioOpcionSectores.this, DispensadorTurno.class);
 
                     intent.putExtra("LOCAL", NOMBRELOCALSELECCIONADO);
                     intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
