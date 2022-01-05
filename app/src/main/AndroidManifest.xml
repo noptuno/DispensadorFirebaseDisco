@@ -24,51 +24,44 @@
         android:theme="@style/Theme.DispensadorFirebase">
         <activity
             android:name=".inicio.InicioOpcionSectores"
-            android:label="Asignar Sectores"
-            android:exported="true" />
+            android:exported="true"
+            android:label="Asignar Sectores" />
         <activity
             android:name=".inicio.InicioOpcionDispositivo"
-            android:label="Seleccionar Dispositivo"
-            android:exported="true" >
-        </activity>
-
+            android:exported="true"
+            android:label="Seleccionar Dispositivo"></activity>
         <activity
             android:name=".inicio.InicioOpcionLocal"
-            android:label="Seleccionar Local"
-            android:exported="true" />
-
+            android:exported="true"
+            android:label="Seleccionar Local" />
         <activity
             android:name=".aplicaciones.DisplayPequeño"
             android:exported="true" />
-
         <activity
             android:name=".administrador.AsignarSectoress"
-            android:label="Asignacion de Sectores"
-            android:exported="true" />
+            android:exported="true"
+            android:label="Asignacion de Sectores" />
         <activity
             android:name=".administrador.CrearSectores"
-            android:label="Crear Sectores"
-            android:exported="true" />
+            android:exported="true"
+            android:label="Crear Sectores" />
         <activity
             android:name=".administrador.CrearLocalDialog"
-            android:label="Crear Local"
-            android:exported="true" />
+            android:exported="true"
+            android:label="Crear Local" />
         <activity
             android:name=".administrador.ListaLocales"
-            android:label="Lista de Locales"
-            android:exported="true" />
+            android:exported="true"
+            android:label="Lista de Locales" />
         <activity
             android:name=".administrador.Menu"
-            android:label="Menu Principal"
-            android:exported="true">
-
+            android:exported="true"
+            android:label="Menu Principal">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
         </activity>
 
         <service

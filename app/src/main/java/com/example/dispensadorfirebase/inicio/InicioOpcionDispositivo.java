@@ -1,5 +1,6 @@
 package com.example.dispensadorfirebase.inicio;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -20,6 +21,8 @@ TextView numeroserie;
     Button btnconfirmar,validar;
 Spinner dispositivo;
 String dispositivo_seleccionado= null;
+    ActionBar actionBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,7 @@ String dispositivo_seleccionado= null;
         dispositivo = findViewById(R.id.spinner_dispositivo);
         numeroserie = findViewById(R.id.txtsn);
 
+        ocultarbarra();
 
 
         dispositivo.setOnItemSelectedListener(this);
@@ -73,6 +77,13 @@ String dispositivo_seleccionado= null;
             }
         });
 
+    }
+
+    private void ocultarbarra() {
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
     @Override

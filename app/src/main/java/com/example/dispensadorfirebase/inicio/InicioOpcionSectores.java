@@ -4,6 +4,7 @@ import static com.example.dispensadorfirebase.app.variables.BASEDATOSSECTORESTEM
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -62,7 +63,7 @@ private Button configurar;
     private int cantidadelegida = 0;
     private int cantidadmaxima = 0;
     private TextView maximoSectores;
-
+    ActionBar actionBar;
 private TextView localseleccionado, dispositivoseleccionado;
     String NOMBRELOCALSELECCIONADO=null;
     String NOMBREDELDISPOSITIVO=null;
@@ -74,7 +75,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
         //FIREBASE
         inicializarFirebase();
-
+        ocultarbarra();
 
 
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
@@ -160,7 +161,12 @@ private TextView localseleccionado, dispositivoseleccionado;
         cargarListaSectoresLocales();
         limitesectores();
     }
-
+    private void ocultarbarra() {
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+    }
     private void limitesectores() {
 
         if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")){

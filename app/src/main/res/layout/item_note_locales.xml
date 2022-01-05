@@ -29,7 +29,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:layout_weight="1"
-        android:background="#8BC34A"
+        android:background="#4CAF50"
         android:orientation="vertical">
 
         <LinearLayout
@@ -70,7 +70,8 @@
                 android:text="Estado"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:textStyle="normal|bold" />
+                android:textStyle="normal|bold"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -117,7 +118,8 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
         </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.example.dispensadorfirebase.inicio;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,12 +42,11 @@ public class InicioOpcionLocal extends AppCompatActivity {
 
     ArrayList<Local> list;
 
-    Button confirmalocal;
     AdapterLocal adapter;
     AlertDialog Adialog;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-
+    ActionBar actionBar;
     String NOMBREDELDISPOSITIVO=null;
 
     @Override
@@ -56,24 +56,13 @@ public class InicioOpcionLocal extends AppCompatActivity {
 
 
         inicializarFirebase();
-
+        ocultarbarra();
         list = new ArrayList<>();
         adapter = new AdapterLocal();
 
-        confirmalocal = findViewById(R.id.btnconfirmarlocal);
 
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
         //Acciones layout
-
-        confirmalocal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-
-            }
-        });
-
 
 
         // funcionaldiades
@@ -103,7 +92,12 @@ public class InicioOpcionLocal extends AppCompatActivity {
         cargarLista();
 
     }
-
+    private void ocultarbarra() {
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+    }
     private void cargarLista() {
 
         setProgressDialog();
