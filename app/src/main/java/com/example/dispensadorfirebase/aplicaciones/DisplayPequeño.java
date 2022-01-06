@@ -2,7 +2,9 @@ package com.example.dispensadorfirebase.aplicaciones;
 
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -62,16 +64,16 @@ public class DisplayPequeño extends AppCompatActivity {
 
     ArrayList<SectoresElegidos> listtemp;
     List<String> sectoreselegidos;
-
+    private SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_pequeno);
 
 
+        validarConfiguracion();
 
-        NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
-        NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
+
 
 
 
@@ -100,6 +102,18 @@ public class DisplayPequeño extends AppCompatActivity {
 
     }
 
+    private void validarConfiguracion() {
+
+        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        String estado = pref.getString("ESTADO", "NO");
+        if (estado.equals("NO")){
+            regresarConfiguracion();
+        }
+
+        NOMBREDELDISPOSITIVO = pref.getString("NOMBREDELDISPOSITIVO", "NO");
+        NOMBRELOCALSELECCIONADO = pref.getString("NOMBRELOCALSELECCIONADO", "NO");
+    }
+
     private void leerSectoresLocales() {
 
         db = new SectorDB(this);
@@ -120,7 +134,15 @@ public class DisplayPequeño extends AppCompatActivity {
 
 
     }
+    private void regresarConfiguracion(){
 
+        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("ESTADO", "NO");
+        editor.apply();
+        finish();
+
+    }
     void conectarFirebase(){
 
         inicializarFirebase();

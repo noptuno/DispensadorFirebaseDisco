@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -99,15 +100,18 @@ public class DispensadorTurno extends AppCompatActivity {
     ArrayList<SectorLocal> list;
     ArrayList<SectoresElegidos> listtemp;
     private SectorDB db;
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dispensador_turno_recicler);
 
+        validarConfiguracion();
 
-        NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
-        NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
+
+
+
 
 
         list = new ArrayList<>();
@@ -153,7 +157,6 @@ public class DispensadorTurno extends AppCompatActivity {
 
         });
 
-
         actionBar = getSupportActionBar();
         hidebarras();
         constrain.setOnClickListener(new View.OnClickListener() {
@@ -164,24 +167,38 @@ public class DispensadorTurno extends AppCompatActivity {
         });
         context = getApplicationContext();
 
-
-
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.reciclerviewprincipal);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
 
-
-
         usb();
-
 
         CargarDatos();
 
 
+    }
+
+    private void validarConfiguracion() {
+
+        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        String estado = pref.getString("ESTADO", "NO");
+        if (estado.equals("NO")){
+            regresarConfiguracion();
+        }
+
+        NOMBREDELDISPOSITIVO = pref.getString("NOMBREDELDISPOSITIVO", "NO");
+        NOMBRELOCALSELECCIONADO = pref.getString("NOMBRELOCALSELECCIONADO", "NO");
 
     }
 
+    private void regresarConfiguracion(){
+        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("ESTADO", "NO");
+        editor.apply();
+        finish();
 
+    }
 
     private void mostrarEspera(SectorLocal note) {
         Intent v = new Intent(DispensadorTurno.this, MensajeActivity.class);

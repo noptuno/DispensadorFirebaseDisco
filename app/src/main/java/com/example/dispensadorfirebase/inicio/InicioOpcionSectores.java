@@ -10,8 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -77,29 +79,20 @@ private TextView localseleccionado, dispositivoseleccionado;
         inicializarFirebase();
         ocultarbarra();
 
-
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
         NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
-
-
-
 
         configurar = findViewById(R.id.btnGuardarConfig);
         localseleccionado = findViewById(R.id.txtlocal);
         dispositivoseleccionado= findViewById(R.id.txtdispositivo);
         localseleccionado.setText(NOMBRELOCALSELECCIONADO);
         dispositivoseleccionado.setText(NOMBREDELDISPOSITIVO);
-
         maximoSectores= findViewById(R.id.txtmaximosectores);
-
-       cantidadsectoreselegidos= findViewById(R.id.txtcantelegidos);
-
-
+        cantidadsectoreselegidos= findViewById(R.id.txtcantelegidos);
         listnombresectores = new ArrayList<>();
         listsectoreslocal = new ArrayList<>();
 
         adapter = new AdapterSectorLocal();
-
 
         //eliminar base datos local
         eliminarSectoresElegidos();
@@ -107,20 +100,16 @@ private TextView localseleccionado, dispositivoseleccionado;
         configurar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if (cantidadmaxima>= cantidadelegida){
 
-                    Intent intent = new Intent(InicioOpcionSectores.this, DispensadorTurno.class);
-
-                    intent.putExtra("LOCAL", NOMBRELOCALSELECCIONADO);
-                    intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    abriraplicacion();
 
                 }else{
+
                     Toast.makeText(InicioOpcionSectores.this, "Debe Elegir menos Sectores para Este Dispositivo", Toast.LENGTH_LONG).show();
+
                 }
-
-
             }
         });
 
@@ -161,6 +150,22 @@ private TextView localseleccionado, dispositivoseleccionado;
         cargarListaSectoresLocales();
         limitesectores();
     }
+
+    private void abriraplicacion() {
+
+        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+        editor.putString("LOCAL", NOMBRELOCALSELECCIONADO);
+        editor.putString("ESTADO", "SI");
+        editor.apply();
+
+        Intent intent = new Intent(InicioOpcionSectores.this, DispensadorTurno.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+    }
+
     private void ocultarbarra() {
         actionBar = getSupportActionBar();
         if (actionBar != null) {

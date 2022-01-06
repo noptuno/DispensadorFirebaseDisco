@@ -3,7 +3,9 @@ package com.example.dispensadorfirebase.inicio;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dispensadorfirebase.R;
+import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
+import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
 import com.google.android.gms.dynamic.IFragmentWrapper;
 
 public class InicioOpcionDispositivo extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -22,8 +26,8 @@ TextView numeroserie;
 Spinner dispositivo;
 String dispositivo_seleccionado= null;
     ActionBar actionBar;
-
-
+    private SharedPreferences pref;
+    private String estado = "NO";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +39,7 @@ String dispositivo_seleccionado= null;
         numeroserie = findViewById(R.id.txtsn);
 
         ocultarbarra();
-
+        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
 
         dispositivo.setOnItemSelectedListener(this);
 
@@ -50,10 +54,13 @@ String dispositivo_seleccionado= null;
                     Toast.makeText(InicioOpcionDispositivo.this, "Debe Seleccionar el Dispositivo", Toast.LENGTH_LONG).show();
 
                 }else{
+
                     Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
                     intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+
                 }
 
 
@@ -76,6 +83,33 @@ String dispositivo_seleccionado= null;
 
             }
         });
+
+    //abriraplicacion();
+
+    }
+
+    private void abriraplicacion() {
+
+        estado = pref.getString("ESTADO", "NO");
+        String tipoaplicaion = pref.getString("NOMBREDELDISPOSITIVO", "NO");
+        Intent intent;
+
+        if (estado.equals("SI")){
+
+            if (tipoaplicaion.equals("DISPENSADOR")){
+                intent = new Intent(InicioOpcionDispositivo.this, DispensadorTurno.class);
+
+            }else if (tipoaplicaion.equals("TABLET 10PLG")){
+                intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
+
+            }else{
+                intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
+
+            }
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        }
+
 
     }
 
