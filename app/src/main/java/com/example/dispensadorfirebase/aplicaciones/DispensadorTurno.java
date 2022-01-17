@@ -215,7 +215,6 @@ public class DispensadorTurno extends AppCompatActivity {
         imprimirNumero(note);
 
     }
-
     private void leerSectoresLocales() {
 
         db = new SectorDB(this);
@@ -233,6 +232,7 @@ public class DispensadorTurno extends AppCompatActivity {
 
 
     }
+
 
     private void CargarDatos() {
 

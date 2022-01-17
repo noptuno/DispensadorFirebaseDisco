@@ -10,10 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +34,7 @@ import com.example.dispensadorfirebase.administrador.CrearLocalDialog;
 import com.example.dispensadorfirebase.administrador.ListaLocales;
 import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
 import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
+import com.example.dispensadorfirebase.aplicaciones.TabletDispensador;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorLocal;
@@ -79,20 +78,29 @@ private TextView localseleccionado, dispositivoseleccionado;
         inicializarFirebase();
         ocultarbarra();
 
+
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
         NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
+
+
+
 
         configurar = findViewById(R.id.btnGuardarConfig);
         localseleccionado = findViewById(R.id.txtlocal);
         dispositivoseleccionado= findViewById(R.id.txtdispositivo);
         localseleccionado.setText(NOMBRELOCALSELECCIONADO);
         dispositivoseleccionado.setText(NOMBREDELDISPOSITIVO);
+
         maximoSectores= findViewById(R.id.txtmaximosectores);
-        cantidadsectoreselegidos= findViewById(R.id.txtcantelegidos);
+
+       cantidadsectoreselegidos= findViewById(R.id.txtcantelegidos);
+
+
         listnombresectores = new ArrayList<>();
         listsectoreslocal = new ArrayList<>();
 
         adapter = new AdapterSectorLocal();
+
 
         //eliminar base datos local
         eliminarSectoresElegidos();
@@ -100,16 +108,39 @@ private TextView localseleccionado, dispositivoseleccionado;
         configurar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (cantidadmaxima>= cantidadelegida){
 
-                    abriraplicacion();
+                    Intent intent = null;
+
+                    if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")){
+                        intent  = new Intent(InicioOpcionSectores.this, DisplayPequeño.class);
+
+                    } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")){
+                         intent = new Intent(InicioOpcionSectores.this, DisplayPequeño.class);
+
+                    }else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")){
+
+                         intent = new Intent(InicioOpcionSectores.this, TabletDispensador.class);
+                    }
+                    else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")){
+                         intent = new Intent(InicioOpcionSectores.this, DispensadorTurno.class);
+
+                    } else if (NOMBREDELDISPOSITIVO.equals("SUPERVISOR")){
+
+                         intent = new Intent(InicioOpcionSectores.this, DisplayPequeño.class);
+                    }
+
+
+                    intent.putExtra("LOCAL", NOMBRELOCALSELECCIONADO);
+                    intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
                 }else{
-
                     Toast.makeText(InicioOpcionSectores.this, "Debe Elegir menos Sectores para Este Dispositivo", Toast.LENGTH_LONG).show();
-
                 }
+
+
             }
         });
 
@@ -150,22 +181,6 @@ private TextView localseleccionado, dispositivoseleccionado;
         cargarListaSectoresLocales();
         limitesectores();
     }
-
-    private void abriraplicacion() {
-
-        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
-        editor.putString("LOCAL", NOMBRELOCALSELECCIONADO);
-        editor.putString("ESTADO", "SI");
-        editor.apply();
-
-        Intent intent = new Intent(InicioOpcionSectores.this, DispensadorTurno.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
-    }
-
     private void ocultarbarra() {
         actionBar = getSupportActionBar();
         if (actionBar != null) {

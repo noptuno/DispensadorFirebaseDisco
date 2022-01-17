@@ -23,13 +23,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DispensadorFirebase">
         <activity
+            android:name=".aplicaciones.TabletDispensador"
+            android:exported="false" />
+        <activity
             android:name=".inicio.InicioOpcionSectores"
             android:exported="true"
             android:label="Asignar Sectores" />
         <activity
             android:name=".inicio.InicioOpcionDispositivo"
             android:exported="true"
-            android:label="Seleccionar Dispositivo"></activity>
+            android:label="Seleccionar Dispositivo" />
         <activity
             android:name=".inicio.InicioOpcionLocal"
             android:exported="true"

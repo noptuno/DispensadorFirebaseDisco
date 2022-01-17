@@ -1,4 +1,6 @@
-package com.example.dispensadorfirebase.principaltemp;
+package com.example.dispensadorfirebase.aplicaciones;
+
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -11,6 +13,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +27,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dispensadorfirebase.R;
+import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Datos;
+import com.example.dispensadorfirebase.clase.SectorLocal;
+import com.example.dispensadorfirebase.clase.SectoresElegidos;
+import com.example.dispensadorfirebase.principaltemp.Tablet;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,7 +39,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class Tablet extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class TabletDispensador extends AppCompatActivity {
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -41,7 +50,7 @@ public class Tablet extends AppCompatActivity {
     TextView txtnumeroactual, txtcantidadespera, txtsector;
     MediaPlayer click, click2;
     int baselimite;
-Button btnsupervisor;
+    Button btnsupervisor;
 
     LinearLayout layoutsupervisor;
     LinearLayout layoutrollo;
@@ -49,36 +58,36 @@ Button btnsupervisor;
     int limiteretroceder = 10;
     int retrocesos = 0;
 
+    private SectorDB db;
+    ArrayList<SectoresElegidos> listtemp;
 
     Button sumar,restar,reset;
-private  AlertDialog Adialog;
+    private AlertDialog Adialog;
     int  Numero_Actual = 0,Cantidad_Espera = 10, Ultimo_numero = 0, limite_espera = 8;
-    Datos datos;
-
+    SectorLocal datos = new SectorLocal();
+    String NOMBRELOCALSELECCIONADO=null;
+    String NOMBREDELDISPOSITIVO=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tablet);
+        setContentView(R.layout.activity_tablet_dispensador);
 
 
-       txtnumeroactual = findViewById(R.id.txtNumero_Actual);
-       txtcantidadespera= findViewById(R.id.txtscantidad);
-       txtsector = findViewById(R.id.txttnombresector);
-       sumar = findViewById(R.id.btnSuma);
-       restar = findViewById(R.id.btnResta);
-       reset = findViewById(R.id.btnReset);
-
-
+        txtnumeroactual = findViewById(R.id.txtNumero_Actual);
+        txtcantidadespera= findViewById(R.id.txtscantidad);
+        txtsector = findViewById(R.id.txttnombresector);
+        sumar = findViewById(R.id.btnSuma);
+        restar = findViewById(R.id.btnResta);
+        reset = findViewById(R.id.btnReset);
         btnsupervisor = findViewById(R.id.btnllamarsupervisor);
-
-
-        click = MediaPlayer.create(Tablet.this, R.raw.fin);
-        click2 = MediaPlayer.create(Tablet.this, R.raw.ckickk);
-
+        click = MediaPlayer.create(TabletDispensador.this, R.raw.fin);
+        click2 = MediaPlayer.create(TabletDispensador.this, R.raw.ckickk);
         constrain = findViewById(R.id.constrainTablet);
 
-        datos = new Datos(0,0,0,8,1,"Comidas","#2196F3",0,0,0);
+
+        NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
+        NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
 
 
         btnsupervisor.setOnClickListener(new View.OnClickListener() {
@@ -89,17 +98,17 @@ private  AlertDialog Adialog;
                 datos.setLlamarsupervisor(1);
 
 
-                    sumar.setEnabled(false);
-                    restar.setEnabled(false);
-                    reset.setEnabled(false);
+                sumar.setEnabled(false);
+                restar.setEnabled(false);
+                reset.setEnabled(false);
                 btnsupervisor.setEnabled(false);
-                    click2.start();
+                click2.start();
 
-                    // setProgressDialog();
-                    delay();
+                // setProgressDialog();
+                delay();
 
 
-                databaseReference.child("Datos").child("dispensador1").setValue(datos);
+                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
 
 
@@ -107,13 +116,9 @@ private  AlertDialog Adialog;
         });
 
 
-
-
         sumar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
 
                 sumar();
 
@@ -135,7 +140,7 @@ private  AlertDialog Adialog;
 
                 }else{
 
-                    Toast.makeText(Tablet.this, "El limite es de 10 turnos para retroceder", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TabletDispensador.this, "El limite es de 10 turnos para retroceder", Toast.LENGTH_LONG).show();
 
                 }
             }
@@ -151,6 +156,8 @@ private  AlertDialog Adialog;
             }
         });
 
+
+
         actionBar = getSupportActionBar();
         constrain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,29 +166,67 @@ private  AlertDialog Adialog;
             }
         });
 
+        leerSectoresLocales();
+
         conectarFirebase();
+
+
     }
 
 
+    private void leerSectoresLocales() {
+
+        db = new SectorDB(this);
+
+        try {
+            db = new SectorDB(this);
+            listtemp = db.loadSector();
+            for (SectoresElegidos sectores : listtemp) {
+
+                Log.i("---> Base de ds: ", sectores.toString());
+
+            }
+
+        } catch (Exception e) {
+            Log.e("error", "mensaje mostrar bse local");
+        }
+
+
+    }
+
     void conectarFirebase(){
+
         inicializarFirebase();
         setProgressDialog();
-        databaseReference.child("Datos").addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
 
-                    datos = objSnaptshot.getValue(Datos.class);
-                    Actualizar();
-                    Adialog.dismiss();
-                }
+                    SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
 
+                    if (sectores.getEstado()==1){
+
+                        for (SectoresElegidos sec : listtemp) {
+                            if (sec.getNombre().equals(sectores.getNombreSector())){
+                                datos = sectores;
+                                //habilitar botones
+                            }
+                            Log.i("---> Base de ds: ", sectores.toString());
+                        }
+
+                    }
+
+
+                }
+                Actualizar();
+                Adialog.dismiss();
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Tablet.this, "Hubo un Problema con la red", Toast.LENGTH_LONG).show();
+                Toast.makeText(TabletDispensador.this, "Hubo un Problema con la red", Toast.LENGTH_LONG).show();
                 Adialog.dismiss();
             }
 
@@ -227,7 +272,7 @@ private  AlertDialog Adialog;
 
             Registrar();
         }else{
-            Toast.makeText(Tablet.this, "No hay Clientes para atender", Toast.LENGTH_LONG).show();
+            Toast.makeText(TabletDispensador.this, "No hay Clientes para atender", Toast.LENGTH_LONG).show();
         }
 
     }
@@ -248,7 +293,7 @@ private  AlertDialog Adialog;
 
             Registrar();
         }else{
-            Toast.makeText(Tablet.this, "No hay Clientes en Esperando", Toast.LENGTH_LONG).show();
+            Toast.makeText(TabletDispensador.this, "No hay Clientes en Esperando", Toast.LENGTH_LONG).show();
         }
 
 
@@ -268,7 +313,7 @@ private  AlertDialog Adialog;
 
     private void permisos() {
 
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(Tablet.this);
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(TabletDispensador.this);
         View mView = getLayoutInflater().inflate(R.layout.alerdiaglog, null);
         final EditText mEmail = (EditText) mView.findViewById(R.id.etEmail);
         final EditText mPassword = (EditText) mView.findViewById(R.id.etPassword);
@@ -298,7 +343,7 @@ private  AlertDialog Adialog;
 
                     }else{
 
-                        Toast.makeText(Tablet.this,"Acceso Denegado", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TabletDispensador.this,"Acceso Denegado", Toast.LENGTH_SHORT).show();
                         dialogg.dismiss();
                         hidebarras();
                     }
@@ -353,8 +398,7 @@ private  AlertDialog Adialog;
         }
 
 
-        databaseReference.child("Datos").child("dispensador1").setValue(datos);
-
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
 
 
@@ -369,8 +413,6 @@ private  AlertDialog Adialog;
         baselimite = datos.getLimite();
         txtsector.setText(datos.getNombreSector());
         txtsector.setBackgroundColor(Color.parseColor(datos.getColorSector()));
-
-       // databaseReference.child("Datos").child("dispensador1").setValue(datos);
 
     }
 
@@ -449,7 +491,6 @@ private  AlertDialog Adialog;
 
 
     }
-
 
 
 }
