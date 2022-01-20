@@ -10,8 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +35,7 @@ import com.example.dispensadorfirebase.administrador.AsignarSectoress;
 import com.example.dispensadorfirebase.administrador.CrearLocalDialog;
 import com.example.dispensadorfirebase.administrador.ListaLocales;
 import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
+import com.example.dispensadorfirebase.aplicaciones.DisplayGrande;
 import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
 import com.example.dispensadorfirebase.aplicaciones.TabletDispensador;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
@@ -113,7 +116,7 @@ private TextView localseleccionado, dispositivoseleccionado;
                     Intent intent = null;
 
                     if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")){
-                        intent  = new Intent(InicioOpcionSectores.this, DisplayPequeño.class);
+                        intent  = new Intent(InicioOpcionSectores.this, DisplayGrande.class);
 
                     } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")){
                          intent = new Intent(InicioOpcionSectores.this, DisplayPequeño.class);
@@ -135,6 +138,17 @@ private TextView localseleccionado, dispositivoseleccionado;
                     intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+
+                    SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("ESTADO", "SI");
+                    editor.putString("LOCAL", NOMBRELOCALSELECCIONADO);
+                    editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+
+                    editor.apply();
+                    finish();
+
 
                 }else{
                     Toast.makeText(InicioOpcionSectores.this, "Debe Elegir menos Sectores para Este Dispositivo", Toast.LENGTH_LONG).show();
@@ -189,14 +203,32 @@ private TextView localseleccionado, dispositivoseleccionado;
     }
     private void limitesectores() {
 
-        if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")){
+
+        if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")){
+            cantidadmaxima = 3;
+            maximoSectores.setText("3");
+
+        } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")){
             cantidadmaxima = 1;
             maximoSectores.setText("1");
 
-        }else{
+        }else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")){
+            cantidadmaxima = 1;
+            maximoSectores.setText("1");
+
+        }
+        else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")){
             cantidadmaxima = 3;
             maximoSectores.setText("3");
+
+        } else if (NOMBREDELDISPOSITIVO.equals("SUPERVISOR")){
+            cantidadmaxima = 6;
+            maximoSectores.setText("6");
+
         }
+
+
+
 
     }
 

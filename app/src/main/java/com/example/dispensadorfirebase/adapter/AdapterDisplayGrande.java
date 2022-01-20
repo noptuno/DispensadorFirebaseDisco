@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,42 +15,41 @@ import com.example.dispensadorfirebase.clase.SectorLocal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.NoteViewHolder> {
+public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGrande.NoteViewHolder> {
 
     private List<SectorLocal> notes;
     private OnNoteSelectedListener onNoteSelectedListener;
     private OnNoteDetailListener onDetailListener;
     private int CantidadSectores;
 
-
-    public AdapterDispensador(int cantidad) {
+    public AdapterDisplayGrande(int cantidad) {
         this.notes = new ArrayList<>();
         this.CantidadSectores = cantidad;
     }
 
-
-    public AdapterDispensador(List<SectorLocal> notes) {
+    public AdapterDisplayGrande(List<SectorLocal> notes) {
         this.notes = notes;
     }
 
+
     @Override
     public NoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
 
         View elementoTitular;
 
         if (CantidadSectores ==1){
             elementoTitular = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_note_sectores_imprimir_uno, parent, false);
+                    .inflate(R.layout.item_note_sectores_21_uno, parent, false);
 
         }else if (CantidadSectores ==2){
             elementoTitular = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_note_sectores_imprimir_dos, parent, false);
+                    .inflate(R.layout.item_note_sectores_21_dos, parent, false);
         }else{
 
             elementoTitular = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_note_sectors_imprimir, parent, false);
+                    .inflate(R.layout.item_note_sectores_21_tres, parent, false);
         }
+
 
         return new NoteViewHolder(elementoTitular);
     }
@@ -83,6 +81,7 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
     }
 
 
+
     public interface OnNoteSelectedListener {
         void onClick(SectorLocal note);
     }
@@ -91,19 +90,18 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
         void onDetail(SectorLocal note);
     }
 
+
+
     public SectorLocal getposicionactual(int position) {
         return notes.get(position);
     }
 
 
 
-
-
     public class NoteViewHolder extends RecyclerView.ViewHolder {
         private TextView nombre;
         private TextView numero;
-
-private LinearLayout layout;
+        private LinearLayout layout;
 
         public NoteViewHolder(View item) {
             super(item);
@@ -118,7 +116,7 @@ private LinearLayout layout;
         public void bind(final SectorLocal sector) {
 
             nombre.setText(sector.getNombreSector());
-            numero.setText("" +sector.getNumeroDispensador());
+            numero.setText("" +sector.getNumeroatendiendo());
             layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
 
 

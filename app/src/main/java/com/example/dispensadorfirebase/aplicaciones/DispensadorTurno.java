@@ -114,10 +114,14 @@ public class DispensadorTurno extends AppCompatActivity {
 
 
 
-        list = new ArrayList<>();
-        adapter = new AdapterDispensador();
+
 
         leerSectoresLocales();
+
+        list = new ArrayList<>();
+        adapter = new AdapterDispensador(listtemp.size());
+
+
         inicializarFirebase();
 
 
@@ -185,9 +189,8 @@ public class DispensadorTurno extends AppCompatActivity {
         if (estado.equals("NO")){
             regresarConfiguracion();
         }
-
-        NOMBREDELDISPOSITIVO = pref.getString("NOMBREDELDISPOSITIVO", "NO");
-        NOMBRELOCALSELECCIONADO = pref.getString("NOMBRELOCALSELECCIONADO", "NO");
+        NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
+        NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
 
     }
 
@@ -207,7 +210,6 @@ public class DispensadorTurno extends AppCompatActivity {
         v.putExtra("colorSector", note.getColorSector());
         startActivityForResult(v, MENSAJERESULT);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
     }
 
     void sumar(SectorLocal note){

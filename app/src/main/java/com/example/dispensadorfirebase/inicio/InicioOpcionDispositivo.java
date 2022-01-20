@@ -16,12 +16,15 @@ import android.widget.Toast;
 
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
+import com.example.dispensadorfirebase.aplicaciones.DisplayGrande;
 import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
+import com.example.dispensadorfirebase.aplicaciones.TabletDispensador;
 import com.google.android.gms.dynamic.IFragmentWrapper;
 
 public class InicioOpcionDispositivo extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-TextView numeroserie;
+    private String NOMBREDELDISPOSITIVO;
+    TextView numeroserie;
     Button btnconfirmar,validar;
 Spinner dispositivo;
 String dispositivo_seleccionado= null;
@@ -38,36 +41,29 @@ String dispositivo_seleccionado= null;
         dispositivo = findViewById(R.id.spinner_dispositivo);
         numeroserie = findViewById(R.id.txtsn);
 
+        abriraplicacion();
+
+
         ocultarbarra();
-        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
 
         dispositivo.setOnItemSelectedListener(this);
-
-
         btnconfirmar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 if (dispositivo_seleccionado.equals("Seleccionado")){
 
                     Toast.makeText(InicioOpcionDispositivo.this, "Debe Seleccionar el Dispositivo", Toast.LENGTH_LONG).show();
 
                 }else{
-
                     Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
                     intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
-
                 }
-
-
-                //guardar share preference
-
             }
         });
+
         validar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,8 +75,6 @@ String dispositivo_seleccionado= null;
 
                 }
 
-
-
             }
         });
 
@@ -90,26 +84,41 @@ String dispositivo_seleccionado= null;
 
     private void abriraplicacion() {
 
-        estado = pref.getString("ESTADO", "NO");
-        String tipoaplicaion = pref.getString("NOMBREDELDISPOSITIVO", "NO");
-        Intent intent;
+        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        String estado = pref.getString("ESTADO", "NO");
 
-        if (estado.equals("SI")){
+        if (estado.equals("SI")) {
 
-            if (tipoaplicaion.equals("DISPENSADOR")){
-                intent = new Intent(InicioOpcionDispositivo.this, DispensadorTurno.class);
+            NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
 
-            }else if (tipoaplicaion.equals("TABLET 10PLG")){
-                intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
 
+            if (NOMBREDELDISPOSITIVO!="NO"){
+                Intent intent = null;
+
+                if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")) {
+                    intent = new Intent(InicioOpcionDispositivo.this, DisplayGrande.class);
+
+                } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")) {
+                    intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
+
+                } else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")) {
+
+                    intent = new Intent(InicioOpcionDispositivo.this, TabletDispensador.class);
+                } else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")) {
+                    intent = new Intent(InicioOpcionDispositivo.this, DispensadorTurno.class);
+
+                } else if (NOMBREDELDISPOSITIVO.equals("SUPERVISOR")) {
+
+                    intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
+                }
+
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }else{
-                intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
 
             }
-            startActivity(intent);
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        }
 
+        }
 
     }
 

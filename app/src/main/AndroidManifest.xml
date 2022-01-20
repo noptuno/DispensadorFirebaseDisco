@@ -23,6 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DispensadorFirebase">
         <activity
+            android:name=".aplicaciones.DisplayGrande"
+            android:exported="false" />
+        <activity
             android:name=".aplicaciones.TabletDispensador"
             android:exported="false" />
         <activity

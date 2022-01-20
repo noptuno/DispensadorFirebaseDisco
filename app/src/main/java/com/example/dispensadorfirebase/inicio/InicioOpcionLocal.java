@@ -77,7 +77,7 @@ public class InicioOpcionLocal extends AppCompatActivity {
                 intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
+                finish();
 
                 //  idtablaserie.setText(note.getId());
                 // numeroserie.setText(note.getNserie());

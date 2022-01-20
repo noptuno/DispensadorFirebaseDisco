@@ -25,11 +25,14 @@
         <entry key="..\:/Users/david/AndroidStudioProjects/DISCO/app/src/main/res/layout/activity_tablet.xml" value="0.25" />
         <entry key="..\:/Users/david/AndroidStudioProjects/DISCO/app/src/main/res/layout/alerdiaglog.xml" value="0.3625" />
         <entry key="..\:/Users/david/AndroidStudioProjects/DISCO/app/src/main/res/layout/item_note_sectores.xml" value="0.3500905797101449" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/drawable-v24/backgroudefecto.xml" value="0.3828125" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout-v23/activity_inicio_opcion_dispositivo.xml" value="0.3654891304347826" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/activity_administrador.xml" value="0.24094202898550723" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/activity_dispensador.xml" value="0.36096014492753625" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/activity_dispensador_turno.xml" value="0.3654891304347826" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/activity_dispensador_turno_recicler.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/activity_display.xml" value="0.24094202898550723" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/activity_display_grande.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/activity_display_pequeno.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/activity_flash_supervisor.xml" value="0.36096014492753625" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/activity_inicio_opcion_dispositivo.xml" value="0.33" />
@@ -47,6 +50,12 @@
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/alerdiaglog.xml" value="0.36096014492753625" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/item_note_locales.xml" value="0.3654891304347826" />
         <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/item_note_sectores.xml" value="0.3654891304347826" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/item_note_sectores_21_dos.xml" value="0.12" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/item_note_sectores_21_tres.xml" value="0.12" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/item_note_sectores_21_uno.xml" value="0.1" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/item_note_sectores_imprimir_dos.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/item_note_sectores_imprimir_uno.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/david/AndroidStudioProjects/Disco/dispensadorturno/app/src/main/res/layout/item_note_sectors_imprimir.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>
