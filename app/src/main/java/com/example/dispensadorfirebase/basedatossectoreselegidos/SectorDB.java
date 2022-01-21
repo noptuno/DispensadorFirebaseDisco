@@ -40,7 +40,7 @@ public class SectorDB {
         ContentValues cv = new ContentValues();
         cv.put(ConstantsDB.SEC_IDSECTOR, sectores.getIdSector());
         cv.put(ConstantsDB.SEC_NOMBRE, sectores.getNombre());
-
+        cv.put(ConstantsDB.SEC_NUMEROELEGIDO, sectores.getUltimonumero()+"");
         return cv;
     }
 
@@ -78,6 +78,58 @@ public class SectorDB {
         return error;
     }
 
+    public SectoresElegidos validarSector(String nombre) {
+
+        SectoresElegidos sector = new SectoresElegidos();
+        this.openReadableDB();
+        String where = ConstantsDB.SEC_NOMBRE+ "= ?";
+
+        Cursor c = db.query(ConstantsDB.TABLA_SECTORESELEGIDOS, null, where, new String[]{nombre}, null, null, null, null);
+        try {
+            if( c.getCount()>0) {
+                while (c.moveToNext()) {
+                    sector = new SectoresElegidos();
+                    sector.setIdSector(c.getInt(0));
+                    sector.setNombre(c.getString(1));
+                    sector.setUltimonumero(c.getString(2));
+
+                }
+
+            }else{
+                sector = null;
+            }
+
+
+        } finally {
+            c.close();
+        }
+        this.closeDB();
+        return sector;
+    }
+
+
+    public Boolean validarUltimoNumero(String ultimonumero) {
+
+        boolean error= false;
+        this.openReadableDB();
+        String where = ConstantsDB.SEC_NUMEROELEGIDO+ "= ?";
+
+        Cursor c = db.query(ConstantsDB.TABLA_SECTORESELEGIDOS, null, where, new String[]{ultimonumero}, null, null, null, null);
+        try{
+            if( c.getCount()>0) {
+                c.close();
+                error = true;
+            }
+
+        }catch (Exception ex){
+            Log.e("valiando" + "", "error al leer");
+            error = true;
+        }
+
+        return error;
+    }
+
+
     public void eliminarSector(String nombre) {
         this.openWriteableDB();
         String where = ConstantsDB.SEC_NOMBRE + "= ?";
@@ -102,7 +154,7 @@ public class SectorDB {
 
         ArrayList<SectoresElegidos> list = new ArrayList<>();
         this.openReadableDB();
-        String[] campos = new String[]{ConstantsDB.SEC_IDSECTOR, ConstantsDB.SEC_NOMBRE};
+        String[] campos = new String[]{ConstantsDB.SEC_IDSECTOR, ConstantsDB.SEC_NOMBRE, ConstantsDB.SEC_NUMEROELEGIDO};
         Cursor c = db.query(ConstantsDB.TABLA_SECTORESELEGIDOS, campos, null, null, null, null, null);
 
         try {
@@ -110,6 +162,7 @@ public class SectorDB {
                 SectoresElegidos sector = new SectoresElegidos();
                 sector.setIdSector(c.getInt(0));
                 sector.setNombre(c.getString(1));
+                sector.setUltimonumero(c.getString(2));
                 list.add(sector);
             }
         } finally {

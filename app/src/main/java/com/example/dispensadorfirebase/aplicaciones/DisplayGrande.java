@@ -35,6 +35,7 @@ import com.example.dispensadorfirebase.adapter.AdapterDisplayGrande;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
+import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -60,9 +61,9 @@ public class DisplayGrande extends AppCompatActivity {
     private AlertDialog Adialog;
     AdapterDisplayGrande adapter;
 private LinearLayout lineartitulo;
-    ArrayList<SectorLocal> list;
-    ArrayList<SectoresElegidos> listtemp;
-    private SectorDB db;
+    ArrayList<SectorLocal> list = new ArrayList<>();;
+    ArrayList<SectoresElegidos> listtemp = new ArrayList<>();;
+    private SectorDB db = new SectorDB(this);
     private SharedPreferences pref;
 
 
@@ -73,12 +74,11 @@ private LinearLayout lineartitulo;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_grande);
 
-        list = new ArrayList<>();
 
         lineartitulo = findViewById(R.id.linearturnos);
 
         validarConfiguracion();
-        leerSectoresLocalesinicio();
+        leerInicioSectores();
 
 
         adapter = new AdapterDisplayGrande(listtemp.size());
@@ -93,7 +93,7 @@ private LinearLayout lineartitulo;
 
 
         click = MediaPlayer.create(DisplayGrande.this, R.raw.fin);
-        click2 = MediaPlayer.create(DisplayGrande.this, R.raw.ckickk);
+        click2 = MediaPlayer.create(DisplayGrande.this, R.raw.notidos);
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.reciclerviewgrande);
@@ -130,73 +130,52 @@ private LinearLayout lineartitulo;
 
     }
 
-    private void leerSectoresLocalesinicio() {
-
-        db = new SectorDB(this);
+    private void leerInicioSectores() {
 
         try {
-            db = new SectorDB(this);
+
             listtemp = db.loadSector();
 
             if (!(listtemp.size() >0)){
                 regresarConfiguracion();
+            }else{
+                if (listtemp.size()>1){
+                    lineartitulo.setVisibility(View.VISIBLE);
+                }else{
+                    lineartitulo.setVisibility(View.GONE);
+                }
             }
-
-
 
         } catch (Exception e) {
             Log.e("error", "mensaje mostrar bse local");
         }
 
-
-        if (listtemp.size()>1){
-            lineartitulo.setVisibility(View.VISIBLE);
-        }else{
-            lineartitulo.setVisibility(View.GONE);
-        }
-        Toast.makeText(DisplayGrande.this, listtemp.size() + "", Toast.LENGTH_LONG).show();
+        Log.e("SECTORES", "cantidad de sectoes" + listtemp.size());
+     //   Toast.makeText(DisplayGrande.this, listtemp.size() + "", Toast.LENGTH_LONG).show();
 
     }
 
     private void leerSectoresLocales(SectorLocal sectores) {
 
-        db = new SectorDB(this);
-
-        listtemp.clear();
-
         try {
             db = new SectorDB(this);
-            listtemp = db.loadSector();
+            SectoresElegidos sec = null;
+            sec = db.validarSector(sectores.getNombreSector());
 
-            for (SectoresElegidos sectoreselegidos : listtemp) {
+            if (sec!=null){
 
-                    if (sectoreselegidos.getNombre().equals(sectores.getNombreSector())){
+                list.add(sectores);
 
-                        int numerotemporal = sectoreselegidos.getUltimonumero();
-                        int numeoractual = sectores.getNumeroatendiendo();
+                    if (!db.validarUltimoNumero(sectores.getNumeroatendiendo()+"")){
 
-                        Log.i("---> Numeros: ", sectores.toString());
-
-
-                        if (numerotemporal!=numeoractual){
-
-                            //guardardarnumerodelsector
-//TODO NO SE ESTA REGISTRANDO EL ULTIMO NUMERO
-                            sectoreselegidos.setUltimonumero(numeoractual);
-                            db.updateSector(sectoreselegidos);
-                            hacerflash(sectores);
-
-
-                        }
-
-
-                        list.add(sectores);
+                        sec.setUltimonumero(sectores.getNumeroatendiendo()+"");
+                        db.updateSector(sec);
+                        hacerflash(sectores);
+                        Log.e("Cambio", sec.getNombre()+ " le cambio el numero a " + sec.getUltimonumero());
+                        realizarsonido();
 
                     }
-            }
-
-            if (!(listtemp.size() >0)){
-                regresarConfiguracion();
+                actualizarReciclerView();
             }
 
         } catch (Exception e) {
@@ -205,9 +184,15 @@ private LinearLayout lineartitulo;
 
     }
 
+    private void realizarsonido() {
+
+        click2.start();
+
+    }
+
     private void hacerflash(SectorLocal sectores) {
 
-        Toast.makeText(DisplayGrande.this, sectores.getNombreSector() +" B Cambio a: " + sectores.getNumeroatendiendo(), Toast.LENGTH_LONG).show();
+        Toast.makeText(DisplayGrande.this, sectores.getNombreSector() +" Cambio a: " + sectores.getNumeroatendiendo(), Toast.LENGTH_LONG).show();
 
     }
 
@@ -226,14 +211,22 @@ private LinearLayout lineartitulo;
                     SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
 
                     if (sectores.getEstado()==1){
+
+
                         leerSectoresLocales(sectores);
+
+
 
                     }
                 }
 
+                if (!(listtemp.size() >0)){
+                    regresarConfiguracion();
+                }
+
 
                 Adialog.dismiss();
-                actualizarReciclerView();
+
             }
 
             @Override
@@ -252,7 +245,7 @@ private LinearLayout lineartitulo;
 
         adapter.setNotes(list);
         adapter.notifyDataSetChanged();
-        click2.start();
+
     }
 
     private void inicializarFirebase() {

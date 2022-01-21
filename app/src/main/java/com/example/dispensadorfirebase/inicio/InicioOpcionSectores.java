@@ -174,6 +174,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
                 SectoresElegidos sector = new SectoresElegidos();
                 sector.setNombre(note.getNombreSector());
+                sector.setUltimonumero(note.getNumeroatendiendo()+"");
                 registrarSectorElegido(sector);
                 mostrarBaseLocalSectoresElegidos();
 
@@ -251,6 +252,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
                         SectoresElegidos sector = new SectoresElegidos();
                         sector.setNombre(sectores.getNombreSector());
+                        sector.setUltimonumero(sectores.getNumeroatendiendo()+"");
                         registrarSectorElegido(sector);
 
                         mostrarBaseLocalSectoresElegidos();
