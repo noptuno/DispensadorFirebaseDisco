@@ -14,7 +14,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:background="#7C2196F3"
+        android:background="#9C4FD0E1"
         android:padding="10dp"
         android:text="Seleccionar Sectores"
         android:textColor="@color/white"

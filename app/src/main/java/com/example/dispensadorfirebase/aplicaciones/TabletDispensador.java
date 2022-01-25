@@ -8,7 +8,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -58,8 +60,8 @@ public class TabletDispensador extends AppCompatActivity {
     int limiteretroceder = 10;
     int retrocesos = 0;
 
-    private SectorDB db;
-    ArrayList<SectoresElegidos> listtemp;
+    private SectorDB db = new SectorDB(this);
+
 
     Button sumar,restar,reset;
     private AlertDialog Adialog;
@@ -67,6 +69,8 @@ public class TabletDispensador extends AppCompatActivity {
     SectorLocal datos = new SectorLocal();
     String NOMBRELOCALSELECCIONADO=null;
     String NOMBREDELDISPOSITIVO=null;
+    private SharedPreferences pref;
+    ArrayList<SectoresElegidos> listtemp = new ArrayList<>();;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +90,14 @@ public class TabletDispensador extends AppCompatActivity {
         constrain = findViewById(R.id.constrainTablet);
 
 
-        NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
-        NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
+        validarConfiguracion();
+
+        leerInicioSectores();
+
+        inicializarFirebase();
+
+        conectarFirebase();
+
 
 
         btnsupervisor.setOnClickListener(new View.OnClickListener() {
@@ -166,38 +176,19 @@ public class TabletDispensador extends AppCompatActivity {
             }
         });
 
-        leerSectoresLocales();
-
-        conectarFirebase();
 
 
-    }
-
-
-    private void leerSectoresLocales() {
-
-        db = new SectorDB(this);
-
-        try {
-            db = new SectorDB(this);
-            listtemp = db.loadSector();
-            for (SectoresElegidos sectores : listtemp) {
-
-                Log.i("---> Base de ds: ", sectores.toString());
-
-            }
-
-        } catch (Exception e) {
-            Log.e("error", "mensaje mostrar bse local");
-        }
 
 
     }
+
+
 
     void conectarFirebase(){
 
-        inicializarFirebase();
+
         setProgressDialog();
+
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -210,7 +201,8 @@ public class TabletDispensador extends AppCompatActivity {
                         for (SectoresElegidos sec : listtemp) {
                             if (sec.getNombre().equals(sectores.getNombreSector())){
                                 datos = sectores;
-                                //habilitar botones
+                                Actualizar();
+                                break;
                             }
                             Log.i("---> Base de ds: ", sectores.toString());
                         }
@@ -219,7 +211,7 @@ public class TabletDispensador extends AppCompatActivity {
 
 
                 }
-                Actualizar();
+
                 Adialog.dismiss();
 
             }
@@ -487,8 +479,55 @@ public class TabletDispensador extends AppCompatActivity {
             layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
             Adialog.getWindow().setAttributes(layoutParams);
         }
+    }
 
 
+    private void validarConfiguracion() {
+
+        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        String estado = pref.getString("ESTADO", "NO");
+        if (estado.equals("NO")){
+            regresarConfiguracion();
+        }else{
+            NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
+            NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
+        }
+
+
+    }
+
+    private void regresarConfiguracion(){
+
+        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("ESTADO", "NO");
+        editor.apply();
+        Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
+        finish();
+
+    }
+
+    private void leerInicioSectores() {
+
+        try {
+
+            listtemp = db.loadSector();
+
+            if (listtemp!= null || !(listtemp.size() >0) ){
+                    if (listtemp.size()>1){
+                        //lineartitulo.setVisibility(View.VISIBLE);
+                    }else{
+                        //lineartitulo.setVisibility(View.GONE);
+                    }
+            }else{
+                regresarConfiguracion();
+            }
+
+
+        } catch (Exception e) {
+            Log.e("error", "mensaje error");
+            regresarConfiguracion();
+        }
 
     }
 

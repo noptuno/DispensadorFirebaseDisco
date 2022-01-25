@@ -98,7 +98,7 @@ public class DispensadorTurno extends AppCompatActivity {
     AdapterDispensador adapter;
 
     ArrayList<SectorLocal> list;
-    ArrayList<SectoresElegidos> listtemp;
+    ArrayList<SectoresElegidos> listtemp= new ArrayList<>();
     private SectorDB db;
     private SharedPreferences pref;
 
@@ -108,14 +108,6 @@ public class DispensadorTurno extends AppCompatActivity {
         setContentView(R.layout.activity_dispensador_turno_recicler);
 
         validarConfiguracion();
-
-
-
-
-
-
-
-
         leerSectoresLocales();
 
         list = new ArrayList<>();
@@ -188,9 +180,11 @@ public class DispensadorTurno extends AppCompatActivity {
         String estado = pref.getString("ESTADO", "NO");
         if (estado.equals("NO")){
             regresarConfiguracion();
+        }else{
+            NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
+            NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
         }
-        NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
-        NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
+
 
     }
 
@@ -224,13 +218,28 @@ public class DispensadorTurno extends AppCompatActivity {
         try {
             db = new SectorDB(this);
             listtemp = db.loadSector();
-            for (SectoresElegidos sectores : listtemp) {
-                Log.i("---> Base de ds: ", sectores.toString());
+
+            if (listtemp!= null){
+                if (!(listtemp.size() >0)){
+                    regresarConfiguracion();
+                }else{
+                    if (listtemp.size()>1){
+                        //lineartitulo.setVisibility(View.VISIBLE);
+                    }else{
+                        //lineartitulo.setVisibility(View.GONE);
+                    }
+                }
+                regresarConfiguracion();
             }
 
         } catch (Exception e) {
+            regresarConfiguracion();
             Log.e("error", "mensaje mostrar bse local");
         }
+
+
+
+
 
 
     }

@@ -99,6 +99,8 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
 
 
     public class NoteViewHolder extends RecyclerView.ViewHolder {
+
+
         private TextView nombre;
         private TextView numero;
         private LinearLayout layout;
@@ -125,6 +127,7 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
                 @Override
                 public void onClick(View view) {
                     if (onNoteSelectedListener != null) {
+
                         onNoteSelectedListener.onClick(sector);
 
                     }

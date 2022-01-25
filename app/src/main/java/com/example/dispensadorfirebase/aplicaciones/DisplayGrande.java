@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -62,7 +64,7 @@ public class DisplayGrande extends AppCompatActivity {
     AdapterDisplayGrande adapter;
 private LinearLayout lineartitulo;
     ArrayList<SectorLocal> list = new ArrayList<>();;
-    ArrayList<SectoresElegidos> listtemp = new ArrayList<>();;
+    ArrayList<SectoresElegidos> listtemp = new ArrayList<>();
     private SectorDB db = new SectorDB(this);
     private SharedPreferences pref;
 
@@ -86,10 +88,6 @@ private LinearLayout lineartitulo;
 
 
         inicializarFirebase();
-
-
-        //valdiar que el los nombres de sectores en firebase coincidan con los nombres de sercotres locales
-        //el que no exista que lo elimine
 
 
         click = MediaPlayer.create(DisplayGrande.this, R.raw.fin);
@@ -136,65 +134,99 @@ private LinearLayout lineartitulo;
 
             listtemp = db.loadSector();
 
-            if (!(listtemp.size() >0)){
-                regresarConfiguracion();
-            }else{
+            listtemp = db.loadSector();
+
+            if (listtemp!= null || !(listtemp.size() >0) ){
                 if (listtemp.size()>1){
                     lineartitulo.setVisibility(View.VISIBLE);
                 }else{
                     lineartitulo.setVisibility(View.GONE);
                 }
+            }else{
+                regresarConfiguracion();
             }
 
         } catch (Exception e) {
             Log.e("error", "mensaje mostrar bse local");
+            regresarConfiguracion();
         }
 
-        Log.e("SECTORES", "cantidad de sectoes" + listtemp.size());
+        //Log.e("SECTORES", "cantidad de sectoes" + listtemp.size());
      //   Toast.makeText(DisplayGrande.this, listtemp.size() + "", Toast.LENGTH_LONG).show();
 
     }
 
     private void leerSectoresLocales(SectorLocal sectores) {
-
+        String Color = sectores.getColorSector();
         try {
             db = new SectorDB(this);
-            SectoresElegidos sec = null;
-            sec = db.validarSector(sectores.getNombreSector());
+
+
+            SectoresElegidos sec = db.validarSector(sectores.getNombreSector());
 
             if (sec!=null){
 
                 list.add(sectores);
 
                     if (!db.validarUltimoNumero(sectores.getNumeroatendiendo()+"")){
-
                         sec.setUltimonumero(sectores.getNumeroatendiendo()+"");
+
                         db.updateSector(sec);
-                        hacerflash(sectores);
-                        Log.e("Cambio", sec.getNombre()+ " le cambio el numero a " + sec.getUltimonumero());
-                        realizarsonido();
+
+                        //sectores.setColorSector(color);
+
+                        sectores.setColorSector("#FFE80606");
+
+                        //adapter.notifyDataSetChanged();
+
+
+                        click2.start();
+
+
+                        new Handler().postDelayed(new Runnable() {
+                            @SuppressLint("NotifyDataSetChanged")
+                            @Override
+                            public void run() {
+
+                                sectores.setColorSector(Color);
+                                adapter.notifyDataSetChanged();
+
+                            }
+                        },4000);
+
+
 
                     }
+
                 actualizarReciclerView();
+
             }
 
         } catch (Exception e) {
             Log.e("error", "mensaje mostrar bse local");
         }
+    }
+
+    private void realizarsonido(SectorLocal sector,String color) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 
-    private void realizarsonido() {
-
-        click2.start();
-
-    }
-
-    private void hacerflash(SectorLocal sectores) {
-
-        Toast.makeText(DisplayGrande.this, sectores.getNombreSector() +" Cambio a: " + sectores.getNumeroatendiendo(), Toast.LENGTH_LONG).show();
-
-    }
 
 
     private void CargarDatos() {
@@ -212,10 +244,7 @@ private LinearLayout lineartitulo;
 
                     if (sectores.getEstado()==1){
 
-
                         leerSectoresLocales(sectores);
-
-
 
                     }
                 }
@@ -245,6 +274,7 @@ private LinearLayout lineartitulo;
 
         adapter.setNotes(list);
         adapter.notifyDataSetChanged();
+
 
     }
 
