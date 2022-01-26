@@ -164,13 +164,14 @@ public class DisplayPequeño extends AppCompatActivity {
                         for (SectoresElegidos sec : listtemp) {
                             if (sec.getNombre().equals(sectores.getNombreSector())){
                                 datos = sectores;
+                                Actualizar();
                                 break;
                             }
                             Log.i("---> Base de ds: ", sectores.toString());
                         }
                     }
                 }
-                Actualizar();
+
                 Adialog.dismiss();
             }
 

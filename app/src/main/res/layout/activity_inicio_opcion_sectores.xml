@@ -7,175 +7,196 @@
     android:background="@drawable/fondodisplay"
     tools:context=".inicio.InicioOpcionLocal">
 
-    <TextView
-        android:id="@+id/textView21"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:background="#9C4FD0E1"
-        android:padding="10dp"
-        android:text="Seleccionar Sectores"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnGuardarConfig"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout7"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="#37FDFDFD"
-        android:orientation="vertical"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView21">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:padding="2dp">
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView13"
+                android:id="@+id/textView16"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Dispositivo: "
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="normal|bold" />
-
-            <TextView
-                android:id="@+id/txtdispositivo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="dispositivo 1"
-                android:textAlignment="center"
-                android:textColor="@color/colorfondodos"
-                android:textSize="16sp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:background="#7C2196F3"
+                android:padding="5dp"
+                android:text="Datos del equipo"
+                android:textColor="@color/white"
+                android:textSize="20sp"
                 android:textStyle="bold" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:padding="2dp">
-
-            <TextView
-                android:id="@+id/textView24"
+            <LinearLayout
+                android:id="@+id/linearLayout7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Local: "
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="normal|bold" />
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="#37FDFDFD"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView13"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="Tipo Dispositivo: "
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/txtdispositivo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="dispositivo 1"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorfondodos"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView24"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="Sucursal:"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/txtlocal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="local1"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorfondodos"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView20"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="Limite de  Sectores: "
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/txtmaximosectores"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="3"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorfondodos"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView15"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="Sectores Seleccionados: "
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/txtcantelegidos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorfondodos"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/txtlocal"
+                android:id="@+id/textView21"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="local1"
-                android:textAlignment="center"
-                android:textColor="@color/colorfondodos"
-                android:textSize="16sp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:background="#7C2196F3"
+                android:padding="5dp"
+                android:text="Habilite los Sectores a Mostrar"
+                android:textColor="@color/white"
+                android:textSize="20sp"
                 android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerelegirsector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp" />
+
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:padding="2dp">
-
-            <TextView
-                android:id="@+id/textView20"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Max Sectores: "
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="normal|bold" />
-
-            <TextView
-                android:id="@+id/txtmaximosectores"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="3"
-                android:textAlignment="center"
-                android:textColor="@color/colorfondodos"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:padding="2dp">
-
-            <TextView
-                android:id="@+id/textView15"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Sectores Seleccionados: "
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="normal|bold" />
-
-            <TextView
-                android:id="@+id/txtcantelegidos"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="0"
-                android:textAlignment="center"
-                android:textColor="@color/colorfondodos"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerelegirsector"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
+    </ScrollView>
 
     <Button
         android:id="@+id/btnGuardarConfig"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Guardar Configuración"
         android:textSize="16sp"
         app:icon="?attr/actionModeSelectAllDrawable"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerelegirsector" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

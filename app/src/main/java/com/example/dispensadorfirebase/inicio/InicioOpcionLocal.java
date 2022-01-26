@@ -4,14 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -37,8 +44,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class InicioOpcionLocal extends AppCompatActivity {
+public class InicioOpcionLocal extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     ArrayList<Local> list;
 
@@ -49,6 +57,8 @@ public class InicioOpcionLocal extends AppCompatActivity {
     ActionBar actionBar;
     String NOMBREDELDISPOSITIVO=null;
 
+    private SharedPreferences pref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +66,7 @@ public class InicioOpcionLocal extends AppCompatActivity {
 
 
         inicializarFirebase();
-        ocultarbarra();
+        //ocultarbarra();
         list = new ArrayList<>();
         adapter = new AdapterLocal();
 
@@ -92,6 +102,111 @@ public class InicioOpcionLocal extends AppCompatActivity {
         cargarLista();
 
     }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_search:
+
+                final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+                searchView.setOnQueryTextListener(this);
+
+                item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        // Do something when collapsed
+                        actualizarReciclerView();
+                        return true; // Return true to collapse action view
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        // Do something when expanded
+                        return true; // Return true to expand action view
+                    }
+                });
+
+                break;
+
+            case R.id.volver:
+
+
+                Solicitar_Contraseña();
+
+                guardarSharePreferencePrincipal();
+                Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionDispositivo.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+
+
+
+                break;
+        }
+    return super.onOptionsItemSelected(item);
+    }
+
+
+    private void Solicitar_Contraseña() {
+
+
+    }
+
+    private void guardarSharePreferencePrincipal() {
+
+
+        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("CONFIGURACIONDMR", "NO");
+        editor.putString("DISPOSITIVO", "NO");
+        editor.apply();
+
+
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_buscador, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+
+        return false;
+
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        final List<Local> filteredModelList = filter(list, newText);
+        adapter.setNotes(filteredModelList);
+        adapter.notifyDataSetChanged();
+        return false;
+    }
+
+    private List<Local> filter(List<Local> models, String query) {
+        query = query.toLowerCase();
+
+        final List<Local> listafiltrada = new ArrayList<>();
+        for (Local model : models) {
+            final String text = model.getNombreLocal().toLowerCase();
+            if (text.contains(query)) {
+                listafiltrada.add(model);
+            }
+        }
+
+
+        return listafiltrada;
+    }
+
+
+
     private void ocultarbarra() {
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -200,6 +315,7 @@ public class InicioOpcionLocal extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
     }
+
 
 
 }

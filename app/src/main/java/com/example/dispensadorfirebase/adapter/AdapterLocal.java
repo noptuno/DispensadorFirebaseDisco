@@ -57,6 +57,14 @@ public class AdapterLocal extends RecyclerView.Adapter<AdapterLocal.NoteViewHold
         this.notes = notes;
     }
 
+    public void setFilter(List<Local> notes){
+        this.notes.addAll(notes);
+        notifyDataSetChanged();
+    }
+
+
+
+
     public void setOnNoteSelectedListener(OnNoteSelectedListener onNoteSelectedListener) {
         this.onNoteSelectedListener = onNoteSelectedListener;
     }
@@ -73,6 +81,10 @@ public class AdapterLocal extends RecyclerView.Adapter<AdapterLocal.NoteViewHold
     public interface OnNoteDetailListener {
         void onDetail(Local note);
     }
+
+
+
+
 
     public Local getposicionactual(int position) {
         return notes.get(position);

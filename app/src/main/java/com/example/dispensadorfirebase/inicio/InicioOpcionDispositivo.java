@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,8 +25,8 @@ import com.google.android.gms.dynamic.IFragmentWrapper;
 public class InicioOpcionDispositivo extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private String NOMBREDELDISPOSITIVO;
-    TextView numeroserie;
-    Button btnconfirmar,validar;
+    private EditText password;
+    Button btnconfirmar;
 Spinner dispositivo;
 String dispositivo_seleccionado= null;
     ActionBar actionBar;
@@ -37,9 +38,8 @@ String dispositivo_seleccionado= null;
         setContentView(R.layout.activity_inicio_opcion_dispositivo);
 
         btnconfirmar = findViewById(R.id.btnconfirmar);
-        validar = findViewById(R.id.btnValidar);
         dispositivo = findViewById(R.id.spinner_dispositivo);
-        numeroserie = findViewById(R.id.txtsn);
+        password = findViewById(R.id.editPassword);
 
         abriraplicacion();
 
@@ -47,78 +47,116 @@ String dispositivo_seleccionado= null;
         ocultarbarra();
 
         dispositivo.setOnItemSelectedListener(this);
+
+
         btnconfirmar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (dispositivo_seleccionado.equals("Seleccionado")){
+                if (dispositivo_seleccionado.equals("Seleccione")){
 
                     Toast.makeText(InicioOpcionDispositivo.this, "Debe Seleccionar el Dispositivo", Toast.LENGTH_LONG).show();
 
                 }else{
-                    Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
-                    intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
+                    if (validaryguardar()){
+
+                        guardarSharePreferencePrincipal();
+
+                        Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
+                        intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+                        finish();
+
+                    }else{
+
+                        Toast.makeText(InicioOpcionDispositivo.this, "Error de contraseña", Toast.LENGTH_LONG).show();
+
+
+
+                    }
                 }
             }
         });
 
-        validar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btnconfirmar.setEnabled(true);
-                if (!numeroserie.getText().toString().equals("")){
-                    btnconfirmar.setEnabled(true);
-                }else {
-                    Toast.makeText(InicioOpcionDispositivo.this, "Numero de Serie Invalido", Toast.LENGTH_LONG).show();
 
-                }
 
-            }
-        });
+    }
 
-    //abriraplicacion();
+    private void guardarSharePreferencePrincipal() {
 
+        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("CONFIGURACIONDMR", "SI");
+        editor.putString("DISPOSITIVO", dispositivo_seleccionado);
+        editor.apply();
+
+
+    }
+
+    private boolean validaryguardar(){
+        boolean v = false;
+        String pass = password.getText().toString();
+        if (pass.equals("dmr")){
+            v = true;
+        }
+
+            return v;
     }
 
     private void abriraplicacion() {
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
         String estado = pref.getString("ESTADO", "NO");
+        String configuracion = pref.getString("CONFIGURACIONDMR", "NO");
 
-        if (estado.equals("SI")) {
+        if (configuracion.equals("SI")){
+
 
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
 
-
             if (NOMBREDELDISPOSITIVO!="NO"){
-                Intent intent = null;
 
-                if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")) {
-                    intent = new Intent(InicioOpcionDispositivo.this, DisplayGrande.class);
 
-                } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")) {
-                    intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
+                if (estado.equals("SI")) {
 
-                } else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")) {
+                    Intent intent = null;
 
-                    intent = new Intent(InicioOpcionDispositivo.this, TabletDispensador.class);
-                } else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")) {
-                    intent = new Intent(InicioOpcionDispositivo.this, DispensadorTurno.class);
+                    if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")) {
+                        intent = new Intent(InicioOpcionDispositivo.this, DisplayGrande.class);
 
-                } else if (NOMBREDELDISPOSITIVO.equals("SUPERVISOR")) {
+                    } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")) {
+                        intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
 
-                    intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
+                    } else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")) {
+
+                        intent = new Intent(InicioOpcionDispositivo.this, TabletDispensador.class);
+                    } else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")) {
+                        intent = new Intent(InicioOpcionDispositivo.this, DispensadorTurno.class);
+
+                    }
+
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    finish();
+                }else{
+
+                    Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
+                    intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    finish();
                 }
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            }else{
 
             }
 
+
+
+
         }
+
+
 
     }
 

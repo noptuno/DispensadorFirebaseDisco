@@ -39,7 +39,7 @@
         <activity
             android:name=".inicio.InicioOpcionLocal"
             android:exported="true"
-            android:label="Seleccionar Local" />
+            android:label="Filtrar por nombre" />
         <activity
             android:name=".aplicaciones.DisplayPequeño"
             android:exported="true" />
