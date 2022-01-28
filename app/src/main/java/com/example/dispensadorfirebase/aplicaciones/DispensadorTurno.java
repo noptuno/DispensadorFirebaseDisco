@@ -254,8 +254,7 @@ public class DispensadorTurno extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-
-        Toast.makeText(DispensadorTurno.this, "No puede vovler ", Toast.LENGTH_LONG).show();
+        Toast.makeText(DispensadorTurno.this, "No puede vovler r ", Toast.LENGTH_LONG).show();
     }
 
     private void CargarDatos() {
