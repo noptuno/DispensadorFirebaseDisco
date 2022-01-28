@@ -71,6 +71,8 @@ public class TabletDispensador extends AppCompatActivity {
     String NOMBREDELDISPOSITIVO=null;
     private SharedPreferences pref;
     ArrayList<SectoresElegidos> listtemp = new ArrayList<>();;
+    private Button configurarnuevamente;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +90,23 @@ public class TabletDispensador extends AppCompatActivity {
         click = MediaPlayer.create(TabletDispensador.this, R.raw.fin);
         click2 = MediaPlayer.create(TabletDispensador.this, R.raw.ckickk);
         constrain = findViewById(R.id.constrainTablet);
+
+
+        configurarnuevamente = findViewById(R.id.btn_configurar3);
+
+        configurarnuevamente.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("ESTADO", "NO");
+                editor.apply();
+                Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
+                finish();
+
+            }
+        });
 
 
         validarConfiguracion();

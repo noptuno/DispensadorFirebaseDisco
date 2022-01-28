@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -101,7 +102,7 @@ public class DispensadorTurno extends AppCompatActivity {
     ArrayList<SectoresElegidos> listtemp= new ArrayList<>();
     private SectorDB db;
     private SharedPreferences pref;
-
+    private Button configurarnuevamente;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +110,24 @@ public class DispensadorTurno extends AppCompatActivity {
 
         validarConfiguracion();
         leerSectoresLocales();
+
+        configurarnuevamente = findViewById(R.id.btn_configurar2);
+
+        configurarnuevamente.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("ESTADO", "NO");
+                editor.apply();
+                Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
+                finish();
+
+            }
+        });
+
+
 
         list = new ArrayList<>();
         adapter = new AdapterDispensador(listtemp.size());
@@ -219,16 +238,7 @@ public class DispensadorTurno extends AppCompatActivity {
             db = new SectorDB(this);
             listtemp = db.loadSector();
 
-            if (listtemp!= null){
-                if (!(listtemp.size() >0)){
-                    regresarConfiguracion();
-                }else{
-                    if (listtemp.size()>1){
-                        //lineartitulo.setVisibility(View.VISIBLE);
-                    }else{
-                        //lineartitulo.setVisibility(View.GONE);
-                    }
-                }
+            if ((listtemp == null) || (listtemp.size() == 0) ){
                 regresarConfiguracion();
             }
 
@@ -239,11 +249,14 @@ public class DispensadorTurno extends AppCompatActivity {
 
 
 
-
-
-
     }
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+
+        Toast.makeText(DispensadorTurno.this, "No puede vovler ", Toast.LENGTH_LONG).show();
+    }
 
     private void CargarDatos() {
 

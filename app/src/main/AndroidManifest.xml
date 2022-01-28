@@ -24,45 +24,56 @@
         android:theme="@style/Theme.DispensadorFirebase">
         <activity
             android:name=".aplicaciones.DisplayGrande"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".aplicaciones.TabletDispensador"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".inicio.InicioOpcionSectores"
             android:exported="true"
-            android:label="Asignar Sectores" />
+            android:label="Asignar Sectores"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".inicio.InicioOpcionDispositivo"
             android:exported="true"
-            android:label="Seleccionar Dispositivo" />
+            android:label="Seleccionar Dispositivo"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".inicio.InicioOpcionLocal"
             android:exported="true"
-            android:label="Filtrar por nombre" />
+            android:label="Filtrar por nombre"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".aplicaciones.DisplayPequeño"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".administrador.AsignarSectoress"
             android:exported="true"
-            android:label="Asignacion de Sectores" />
+            android:label="Asignacion de Sectores"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".administrador.CrearSectores"
             android:exported="true"
-            android:label="Crear Sectores" />
+            android:label="Crear Sectores"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".administrador.CrearLocalDialog"
             android:exported="true"
-            android:label="Crear Local" />
+            android:label="Crear Local"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".administrador.ListaLocales"
             android:exported="true"
-            android:label="Lista de Locales" />
+            android:label="Lista de Locales"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".administrador.Menu"
             android:exported="true"
-            android:label="Menu Principal">
+            android:label="Menu Principal"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -76,16 +87,20 @@
 
         <activity
             android:name=".principaltemp.notificador.FlashSupervisor"
-            android:exported="true" />
+            android:exported="true"
+           />
         <activity
             android:name=".principaltemp.Menu"
-            android:exported="true" />
+            android:exported="true"
+           />
         <activity
             android:name=".principaltemp.Dispensador"
-            android:exported="true" />
+            android:exported="true"
+            />
         <activity
             android:name=".principaltemp.Tablet"
-            android:exported="true" />
+            android:exported="true"
+            />
         <activity
             android:name=".principaltemp.Display"
             android:exported="true" />

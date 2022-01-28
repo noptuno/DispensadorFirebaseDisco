@@ -145,10 +145,8 @@ private TextView localseleccionado, dispositivoseleccionado;
                     editor.putString("ESTADO", "SI");
                     editor.putString("LOCAL", NOMBRELOCALSELECCIONADO);
                     editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
-
                     editor.apply();
                     finish();
-
 
                 }else{
                     Toast.makeText(InicioOpcionSectores.this, "Debe Elegir menos Sectores para Este Dispositivo", Toast.LENGTH_LONG).show();

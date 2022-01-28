@@ -11,7 +11,7 @@
 
     <item
         android:id="@+id/volver"
-        android:icon="@drawable/ic_config"
-        app:showAsAction="always"
-        android:title="Configurar" />
+        android:icon="@android:drawable/ic_delete"
+        android:title="Configurar"
+        app:showAsAction="always" />
 </menu>

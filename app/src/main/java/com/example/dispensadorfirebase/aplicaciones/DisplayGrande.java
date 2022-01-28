@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -69,12 +70,29 @@ private LinearLayout lineartitulo;
     private SharedPreferences pref;
 
 
-
+    private Button configurarnuevamente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_grande);
+
+        configurarnuevamente = findViewById(R.id.btn_configurar);
+
+        configurarnuevamente.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("ESTADO", "NO");
+                editor.apply();
+                Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
+                finish();
+
+            }
+        });
+
 
 
         lineartitulo = findViewById(R.id.linearturnos);
@@ -101,6 +119,7 @@ private LinearLayout lineartitulo;
         hidebarras();
         CargarDatos();
     }
+
 
     private void validarConfiguracion() {
 
@@ -134,7 +153,6 @@ private LinearLayout lineartitulo;
 
             listtemp = db.loadSector();
 
-            listtemp = db.loadSector();
 
             if (listtemp!= null || !(listtemp.size() >0) ){
                 if (listtemp.size()>1){

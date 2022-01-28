@@ -9,6 +9,17 @@
     tools:context=".aplicaciones.TabletDispensador">
 
     <Button
+        android:id="@+id/btn_configurar3"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:drawable/ic_delete"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <Button
         android:id="@+id/btnllamarsupervisor"
         android:layout_width="150dp"
         android:layout_height="150dp"
@@ -49,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
+            android:clickable="false"
             app:srcCompat="@drawable/logodisco" />
 
         <TextView
@@ -61,7 +73,7 @@
             android:background="@color/colorletras"
             android:text="Sector"
             android:textAlignment="center"
-            android:textColor="#F0F2F6"
+            android:textColor="#546E7A"
             android:textSize="48sp"
             android:textStyle="bold" />
 

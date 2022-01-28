@@ -27,8 +27,8 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     private String NOMBREDELDISPOSITIVO;
     private EditText password;
     Button btnconfirmar;
-Spinner dispositivo;
-String dispositivo_seleccionado= null;
+    Spinner dispositivo;
+    String dispositivo_seleccionado= null;
     ActionBar actionBar;
     private SharedPreferences pref;
     private String estado = "NO";
@@ -43,11 +43,9 @@ String dispositivo_seleccionado= null;
 
         abriraplicacion();
 
-
         ocultarbarra();
 
         dispositivo.setOnItemSelectedListener(this);
-
 
         btnconfirmar.setOnClickListener(new View.OnClickListener() {
             @Override

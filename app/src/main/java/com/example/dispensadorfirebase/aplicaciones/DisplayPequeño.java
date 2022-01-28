@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -65,6 +66,10 @@ public class DisplayPequeño extends AppCompatActivity {
     ArrayList<SectoresElegidos> listtemp;
     List<String> sectoreselegidos;
     private SharedPreferences pref;
+
+    private Button configurarnuevamente;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +78,21 @@ public class DisplayPequeño extends AppCompatActivity {
 
         validarConfiguracion();
 
+        configurarnuevamente = findViewById(R.id.btn_configurar4);
+
+        configurarnuevamente.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("ESTADO", "NO");
+                editor.apply();
+                Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
+                finish();
+
+            }
+        });
 
 
 
