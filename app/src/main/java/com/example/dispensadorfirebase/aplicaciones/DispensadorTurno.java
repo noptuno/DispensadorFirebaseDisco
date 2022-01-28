@@ -70,7 +70,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
-public class DispensadorTurno extends AppCompatActivity {
+public class DispensadorTurno extends AppCompatActivity implements CuadrodeDialogo.finalizarCuadro{
     //TODO Modificado 5/1/22/12:00
     public static boolean isConnected = false;
     private Handler m_handler = new Handler(); // Main thread
@@ -119,49 +119,7 @@ public class DispensadorTurno extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getApplicationContext());
-                View mView = getLayoutInflater().inflate(R.layout.alerdiaglog, null);
-                final EditText mEmail = (EditText) mView.findViewById(R.id.etEmail);
-                final EditText mPassword = (EditText) mView.findViewById(R.id.etPassword);
-                final TextView text = (TextView) mView.findViewById(R.id.txt_sucursal);
-                Button mLogin = (Button) mView.findViewById(R.id.btnLogin);
-
-                mBuilder.setView(mView);
-                final AlertDialog dialog = mBuilder.create();
-                dialog.show();
-
-                mLogin.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (!mPassword.getText().toString().isEmpty()) {
-
-                            pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-
-
-                            if (mPassword.getText().toString().equals("dmr") ){
-
-                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.putString("ESTADO", "NO");
-                                editor.apply();
-                                Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
-                                finish();
-                                dialog.dismiss();
-
-                            }else{
-
-                                Toast.makeText(getApplicationContext(),"Acceso Denegado", Toast.LENGTH_SHORT).show();
-
-                            }
-
-                        } else {
-
-                            mPassword.setError("Faltan Datos");
-                            mPassword.requestFocus();
-
-                        }
-                    }
-                });
+                new CuadrodeDialogo(getApplicationContext(),DispensadorTurno.this);
 
 
 
@@ -627,5 +585,18 @@ public class DispensadorTurno extends AppCompatActivity {
                 break;
             }
         }
+    }
+
+    @Override
+    public void ResultadoCuadroDialogo(int numero) {
+
+
+
+        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("ESTADO", "NO");
+        editor.apply();
+        Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
+        finish();
     }
 }
