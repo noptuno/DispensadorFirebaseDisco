@@ -252,7 +252,7 @@ public class DispensadorTurno extends AppCompatActivity implements CuadrodeDialo
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        Toast.makeText(DispensadorTurno.this, "No puede vovler r ", Toast.LENGTH_LONG).show();
+        Toast.makeText(DispensadorTurno.this, "No puede vovler sin vcs ", Toast.LENGTH_LONG).show();
     }
 
     private void CargarDatos() {
