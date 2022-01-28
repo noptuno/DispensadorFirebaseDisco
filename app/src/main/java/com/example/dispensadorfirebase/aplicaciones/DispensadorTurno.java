@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -117,12 +118,53 @@ public class DispensadorTurno extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("ESTADO", "NO");
-                editor.apply();
-                Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
-                finish();
+
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getApplicationContext());
+                View mView = getLayoutInflater().inflate(R.layout.alerdiaglog, null);
+                final EditText mEmail = (EditText) mView.findViewById(R.id.etEmail);
+                final EditText mPassword = (EditText) mView.findViewById(R.id.etPassword);
+                final TextView text = (TextView) mView.findViewById(R.id.txt_sucursal);
+                Button mLogin = (Button) mView.findViewById(R.id.btnLogin);
+
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+                mLogin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!mPassword.getText().toString().isEmpty()) {
+
+                            pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+
+
+                            if (mPassword.getText().toString().equals("dmr") ){
+
+                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("ESTADO", "NO");
+                                editor.apply();
+                                Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
+                                finish();
+                                dialog.dismiss();
+
+                            }else{
+
+                                Toast.makeText(getApplicationContext(),"Acceso Denegado", Toast.LENGTH_SHORT).show();
+
+                            }
+
+                        } else {
+
+                            mPassword.setError("Faltan Datos");
+                            mPassword.requestFocus();
+
+                        }
+                    }
+                });
+
+
+
 
             }
         });
@@ -246,8 +288,6 @@ public class DispensadorTurno extends AppCompatActivity {
             regresarConfiguracion();
             Log.e("error", "mensaje mostrar bse local");
         }
-
-
 
     }
 
