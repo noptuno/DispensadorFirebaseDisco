@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -98,12 +99,54 @@ public class TabletDispensador extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("ESTADO", "NO");
-                editor.apply();
-                Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
-                finish();
+                // load the dialog_promt_user.xml layout and inflate to view
+                LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
+                View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TabletDispensador.this);
+
+                alertDialogBuilder.setView(promptUserView);
+
+                final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
+
+                alertDialogBuilder.setTitle("Usuario Administrador: ");
+
+                // prompt for username
+                alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // and display the username on main activity layout
+
+
+                        if (!userAnswer.equals("") && userAnswer.getText().length()>0){
+
+                            if (validaryguardar(userAnswer.getText().toString())){
+
+                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("ESTADO", "NO");
+                                editor.apply();
+                                finish();
+
+                            }else{
+
+                                Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                    }
+                });
+
+                // all set and time to build and show up!
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+                userAnswer.requestFocus();
+
+
+
+
+
+
 
             }
         });
@@ -201,7 +244,14 @@ public class TabletDispensador extends AppCompatActivity {
 
     }
 
+    private boolean validaryguardar(String pass){
+        boolean v = false;
+        if (pass.equals("dmr")){
+            v = true;
+        }
 
+        return v;
+    }
 
     void conectarFirebase(){
 
@@ -326,9 +376,7 @@ public class TabletDispensador extends AppCompatActivity {
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(TabletDispensador.this);
         View mView = getLayoutInflater().inflate(R.layout.alerdiaglog, null);
-        final EditText mEmail = (EditText) mView.findViewById(R.id.etEmail);
         final EditText mPassword = (EditText) mView.findViewById(R.id.etPassword);
-        final TextView text = (TextView) mView.findViewById(R.id.txt_sucursal);
         Button mLogin = (Button) mView.findViewById(R.id.btnLogin);
 
         mBuilder.setView(mView);

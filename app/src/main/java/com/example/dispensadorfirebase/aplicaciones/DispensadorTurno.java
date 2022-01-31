@@ -5,6 +5,7 @@ import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIR
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -22,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -43,15 +45,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterDispensador;
-import com.example.dispensadorfirebase.adapter.AdapterLocal;
-import com.example.dispensadorfirebase.adapter.AdapterSectorLocal;
-import com.example.dispensadorfirebase.administrador.AsignarSectoress;
-import com.example.dispensadorfirebase.administrador.ListaLocales;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
-import com.example.dispensadorfirebase.clase.Datos;
-import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
+import com.example.dispensadorfirebase.inicio.InicioOpcionDispositivo;
+import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
 import com.example.dispensadorfirebase.principaltemp.MensajeActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -70,7 +68,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 
-public class DispensadorTurno extends AppCompatActivity implements CuadrodeDialogo.finalizarCuadro{
+public class DispensadorTurno extends AppCompatActivity{
     //TODO Modificado 5/1/22/12:00
     public static boolean isConnected = false;
     private Handler m_handler = new Handler(); // Main thread
@@ -81,7 +79,7 @@ public class DispensadorTurno extends AppCompatActivity implements CuadrodeDialo
     private UsbInterface usbInterface;
     private UsbEndpoint usbEndpointIn = null;
     private UsbEndpoint usbEndpointOut = null;
-    private Context context;
+    private Context context = this;
     private AlertDialog Adialog;
     static final int MENSAJERESULT = 0;
     MediaPlayer click, click2;
@@ -112,17 +110,55 @@ public class DispensadorTurno extends AppCompatActivity implements CuadrodeDialo
         validarConfiguracion();
         leerSectoresLocales();
 
-        configurarnuevamente = findViewById(R.id.btn_configurar2);
+        configurarnuevamente = findViewById(R.id.btn_salir);
 
         configurarnuevamente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-                new CuadrodeDialogo(getApplicationContext(),DispensadorTurno.this);
+                // load the dialog_promt_user.xml layout and inflate to view
+                LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
+                View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DispensadorTurno.this);
+
+                alertDialogBuilder.setView(promptUserView);
+
+                final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
+
+                alertDialogBuilder.setTitle("Usuario Administrador: ");
+
+                // prompt for username
+                alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // and display the username on main activity layout
 
 
+                        if (!userAnswer.equals("") && userAnswer.getText().length()>0){
 
+                            if (validaryguardar(userAnswer.getText().toString())){
+
+
+                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("ESTADO", "NO");
+                                editor.apply();
+                                finish();
+                            }else{
+
+                                Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                    }
+                });
+
+                // all set and time to build and show up!
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+                userAnswer.requestFocus();
 
             }
         });
@@ -191,6 +227,15 @@ public class DispensadorTurno extends AppCompatActivity implements CuadrodeDialo
         CargarDatos();
 
 
+    }
+
+    private boolean validaryguardar(String pass){
+        boolean v = false;
+        if (pass.equals("dmr")){
+            v = true;
+        }
+
+        return v;
     }
 
     private void validarConfiguracion() {
@@ -280,8 +325,6 @@ public class DispensadorTurno extends AppCompatActivity implements CuadrodeDialo
                         }
                     }
                 }
-
-
           Adialog.dismiss();
                 actualizarReciclerView();
             }
@@ -587,16 +630,5 @@ public class DispensadorTurno extends AppCompatActivity implements CuadrodeDialo
         }
     }
 
-    @Override
-    public void ResultadoCuadroDialogo(int numero) {
 
-
-
-        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("ESTADO", "NO");
-        editor.apply();
-        Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
-        finish();
-    }
 }

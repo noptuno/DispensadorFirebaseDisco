@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -22,11 +23,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -83,12 +86,52 @@ private LinearLayout lineartitulo;
             @Override
             public void onClick(View view) {
 
-                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("ESTADO", "NO");
-                editor.apply();
-                Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
-                finish();
+                // load the dialog_promt_user.xml layout and inflate to view
+                LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
+                View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DisplayGrande.this);
+
+                alertDialogBuilder.setView(promptUserView);
+
+                final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
+
+                alertDialogBuilder.setTitle("Usuario Administrador: ");
+
+                // prompt for username
+                alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // and display the username on main activity layout
+
+
+                        if (!userAnswer.equals("") && userAnswer.getText().length()>0){
+
+                            if (validaryguardar(userAnswer.getText().toString())){
+
+                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("ESTADO", "NO");
+                                editor.apply();
+                                finish();
+
+                            }else{
+
+                                Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                    }
+                });
+
+                // all set and time to build and show up!
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+                userAnswer.requestFocus();
+
+
+
+
 
             }
         });
@@ -135,6 +178,17 @@ private LinearLayout lineartitulo;
 
 
     }
+
+    private boolean validaryguardar(String pass){
+        boolean v = false;
+        if (pass.equals("dmr")){
+            v = true;
+        }
+
+        return v;
+    }
+
+
 
     private void regresarConfiguracion(){
 
@@ -224,27 +278,6 @@ private LinearLayout lineartitulo;
             Log.e("error", "mensaje mostrar bse local");
         }
     }
-
-    private void realizarsonido(SectorLocal sector,String color) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    }
-
 
 
     private void CargarDatos() {

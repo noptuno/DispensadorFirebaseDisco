@@ -74,6 +74,22 @@
             android:exported="true"
             android:label="Menu Principal"
             android:screenOrientation="portrait">
+
+        </activity>
+
+
+        <activity
+            android:name=".aplicaciones.supervisor.Supervisor_Principal"
+            android:exported="true"
+            android:label="Menu Principal"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".aplicaciones.supervisor.Supervisor_Flash"
+            android:exported="true"
+            android:label="Menu Principal"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

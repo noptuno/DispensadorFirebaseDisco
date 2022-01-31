@@ -270,7 +270,7 @@ private  AlertDialog Adialog;
 
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(Tablet.this);
         View mView = getLayoutInflater().inflate(R.layout.alerdiaglog, null);
-        final EditText mEmail = (EditText) mView.findViewById(R.id.etEmail);
+
         final EditText mPassword = (EditText) mView.findViewById(R.id.etPassword);
         final TextView text = (TextView) mView.findViewById(R.id.txt_sucursal);
         Button mLogin = (Button) mView.findViewById(R.id.btnLogin);

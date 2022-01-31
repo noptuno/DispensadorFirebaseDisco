@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,6 +38,7 @@ import com.example.dispensadorfirebase.administrador.CrearLocalDialog;
 import com.example.dispensadorfirebase.administrador.ListaLocales;
 import com.example.dispensadorfirebase.app.variables;
 import com.example.dispensadorfirebase.clase.Local;
+import com.google.android.gms.dynamic.IFragmentWrapper;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -131,15 +134,50 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                 break;
 
             case R.id.volver:
+                if(!NOMBREDELDISPOSITIVO.equals("SUPERVISOR")){
+                    finish();
+                }else{
+                    // load the dialog_promt_user.xml layout and inflate to view
+                    LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
+                    View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InicioOpcionLocal.this);
+
+                    alertDialogBuilder.setView(promptUserView);
+
+                    final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
+
+                    alertDialogBuilder.setTitle("Usuario Administrador: ");
+
+                    // prompt for username
+                    alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // and display the username on main activity layout
 
 
-                Solicitar_Contraseña();
+                            if (!userAnswer.equals("") && userAnswer.getText().length()>0){
 
-                guardarSharePreferencePrincipal();
-                Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionDispositivo.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
+                                if (validaryguardar(userAnswer.getText().toString())){
+                                    guardarSharePreferencePrincipal();
+                                    Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionDispositivo.class);
+                                    startActivity(intent);
+                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                    finish();
+                                }else{
+                                    Toast.makeText(InicioOpcionLocal.this, "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                                }
+                            }
+
+                        }
+                    });
+
+                    // all set and time to build and show up!
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+
+                    userAnswer.requestFocus();
+
+                }
 
 
 
@@ -149,9 +187,13 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
     }
 
 
-    private void Solicitar_Contraseña() {
+    private boolean validaryguardar(String pass){
+        boolean v = false;
+        if (pass.equals("dmr")){
+            v = true;
+        }
 
-
+        return v;
     }
 
     private void guardarSharePreferencePrincipal() {

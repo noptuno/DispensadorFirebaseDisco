@@ -38,6 +38,7 @@ import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
 import com.example.dispensadorfirebase.aplicaciones.DisplayGrande;
 import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
 import com.example.dispensadorfirebase.aplicaciones.TabletDispensador;
+import com.example.dispensadorfirebase.aplicaciones.supervisor.Supervisor_Principal;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorLocal;
@@ -130,7 +131,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
                     } else if (NOMBREDELDISPOSITIVO.equals("SUPERVISOR")){
 
-                         intent = new Intent(InicioOpcionSectores.this, DisplayPequeño.class);
+                         intent = new Intent(InicioOpcionSectores.this, Supervisor_Principal.class);
                     }
 
 
@@ -138,7 +139,6 @@ private TextView localseleccionado, dispositivoseleccionado;
                     intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
 
                     SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = pref.edit();
