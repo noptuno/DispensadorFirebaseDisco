@@ -11,6 +11,7 @@
     android:layout_marginEnd="9dp"
     android:layout_marginBottom="681dp"
     android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="#7A1C1C"
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp"
     app:layout_constraintBottom_toBottomOf="parent"
@@ -20,7 +21,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical"
         android:textAlignment="center">
@@ -39,7 +41,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Nombre del Sector: "
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -50,7 +52,17 @@
                 android:layout_weight="2"
                 android:text="Clientes:"
                 android:textAlignment="center"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView27"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.2"
+                android:text="Noti"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -73,7 +85,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:background="#409C9C"
                 android:text="CARRO DE COMIDA"
                 android:textAlignment="center"
                 android:textColor="@color/white"
@@ -87,12 +98,19 @@
                 android:layout_margin="5dp"
                 android:layout_weight="2"
                 android:background="@drawable/diseno_redondo_dos"
-                android:backgroundTint="#F44336"
+                android:backgroundTint="#F44D4D"
                 android:text="99"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnnoti"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.2"
+                android:background="@drawable/ic_notificacion" />
 
         </LinearLayout>
 

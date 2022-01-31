@@ -130,10 +130,7 @@ public class Supervisor extends AppCompatActivity {
            datos.setLlamarsupervisor(0);
            setPendingIntent();
            createNotificationChannel();
-
            createNotification("Lo estan Solicitando");
-
-
            databaseReference.child("Datos").child("dispensador1").setValue(datos);
 
        }

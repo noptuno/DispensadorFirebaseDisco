@@ -42,6 +42,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterDispensador;
 import com.example.dispensadorfirebase.adapter.AdapterDisplayGrande;
+import com.example.dispensadorfirebase.adapter.AdapterSectorLocal;
 import com.example.dispensadorfirebase.adapter.AdapterSupervisorPrincipal;
 import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
 import com.example.dispensadorfirebase.aplicaciones.DisplayGrande;
@@ -49,6 +50,9 @@ import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Datos;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
+import com.example.dispensadorfirebase.inicio.InicioOpcionDispositivo;
+import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
+import com.example.dispensadorfirebase.principaltemp.notificador.FlashSupervisor;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -90,34 +94,30 @@ public class Supervisor_Principal extends AppCompatActivity {
         setContentView(R.layout.activity_supervisor_principal);
         inicializarFirebase();
 
-
         regresar = findViewById(R.id.btn_salir2);
 
         regresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("ESTADO", "NO");
+                editor.apply();
+
+                Intent intent = new Intent(Supervisor_Principal.this, Supervisor_Flash.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+
             }
         });
-
-
-        btDeshabilitar = findViewById(R.id.btnSupervisor);
 
 
         actionBar = getSupportActionBar();
         actionBar.hide();
 
 
-
-        btDeshabilitar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                btDeshabilitar.setEnabled(false);
-                btDeshabilitar.setBackgroundColor(Color.parseColor(color));
-
-            }
-        });
 
         adapter = new AdapterSupervisorPrincipal();
         list = new ArrayList<>();
@@ -130,6 +130,15 @@ public class Supervisor_Principal extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         CargarDatos();
+
+        adapter.setOnDetailListener(new AdapterSupervisorPrincipal.OnNoteDetailListener() {
+            @Override
+            public void onDetail(SectorLocal note) {
+
+                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(note.getNombreSector()).setValue(note);
+            }
+        });
+
 
 
 
@@ -216,6 +225,7 @@ public class Supervisor_Principal extends AppCompatActivity {
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private void leerSectoresLocales(SectorLocal sectores) {
         String Color = sectores.getColorSector();
         try {
@@ -228,39 +238,24 @@ public class Supervisor_Principal extends AppCompatActivity {
 
                 list.add(sectores);
 
-                if (!db.validarUltimoNumero(sectores.getNumeroatendiendo()+"")){
-                    sec.setUltimonumero(sectores.getNumeroatendiendo()+"");
+                if (sectores.getNotificacion()==1 && sectores.getNotificaciondeshabilitar()==0){
 
-                    db.updateSector(sec);
-
-                    //sectores.setColorSector(color);
-
-                    sectores.setColorSector("#FFE80606");
-
-                    //adapter.notifyDataSetChanged();
-
-
-                    //click2.start();
-
-
-                    new Handler().postDelayed(new Runnable() {
-                        @SuppressLint("NotifyDataSetChanged")
-                        @Override
-                        public void run() {
-
-                            sectores.setColorSector(Color);
-                            adapter.notifyDataSetChanged();
-
-                        }
-                    },4000);
-
-
-
+                    setPendingIntent();
+                    createNotificationChannel();
+                    createNotification("Atender el Sector");
                 }
 
-                actualizarReciclerView();
+                if (sectores.getLlamarsupervisor() == 1){
 
-            }
+                    sectores.setLlamarsupervisor(0);
+                    setPendingIntent();
+                    createNotificationChannel();
+                    createNotification("Lo estan Solicitando");
+                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(sectores.getNombreSector()).setValue(sectores);
+                }
+
+                }
+            actualizarReciclerView();
 
         } catch (Exception e) {
             Log.e("error", "mensaje mostrar bse local");

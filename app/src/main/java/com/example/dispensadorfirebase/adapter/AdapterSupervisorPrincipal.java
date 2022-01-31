@@ -1,12 +1,16 @@
 package com.example.dispensadorfirebase.adapter;
 
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dispensadorfirebase.R;
@@ -93,13 +97,16 @@ public class AdapterSupervisorPrincipal extends RecyclerView.Adapter<AdapterSupe
 
         private TextView nombre;
         private TextView numero;
-
+private CardView card;
+private Button btnNotificacion;
 
         public NoteViewHolder(View item) {
             super(item);
 
             nombre = (TextView) item.findViewById(R.id.txtssector_supervisor);
             numero = (TextView) item.findViewById(R.id.txtscantidad_supervisor);
+            card = (CardView) item.findViewById(R.id.cardview);
+            btnNotificacion = item.findViewById(R.id.btnnoti);
 
         //falta color
 
@@ -108,21 +115,31 @@ public class AdapterSupervisorPrincipal extends RecyclerView.Adapter<AdapterSupe
         public void bind(final SectorLocal sector) {
 
             nombre.setText(sector.getNombreSector());
-            numero.setText("" +sector.getNumeroatendiendo());
+            numero.setText("" +sector.getCantidadEspera());
+            card.setBackgroundColor(Color.parseColor(sector.getColorSector()));
 
-            nombre.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+
+            if (sector.getNotificacion()==1 && sector.getNotificaciondeshabilitar()==0){
+                btnNotificacion.setEnabled(true);
+            }else{
+                btnNotificacion.setEnabled(false);
+            }
 
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+            btnNotificacion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (onNoteSelectedListener != null) {
 
-                        onNoteSelectedListener.onClick(sector);
+                    if (onDetailListener != null) {
+                        sector.setNotificaciondeshabilitar(1);
+                        onDetailListener.onDetail(sector);
 
                     }
+
                 }
             });
+
+
         }
     }
 }
