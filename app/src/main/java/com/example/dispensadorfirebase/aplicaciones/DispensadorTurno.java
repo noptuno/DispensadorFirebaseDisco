@@ -69,7 +69,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 public class DispensadorTurno extends AppCompatActivity{
-    //TODO Modificado 5/1/22/12:00
+
     public static boolean isConnected = false;
     private Handler m_handler = new Handler(); // Main thread
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";

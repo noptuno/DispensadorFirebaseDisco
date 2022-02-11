@@ -9,5 +9,5 @@ public class Constants {
     public static final String ACTION_PROGRESS_EXIT = "PROGRESS_EXIT";
 
     public static final String EXTRA_PROGRESS = "PROGRESS";
-
+    public static final String EXTRA_PROGRESS2 = "PROGRESS2";
 }
