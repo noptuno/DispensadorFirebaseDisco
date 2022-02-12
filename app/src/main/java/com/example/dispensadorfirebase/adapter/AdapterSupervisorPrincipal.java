@@ -118,8 +118,8 @@ private Button btnNotificacion;
             numero.setText("" +sector.getCantidadEspera());
             card.setBackgroundColor(Color.parseColor(sector.getColorSector()));
 
-
             if (sector.getNotificacion()==1 && sector.getNotificaciondeshabilitar()==0){
+
                 btnNotificacion.setEnabled(true);
             }else{
                 btnNotificacion.setEnabled(false);
@@ -131,15 +131,10 @@ private Button btnNotificacion;
                 public void onClick(View view) {
 
                     if (onDetailListener != null) {
-                        sector.setNotificaciondeshabilitar(1);
                         onDetailListener.onDetail(sector);
-
                     }
-
                 }
             });
-
-
         }
     }
 }

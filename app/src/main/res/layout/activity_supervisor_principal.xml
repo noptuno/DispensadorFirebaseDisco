@@ -35,7 +35,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="2dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
@@ -63,7 +63,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_margin="2dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
@@ -107,6 +107,8 @@
         android:id="@+id/reciclersupervisor"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

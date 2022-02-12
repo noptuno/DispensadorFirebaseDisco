@@ -10,6 +10,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -20,11 +21,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,6 +49,7 @@ import com.example.dispensadorfirebase.adapter.AdapterSectorLocal;
 import com.example.dispensadorfirebase.adapter.AdapterSupervisorPrincipal;
 import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
 import com.example.dispensadorfirebase.aplicaciones.DisplayGrande;
+import com.example.dispensadorfirebase.aplicaciones.TabletDispensador;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Datos;
 import com.example.dispensadorfirebase.clase.SectorLocal;
@@ -70,6 +74,8 @@ public class Supervisor_Principal extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
+    boolean nobuscar = false;
+    private Button deshabilitar;
 
     private String color = "#F44336";
     private String colordos = "#4CAF50";
@@ -88,6 +94,8 @@ public class Supervisor_Principal extends AppCompatActivity {
 
     private Button regresar;
 
+    Boolean Solicitud = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,26 +108,68 @@ public class Supervisor_Principal extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("ESTADO", "NO");
-                editor.apply();
 
-                Intent intent = new Intent(Supervisor_Principal.this, Supervisor_Flash.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
+                // load the dialog_promt_user.xml layout and inflate to view
+                LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
+                View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Supervisor_Principal.this);
+
+                alertDialogBuilder.setView(promptUserView);
+
+                final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
+
+                alertDialogBuilder.setTitle("Usuario Administrador: ");
+
+                // prompt for username
+                alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // and display the username on main activity layout
+
+
+                        if (!userAnswer.equals("") && userAnswer.getText().length()>0){
+
+                            if (validaryguardar(userAnswer.getText().toString())){
+
+                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("ESTADO", "NO");
+                                editor.apply();
+
+                                Intent intent = new Intent(Supervisor_Principal.this, Supervisor_Flash.class);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                               Supervisor_Principal.this.finish();
+
+
+
+                            }else{
+
+                                Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                    }
+                });
+
+                // all set and time to build and show up!
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+                userAnswer.requestFocus();
 
             }
         });
 
 
+
+
         actionBar = getSupportActionBar();
         actionBar.hide();
 
-
-
         adapter = new AdapterSupervisorPrincipal();
+
+
         list = new ArrayList<>();
         validarConfiguracion();
         leerInicioSectores();
@@ -135,11 +185,27 @@ public class Supervisor_Principal extends AppCompatActivity {
             @Override
             public void onDetail(SectorLocal note) {
 
-                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(note.getNombreSector()).setValue(note);
+
+                        note.setNotificacion(0);
+               // actualizarReciclerView();
+                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
+
             }
         });
 
 
+
+
+    }
+
+    private boolean validaryguardar(String pass) {
+
+            boolean v = false;
+            if (pass.equals("dmr")){
+                v = true;
+            }
+
+            return v;
 
 
     }
@@ -181,10 +247,15 @@ public class Supervisor_Principal extends AppCompatActivity {
 
     private void CargarDatos() {
 
+
         setProgressDialog();
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                Log.e("---> Consulta Base", "ENTRO: ");
+
 
                 list.clear();
 
@@ -247,11 +318,18 @@ public class Supervisor_Principal extends AppCompatActivity {
 
                 if (sectores.getLlamarsupervisor() == 1){
 
-                    sectores.setLlamarsupervisor(0);
+                    //sectores.setLlamarsupervisor(0);
                     setPendingIntent();
                     createNotificationChannel();
                     createNotification("Lo estan Solicitando");
-                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(sectores.getNombreSector()).setValue(sectores);
+                    sectores.setLlamarsupervisor(0);
+
+                    // actualizarReciclerView();
+                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(sectores.getNombreSector()).setValue(sectores);
+
+                   // nobuscar = true;
+                    //databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(sectores.getNombreSector()).setValue(sectores);
+
                 }
 
                 }

@@ -96,7 +96,6 @@ public class DispensadorTurno extends AppCompatActivity{
     String NOMBREDELDISPOSITIVO=null;
 
     AdapterDispensador adapter;
-
     ArrayList<SectorLocal> list;
     ArrayList<SectoresElegidos> listtemp= new ArrayList<>();
     private SectorDB db;
@@ -106,7 +105,7 @@ public class DispensadorTurno extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dispensador_turno_recicler);
-
+        inicializarFirebase();
         validarConfiguracion();
         leerSectoresLocales();
 
@@ -117,48 +116,8 @@ public class DispensadorTurno extends AppCompatActivity{
             public void onClick(View view) {
 
 
-                // load the dialog_promt_user.xml layout and inflate to view
-                LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
-                View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+                botonregresar();
 
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DispensadorTurno.this);
-
-                alertDialogBuilder.setView(promptUserView);
-
-                final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
-
-                alertDialogBuilder.setTitle("Usuario Administrador: ");
-
-                // prompt for username
-                alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // and display the username on main activity layout
-
-
-                        if (!userAnswer.equals("") && userAnswer.getText().length()>0){
-
-                            if (validaryguardar(userAnswer.getText().toString())){
-
-
-                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.putString("ESTADO", "NO");
-                                editor.apply();
-                                finish();
-                            }else{
-
-                                Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                    }
-                });
-
-                // all set and time to build and show up!
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-
-                userAnswer.requestFocus();
 
             }
         });
@@ -169,7 +128,7 @@ public class DispensadorTurno extends AppCompatActivity{
         adapter = new AdapterDispensador(listtemp.size());
 
 
-        inicializarFirebase();
+
 
 
         //valdiar que el los nombres de sectores en firebase coincidan con los nombres de sercotres locales
@@ -282,6 +241,7 @@ public class DispensadorTurno extends AppCompatActivity{
         try {
             db = new SectorDB(this);
             listtemp = db.loadSector();
+            listtemp.size();
 
             if ((listtemp == null) || (listtemp.size() == 0) ){
                 regresarConfiguracion();
@@ -294,10 +254,69 @@ public class DispensadorTurno extends AppCompatActivity{
 
     }
 
+
+
+    private void botonregresar() {
+
+        // load the dialog_promt_user.xml layout and inflate to view
+        LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
+        View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DispensadorTurno.this);
+
+        alertDialogBuilder.setView(promptUserView);
+
+        final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
+
+        alertDialogBuilder.setTitle("Usuario Administrador: ");
+
+        // prompt for username
+        alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // and display the username on main activity layout
+
+
+                if (!userAnswer.equals("") && userAnswer.getText().length()>0){
+
+                    if (validaryguardar(userAnswer.getText().toString())){
+
+                        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString("ESTADO", "NO");
+                        editor.apply();
+
+                        Intent intent= new Intent(DispensadorTurno.this, InicioOpcionLocal.class);
+                        startActivity(intent);
+
+                        DispensadorTurno.this.finish();
+
+
+                    }else{
+
+                        Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+            }
+        });
+
+        // all set and time to build and show up!
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+        userAnswer.requestFocus();
+
+
+    }
+
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
-        Toast.makeText(DispensadorTurno.this, "No puede vovler sin vcs ", Toast.LENGTH_LONG).show();
+
+
+        botonregresar();
+        // super.onBackPressed();
+
+
     }
 
     private void CargarDatos() {

@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -30,10 +31,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dispensadorfirebase.R;
+import com.example.dispensadorfirebase.aplicaciones.supervisor.Supervisor_Principal;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Datos;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
+import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
+import com.example.dispensadorfirebase.inicio.InicioOpcionSectores;
 import com.example.dispensadorfirebase.principaltemp.Tablet;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -99,48 +103,9 @@ public class TabletDispensador extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                // load the dialog_promt_user.xml layout and inflate to view
-                LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
-                View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
-
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TabletDispensador.this);
-
-                alertDialogBuilder.setView(promptUserView);
-
-                final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
-
-                alertDialogBuilder.setTitle("Usuario Administrador: ");
-
-                // prompt for username
-                alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // and display the username on main activity layout
+                botonregresar();
 
 
-                        if (!userAnswer.equals("") && userAnswer.getText().length()>0){
-
-                            if (validaryguardar(userAnswer.getText().toString())){
-
-                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.putString("ESTADO", "NO");
-                                editor.apply();
-                                finish();
-
-                            }else{
-
-                                Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                    }
-                });
-
-                // all set and time to build and show up!
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-
-                userAnswer.requestFocus();
 
 
 
@@ -238,11 +203,68 @@ public class TabletDispensador extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void botonregresar() {
+
+        // load the dialog_promt_user.xml layout and inflate to view
+        LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
+        View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TabletDispensador.this);
+
+        alertDialogBuilder.setView(promptUserView);
+
+        final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
+
+        alertDialogBuilder.setTitle("Usuario Administrador: ");
+
+        // prompt for username
+        alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // and display the username on main activity layout
 
 
+                if (!userAnswer.equals("") && userAnswer.getText().length()>0){
+
+                    if (validaryguardar(userAnswer.getText().toString())){
+
+                        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString("ESTADO", "NO");
+                        editor.apply();
+
+                        Intent intent= new Intent(TabletDispensador.this, InicioOpcionLocal.class);
+                        startActivity(intent);
+                        TabletDispensador.this.finish();
+
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+            }
+        });
+
+        // all set and time to build and show up!
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+        userAnswer.requestFocus();
 
 
     }
+
+    @Override
+    public void onBackPressed() {
+
+
+        botonregresar();
+       // super.onBackPressed();
+
+
+    }
+
 
     private boolean validaryguardar(String pass){
         boolean v = false;
@@ -389,7 +411,7 @@ public class TabletDispensador extends AppCompatActivity {
                 if (!mPassword.getText().toString().isEmpty()) {
 
 
-                    String PASSWORD = "123";
+                    String PASSWORD = "dmr";
                     String PASSWORDROOT = "dmrmilrollos";
 
                     if (mPassword.getText().toString().equals(PASSWORD) || mPassword.getText().toString().equals(PASSWORDROOT) ){

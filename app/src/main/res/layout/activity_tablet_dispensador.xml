@@ -73,7 +73,8 @@
             android:background="@color/colorletras"
             android:text="Sector"
             android:textAlignment="center"
-            android:textColor="#546E7A"
+            android:textColor="#F6F7FA"
+            android:textColorLink="#FAF9F9"
             android:textSize="48sp"
             android:textStyle="bold" />
 

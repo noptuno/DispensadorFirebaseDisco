@@ -83,9 +83,9 @@ private TextView localseleccionado, dispositivoseleccionado;
         ocultarbarra();
 
 
+
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
         NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
-
 
 
 
@@ -96,15 +96,12 @@ private TextView localseleccionado, dispositivoseleccionado;
         dispositivoseleccionado.setText(NOMBREDELDISPOSITIVO);
 
         maximoSectores= findViewById(R.id.txtmaximosectores);
-
        cantidadsectoreselegidos= findViewById(R.id.txtcantelegidos);
-
 
         listnombresectores = new ArrayList<>();
         listsectoreslocal = new ArrayList<>();
 
         adapter = new AdapterSectorLocal();
-
 
         //eliminar base datos local
         eliminarSectoresElegidos();
@@ -146,7 +143,8 @@ private TextView localseleccionado, dispositivoseleccionado;
                     editor.putString("LOCAL", NOMBRELOCALSELECCIONADO);
                     editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                     editor.apply();
-                    finish();
+
+                    InicioOpcionSectores.this.finish();
 
                 }else{
                     Toast.makeText(InicioOpcionSectores.this, "Debe Elegir menos Sectores para Este Dispositivo", Toast.LENGTH_LONG).show();

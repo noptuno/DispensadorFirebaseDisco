@@ -116,6 +116,7 @@ private LinearLayout layout;
                 @Override
                 public void onClick(View view) {
                     if (onNoteSelectedListener != null) {
+
                         onNoteSelectedListener.onClick(sector);
 
                     }

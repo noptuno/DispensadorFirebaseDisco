@@ -37,6 +37,7 @@ public class Supervisor_Flash extends AppCompatActivity {
                     pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                     String estado = pref.getString("ESTADO", "NO");
 
+                    
                             if (estado.equals("SI")) {
 
                                 Intent mainIntent = new Intent(Supervisor_Flash.this, Supervisor_Principal.class);

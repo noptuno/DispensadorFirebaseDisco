@@ -36,6 +36,11 @@ import com.example.dispensadorfirebase.adapter.AdapterLocal;
 import com.example.dispensadorfirebase.administrador.AsignarSectoress;
 import com.example.dispensadorfirebase.administrador.CrearLocalDialog;
 import com.example.dispensadorfirebase.administrador.ListaLocales;
+import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
+import com.example.dispensadorfirebase.aplicaciones.DisplayGrande;
+import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
+import com.example.dispensadorfirebase.aplicaciones.TabletDispensador;
+import com.example.dispensadorfirebase.aplicaciones.supervisor.Supervisor_Flash;
 import com.example.dispensadorfirebase.app.variables;
 import com.example.dispensadorfirebase.clase.Local;
 import com.google.android.gms.dynamic.IFragmentWrapper;
@@ -99,12 +104,67 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         });
 
 
+        abriraplicacion();
+
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerElegirLocal);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
         cargarLista();
 
     }
+
+
+
+    private void abriraplicacion() {
+
+        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        String estado = pref.getString("ESTADO", "NO");
+        String configuracion = pref.getString("CONFIGURACIONDMR", "NO");
+
+        if (configuracion.equals("SI")){
+
+
+            NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
+
+            if (NOMBREDELDISPOSITIVO!="NO"){
+
+
+                if (estado.equals("SI")) {
+
+                    Intent intent = null;
+
+                    if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")) {
+                        intent = new Intent(InicioOpcionLocal.this, DisplayGrande.class);
+
+                    } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")) {
+                        intent = new Intent(InicioOpcionLocal.this, DisplayPequeño.class);
+
+                    } else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")) {
+
+                        intent = new Intent(InicioOpcionLocal.this, TabletDispensador.class);
+                    } else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")) {
+                        intent = new Intent(InicioOpcionLocal.this, DispensadorTurno.class);
+
+                    }
+
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    InicioOpcionLocal.this.finish();
+
+                }
+
+            }
+
+
+
+
+        }
+
+
+
+    }
+
 
 
     @Override
@@ -134,56 +194,76 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                 break;
 
             case R.id.volver:
-                if(!NOMBREDELDISPOSITIVO.equals("SUPERVISOR")){
-                    finish();
-                }else{
-                    // load the dialog_promt_user.xml layout and inflate to view
-                    LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
-                    View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
-
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InicioOpcionLocal.this);
-
-                    alertDialogBuilder.setView(promptUserView);
-
-                    final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
-
-                    alertDialogBuilder.setTitle("Usuario Administrador: ");
-
-                    // prompt for username
-                    alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // and display the username on main activity layout
 
 
-                            if (!userAnswer.equals("") && userAnswer.getText().length()>0){
-
-                                if (validaryguardar(userAnswer.getText().toString())){
-                                    guardarSharePreferencePrincipal();
-                                    Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionDispositivo.class);
-                                    startActivity(intent);
-                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                                    finish();
-                                }else{
-                                    Toast.makeText(InicioOpcionLocal.this, "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
-                                }
-                            }
-
-                        }
-                    });
-
-                    // all set and time to build and show up!
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-                    alertDialog.show();
-
-                    userAnswer.requestFocus();
-
-                }
-
+        botonregresar();
 
 
                 break;
         }
     return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+
+        botonregresar();
+        // super.onBackPressed();
+
+
+    }
+
+
+    private void botonregresar() {
+
+
+        if(NOMBREDELDISPOSITIVO.equals("SUPERVISOR")){
+            finish();
+        }else{
+            // load the dialog_promt_user.xml layout and inflate to view
+            LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
+            View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InicioOpcionLocal.this);
+
+            alertDialogBuilder.setView(promptUserView);
+
+            final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
+
+            alertDialogBuilder.setTitle("Usuario Administrador: ");
+
+            // prompt for username
+            alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // and display the username on main activity layout
+
+
+                    if (!userAnswer.equals("") && userAnswer.getText().length()>0){
+
+                        if (validaryguardar(userAnswer.getText().toString())){
+                            guardarSharePreferencePrincipal();
+                            Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionDispositivo.class);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            InicioOpcionLocal.this.finish();
+                        }else{
+                            Toast.makeText(InicioOpcionLocal.this, "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                }
+            });
+
+            // all set and time to build and show up!
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+
+            userAnswer.requestFocus();
+
+        }
+
     }
 
 

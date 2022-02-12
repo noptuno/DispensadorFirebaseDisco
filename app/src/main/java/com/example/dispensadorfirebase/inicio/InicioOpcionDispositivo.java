@@ -116,40 +116,13 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
 
             if (NOMBREDELDISPOSITIVO!="NO"){
 
-
-                if (estado.equals("SI")) {
-
-                    Intent intent = null;
-
-                    if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")) {
-                        intent = new Intent(InicioOpcionDispositivo.this, DisplayGrande.class);
-
-                    } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")) {
-                        intent = new Intent(InicioOpcionDispositivo.this, DisplayPequeño.class);
-
-                    } else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")) {
-
-                        intent = new Intent(InicioOpcionDispositivo.this, TabletDispensador.class);
-                    } else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")) {
-                        intent = new Intent(InicioOpcionDispositivo.this, DispensadorTurno.class);
-
-                    }
-
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    finish();
-                }else{
-
                     Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
                     intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     finish();
-                }
 
             }
-
-
 
 
         }
