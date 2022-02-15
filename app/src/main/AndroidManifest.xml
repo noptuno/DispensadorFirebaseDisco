@@ -14,6 +14,13 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.hardware.usb.host" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".app.Myapp"
         android:allowBackup="true"
@@ -22,6 +29,45 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DispensadorFirebase">
+
+        <receiver android:name=".app.bootapp">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+
+        <activity
+            android:name=".inicio.InicioOpcionDispositivo"
+            android:exported="true"
+            android:label="Seleccionar Dispositivo"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".aplicaciones.supervisor.Supervisor_Flash"
+            android:exported="true"
+            android:label="Menu Principal"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+        <activity
+            android:name=".administrador.Menu"
+            android:exported="true"
+            android:label="Menu Principal"
+            android:screenOrientation="portrait">
+
+        </activity>
+
         <activity
             android:name=".aplicaciones.DisplayGrande"
             android:exported="false"
@@ -35,20 +81,9 @@
             android:exported="true"
             android:label="Asignar Sectores"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".inicio.InicioOpcionDispositivo"
-            android:exported="true"
-            android:label="Seleccionar Dispositivo"
-            android:screenOrientation="portrait">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 
-            
-        </activity>
         <activity
             android:name=".inicio.InicioOpcionLocal"
             android:exported="true"
@@ -78,13 +113,7 @@
             android:exported="true"
             android:label="Lista de Locales"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".administrador.Menu"
-            android:exported="true"
-            android:label="Menu Principal"
-            android:screenOrientation="portrait">
 
-        </activity>
 
 
         <activity
@@ -94,16 +123,7 @@
             android:screenOrientation="portrait">
         </activity>
 
-        <activity
-            android:name=".aplicaciones.supervisor.Supervisor_Flash"
-            android:exported="true"
-            android:label="Menu Principal"
-            android:screenOrientation="portrait">
 
-
-
-
-        </activity>
 
         <service
             android:name=".principaltemp.notificador.MyIntentService"

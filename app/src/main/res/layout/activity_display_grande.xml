@@ -39,7 +39,7 @@
             android:layout_weight="1"
             android:text="TURNOS"
             android:textAlignment="center"
-            android:textColor="@color/colorletras"
+            android:textColor="@color/black"
             android:textSize="96sp"
             android:textStyle="bold" />
     </LinearLayout>

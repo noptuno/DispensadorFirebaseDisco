@@ -5,23 +5,23 @@ public class SectoresElegidos {
     Integer idSector;
     String nombre;
     int favorito;
-    String ultimonumero;
+    int ultimonumero;
 
     public SectoresElegidos() {
     }
 
-    public SectoresElegidos(Integer idSector, String nombre, int favorito, String ultimonumero) {
+    public SectoresElegidos(Integer idSector, String nombre, int favorito, int ultimonumero) {
         this.idSector = idSector;
         this.nombre = nombre;
         this.favorito = favorito;
         this.ultimonumero = ultimonumero;
     }
 
-    public String getUltimonumero() {
+    public int getUltimonumero() {
         return ultimonumero;
     }
 
-    public void setUltimonumero(String ultimonumero) {
+    public void setUltimonumero(int ultimonumero) {
         this.ultimonumero = ultimonumero;
     }
 

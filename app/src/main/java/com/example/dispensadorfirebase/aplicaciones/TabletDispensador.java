@@ -592,7 +592,13 @@ public class TabletDispensador extends AppCompatActivity {
         editor.putString("ESTADO", "NO");
         editor.apply();
         Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
-        finish();
+
+
+        Intent intent= new Intent(TabletDispensador.this, InicioOpcionLocal.class);
+        startActivity(intent);
+
+        TabletDispensador.this.finish();
+
 
     }
 

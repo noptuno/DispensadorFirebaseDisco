@@ -61,7 +61,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
     AdapterLocal adapter;
     AlertDialog Adialog;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReferencelocales;
     ActionBar actionBar;
     String NOMBREDELDISPOSITIVO=null;
 
@@ -327,8 +327,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         return listafiltrada;
     }
 
-
-
     private void ocultarbarra() {
         actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -339,7 +337,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
         setProgressDialog();
 
-        databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).addValueEventListener(new ValueEventListener() {
+        databaseReferencelocales.child(variables.NOMBREBASEDEDATOSFIREBASE).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -435,7 +433,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
     private void inicializarFirebase() {
         FirebaseApp.initializeApp(this);
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference();
+        databaseReferencelocales = firebaseDatabase.getReference();
     }
 
 

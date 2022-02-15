@@ -40,7 +40,7 @@ public class SectorDB {
         ContentValues cv = new ContentValues();
         cv.put(ConstantsDB.SEC_IDSECTOR, sectores.getIdSector());
         cv.put(ConstantsDB.SEC_NOMBRE, sectores.getNombre());
-        cv.put(ConstantsDB.SEC_NUMEROELEGIDO, sectores.getUltimonumero()+"");
+        cv.put(ConstantsDB.SEC_NUMEROELEGIDO, sectores.getUltimonumero());
         return cv;
     }
 
@@ -91,7 +91,7 @@ public class SectorDB {
                     sector = new SectoresElegidos();
                     sector.setIdSector(c.getInt(0));
                     sector.setNombre(c.getString(1));
-                    sector.setUltimonumero(c.getString(2));
+                    sector.setUltimonumero(c.getInt(2));
 
                 }
 
@@ -162,7 +162,7 @@ public class SectorDB {
                 SectoresElegidos sector = new SectoresElegidos();
                 sector.setIdSector(c.getInt(0));
                 sector.setNombre(c.getString(1));
-                sector.setUltimonumero(c.getString(2));
+                sector.setUltimonumero(c.getInt(2));
                 list.add(sector);
             }
         } finally {

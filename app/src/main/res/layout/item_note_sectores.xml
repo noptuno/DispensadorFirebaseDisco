@@ -111,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
-                android:checked="true"
+                android:checked="false"
                 android:gravity="center"
                 android:scaleX="2"
                 android:scaleY="2"

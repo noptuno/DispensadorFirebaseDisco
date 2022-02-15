@@ -55,7 +55,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class DisplayGrande extends AppCompatActivity {
-
+    MediaPlayer mp;
+    Button b1;
+    int posicion = 0;
 
 
     MediaPlayer click, click2;
@@ -91,12 +93,8 @@ private LinearLayout lineartitulo;
                 botonregresar();
 
 
-
-
-
             }
         });
-
 
 
         lineartitulo = findViewById(R.id.linearturnos);
@@ -106,6 +104,8 @@ private LinearLayout lineartitulo;
 
 
         adapter = new AdapterDisplayGrande(listtemp.size());
+
+
         constrain = findViewById(R.id.constrainLayoutGrande);
 
 
@@ -120,8 +120,18 @@ private LinearLayout lineartitulo;
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
 
-        hidebarras();
         CargarDatos();
+
+        actionBar = getSupportActionBar();
+        hidebarras();
+        constrain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hidebarras();
+            }
+        });
+
+
     }
 
 
@@ -217,12 +227,14 @@ private LinearLayout lineartitulo;
 
     private void regresarConfiguracion(){
 
+
         SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("ESTADO", "NO");
         editor.apply();
-        Toast.makeText(DisplayGrande.this, "No hay registro guardado", Toast.LENGTH_LONG).show();
-        finish();
+        Intent intent= new Intent(DisplayGrande.this, InicioOpcionLocal.class);
+        startActivity(intent);
+        DisplayGrande.this.finish();
 
     }
 
@@ -255,48 +267,38 @@ private LinearLayout lineartitulo;
 
     private void leerSectoresLocales(SectorLocal sectores) {
         String Color = sectores.getColorSector();
-        try {
-            db = new SectorDB(this);
 
+        try {
 
             SectoresElegidos sec = db.validarSector(sectores.getNombreSector());
 
             if (sec!=null){
 
+                int numeroactual = sec.getUltimonumero();
+                int numeronuevo = sectores.getNumeroatendiendo();
+
+                if (numeroactual != numeronuevo){
+
+                    sec.setUltimonumero(numeronuevo);
+                    db.updateSector(sec);
+                    sectores.setColorSector("#FFE80606");
+
+                    iniciar();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void run() {
+                            detener();
+                            sectores.setColorSector(Color);
+                            adapter.notifyDataSetChanged();
+
+                        }
+                    },3000);
+
+                }
                 list.add(sectores);
-
-                    if (!db.validarUltimoNumero(sectores.getNumeroatendiendo()+"")){
-                        sec.setUltimonumero(sectores.getNumeroatendiendo()+"");
-
-                        db.updateSector(sec);
-
-                        //sectores.setColorSector(color);
-
-                        sectores.setColorSector("#FFE80606");
-
-                        //adapter.notifyDataSetChanged();
-
-
-                        click2.start();
-
-
-                        new Handler().postDelayed(new Runnable() {
-                            @SuppressLint("NotifyDataSetChanged")
-                            @Override
-                            public void run() {
-
-                                sectores.setColorSector(Color);
-                                adapter.notifyDataSetChanged();
-
-                            }
-                        },4000);
-
-
-
-                    }
-
                 actualizarReciclerView();
-
             }
 
         } catch (Exception e) {
@@ -305,14 +307,39 @@ private LinearLayout lineartitulo;
     }
 
 
+
+        public void destruir() {
+            if (mp != null)
+                mp.release();
+        }
+
+        public void iniciar() {
+            destruir();
+            mp = MediaPlayer.create(this, R.raw.notidosaumentadodos);
+            mp.start();
+            //String op = b1.getText().toString();
+            mp.setLooping(false);
+
+        }
+
+    public void detener() {
+        if (mp != null) {
+            mp.stop();
+            posicion = 0;
+        }
+    }
+
+
     private void CargarDatos() {
 
         setProgressDialog();
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
+
+
+        this.databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                list.clear();
+              list.clear();
 
                 for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
 
@@ -328,7 +355,6 @@ private LinearLayout lineartitulo;
                 if (!(listtemp.size() >0)){
                     regresarConfiguracion();
                 }
-
 
                 Adialog.dismiss();
 

@@ -187,6 +187,7 @@ public class Supervisor_Principal extends AppCompatActivity {
 
 
                         note.setNotificacion(0);
+                note.setNotificaciondeshabilitar(1);
                // actualizarReciclerView();
                 databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
 
@@ -231,7 +232,11 @@ public class Supervisor_Principal extends AppCompatActivity {
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("ESTADO", "NO");
         editor.apply();
-        finish();
+
+        Intent intent= new Intent(Supervisor_Principal.this, InicioOpcionLocal.class);
+        startActivity(intent);
+        Supervisor_Principal.this.finish();
+
 
     }
 
@@ -313,7 +318,7 @@ public class Supervisor_Principal extends AppCompatActivity {
 
                     setPendingIntent();
                     createNotificationChannel();
-                    createNotification("Atender el Sector");
+                    createNotification(sectores.getNombreSector().toString());
                 }
 
                 if (sectores.getLlamarsupervisor() == 1){
@@ -321,7 +326,7 @@ public class Supervisor_Principal extends AppCompatActivity {
                     //sectores.setLlamarsupervisor(0);
                     setPendingIntent();
                     createNotificationChannel();
-                    createNotification("Lo estan Solicitando");
+                    createNotification(sectores.getNombreSector().toString());
                     sectores.setLlamarsupervisor(0);
 
                     // actualizarReciclerView();

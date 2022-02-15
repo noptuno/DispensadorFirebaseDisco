@@ -61,7 +61,7 @@ public class InicioOpcionSectores extends AppCompatActivity {
     AdapterSectorLocal adapter;
     AlertDialog Adialog;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReferencesectores;
     private SectorDB db;
 private Button configurar;
     TextView cantidadsectoreselegidos;
@@ -144,6 +144,8 @@ private TextView localseleccionado, dispositivoseleccionado;
                     editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                     editor.apply();
 
+
+
                     InicioOpcionSectores.this.finish();
 
                 }else{
@@ -170,7 +172,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
                 SectoresElegidos sector = new SectoresElegidos();
                 sector.setNombre(note.getNombreSector());
-                sector.setUltimonumero(note.getNumeroatendiendo()+"");
+                sector.setUltimonumero(note.getNumeroatendiendo());
                 registrarSectorElegido(sector);
                 mostrarBaseLocalSectoresElegidos();
 
@@ -233,7 +235,8 @@ private TextView localseleccionado, dispositivoseleccionado;
 
         setProgressDialog();
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
+        this.databaseReferencesectores.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -248,7 +251,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
                         SectoresElegidos sector = new SectoresElegidos();
                         sector.setNombre(sectores.getNombreSector());
-                        sector.setUltimonumero(sectores.getNumeroatendiendo()+"");
+                        sector.setUltimonumero(sectores.getNumeroatendiendo());
                         registrarSectorElegido(sector);
 
                         mostrarBaseLocalSectoresElegidos();
@@ -398,7 +401,7 @@ private TextView localseleccionado, dispositivoseleccionado;
     private void inicializarFirebase() {
         FirebaseApp.initializeApp(this);
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference();
+        databaseReferencesectores = firebaseDatabase.getReference();
     }
 
 

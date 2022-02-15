@@ -101,6 +101,13 @@ public class DispensadorTurno extends AppCompatActivity{
     private SectorDB db;
     private SharedPreferences pref;
     private Button configurarnuevamente;
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +136,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
 
 
-
+        constrain = findViewById(R.id.constrain);
 
         //valdiar que el los nombres de sectores en firebase coincidan con los nombres de sercotres locales
         //el que no exista que lo elimine
@@ -142,7 +149,6 @@ public class DispensadorTurno extends AppCompatActivity{
         txt_numeroActualDispensdor= findViewById(R.id.txtNumeroActualDispensador);
         txt_nombresector= findViewById(R.id.txtNombreSectorDispensdor);
 
-        constrain = findViewById(R.id.constrain);
 
 
         /*
@@ -160,7 +166,7 @@ public class DispensadorTurno extends AppCompatActivity{
             public void onClick(SectorLocal note) {
 
                 click2.start();
-                mostrarEspera(note);
+                //mostrarEspera(note);
                 sumar(note);
 
             }
@@ -169,12 +175,8 @@ public class DispensadorTurno extends AppCompatActivity{
 
         actionBar = getSupportActionBar();
         hidebarras();
-        constrain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hidebarras();
-            }
-        });
+
+
         context = getApplicationContext();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.reciclerviewprincipal);
@@ -216,7 +218,12 @@ public class DispensadorTurno extends AppCompatActivity{
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("ESTADO", "NO");
         editor.apply();
-        finish();
+
+        Intent intent= new Intent(DispensadorTurno.this, InicioOpcionLocal.class);
+        startActivity(intent);
+
+        DispensadorTurno.this.finish();
+
 
     }
 
@@ -289,7 +296,6 @@ public class DispensadorTurno extends AppCompatActivity{
                         startActivity(intent);
 
                         DispensadorTurno.this.finish();
-
 
                     }else{
 
