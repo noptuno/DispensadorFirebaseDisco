@@ -23,36 +23,83 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="15dp"
-        android:background="#2196F3"
+        android:background="@drawable/freshfondovertical"
         android:gravity="center"
         android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/freshlogodisco" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.5" />
 
         <TextView
             android:id="@+id/txtnombresec"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
             android:gravity="center"
-            android:text="sector"
-            android:textColor="#F6F3F3"
-            android:textSize="48sp"
+            android:text="PESCADERIA"
+            android:textColor="#F8F7F7"
+            android:textSize="60sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/txtnumerosec"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="80dp"
-            android:layout_marginRight="80dp"
-            android:layout_marginBottom="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/fondoturnoblanco"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="2"
             android:gravity="center"
-            android:text="0"
-            android:textColor="#050505"
-            android:textSize="96sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView25"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="IMPRIMA SU NÚMERO AQUÍ"
+                android:textColor="@color/white"
+                android:textSize="48sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtnumerosec"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/fondoturnoblanco"
+                android:gravity="center"
+                android:text="10"
+                android:textAlignment="center"
+                android:textColor="#0C0000"
+                android:textSize="96sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
 
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>
 

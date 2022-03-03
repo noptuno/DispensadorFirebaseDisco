@@ -493,7 +493,7 @@ public class TabletDispensador extends AppCompatActivity {
         txtcantidadespera.setText(""+datos.getCantidadEspera());
         baselimite = datos.getLimite();
         txtsector.setText(datos.getNombreSector());
-        txtsector.setBackgroundColor(Color.parseColor(datos.getColorSector()));
+      //  txtsector.setBackgroundColor(Color.parseColor(datos.getColorSector()));
 
     }
 

@@ -5,7 +5,7 @@
     android:id="@+id/constrainTablet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondodisplay"
+    android:background="@drawable/freshfondohorizonal"
     tools:context=".aplicaciones.TabletDispensador">
 
     <Button
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
             android:clickable="false"
-            app:srcCompat="@drawable/logodisco" />
+            app:srcCompat="@drawable/freshlogodisco" />
 
         <TextView
             android:id="@+id/txttnombresector"
@@ -70,7 +70,6 @@
             android:layout_gravity="center"
             android:layout_margin="20dp"
             android:layout_weight="1"
-            android:background="@color/colorletras"
             android:text="Sector"
             android:textAlignment="center"
             android:textColor="#F6F7FA"
@@ -85,26 +84,26 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/txtscantidad"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/diseno_redondo_dos"
-                android:backgroundTint="#F44336"
-                android:text="99"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="96sp" />
-
-            <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Clientes en espera:"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtscantidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/diseno_redondo_dos"
+                android:backgroundTint="#5E5858"
+                android:text="99"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="96sp" />
 
         </LinearLayout>
 
@@ -130,7 +129,6 @@
             android:layout_height="150dp"
             android:layout_weight="2"
             android:background="@drawable/diseno_redondo_dos"
-            android:backgroundTint="#5B9A12"
             android:text="-"
             android:textAlignment="center"
             android:textSize="96sp"
@@ -149,6 +147,7 @@
             android:layout_height="150dp"
             android:layout_weight="2"
             android:background="@drawable/diseno_redondo_dos"
+            android:backgroundTint="#009688"
             android:text="+"
             android:textAlignment="center"
             android:textSize="96sp"
@@ -158,7 +157,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout3"
-        android:layout_width="600dp"
+        android:layout_width="450dp"
         android:layout_height="0dp"
         android:layout_margin="10dp"
         android:layout_marginStart="16dp"
@@ -184,7 +183,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="5"
                 android:gravity="center"
-                android:text="TURNO"
                 android:textColor="@color/colorfondo"
                 android:textSize="60sp"
                 android:textStyle="normal|bold" />

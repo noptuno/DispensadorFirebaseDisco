@@ -23,43 +23,64 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="15dp"
-        android:background="#E91E63"
+        android:background="@drawable/freshfondovertical"
         android:gravity="center"
         android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/freshlogodisco" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4" />
 
         <TextView
             android:id="@+id/txtnombresec"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:gravity="center"
-            android:text="FARMACEUTICA "
+            android:text="PESCADERIA"
             android:textColor="#F8F7F7"
-            android:textSize="96sp"
+            android:textSize="140sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView25"
+        <LinearLayout
+            android:layout_width="680dp"
+            android:layout_height="700dp"
+            android:layout_gravity="center"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtnumerosec"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/fondoturnoblanco"
+                android:gravity="center"
+                android:text="10"
+                android:textAlignment="center"
+                android:textColor="#0C0000"
+                android:textSize="300sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TURNO"
-            android:textAlignment="center"
-            android:textColor="@color/colorletras"
-            android:textSize="96sp"
-            android:textStyle="bold" />
+            android:layout_weight="3" />
 
-        <TextView
-            android:id="@+id/txtnumerosec"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/fondoturnoblanco"
-            android:gravity="center"
-            android:text="10"
-            android:textColor="#0C0000"
-            android:textSize="400sp"
-            android:textStyle="bold" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

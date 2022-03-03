@@ -70,7 +70,6 @@ public class DisplayGrande extends AppCompatActivity {
     String NOMBREDELDISPOSITIVO=null;
     private AlertDialog Adialog;
     AdapterDisplayGrande adapter;
-private LinearLayout lineartitulo;
     ArrayList<SectorLocal> list = new ArrayList<>();;
     ArrayList<SectoresElegidos> listtemp = new ArrayList<>();
     private SectorDB db = new SectorDB(this);
@@ -96,8 +95,6 @@ private LinearLayout lineartitulo;
             }
         });
 
-
-        lineartitulo = findViewById(R.id.linearturnos);
 
         validarConfiguracion();
         leerInicioSectores();
@@ -247,9 +244,9 @@ private LinearLayout lineartitulo;
 
             if (listtemp!= null || !(listtemp.size() >0) ){
                 if (listtemp.size()>1){
-                    lineartitulo.setVisibility(View.VISIBLE);
+                   // lineartitulo.setVisibility(View.VISIBLE);
                 }else{
-                    lineartitulo.setVisibility(View.GONE);
+                 //   lineartitulo.setVisibility(View.GONE);
                 }
             }else{
                 regresarConfiguracion();
