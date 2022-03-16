@@ -1,6 +1,5 @@
 package com.example.dispensadorfirebase.inicio;
 
-import static com.example.dispensadorfirebase.app.variables.BASEDATOSSECTORESTEMP;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.NonNull;

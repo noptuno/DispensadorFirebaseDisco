@@ -1,5 +1,7 @@
 package com.example.dispensadorfirebase.administrador;
 
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -78,7 +80,7 @@ public class CrearLocalDialog extends AppCompatActivity {
 
         //validar que el nombre no se repita
 
-        databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(local.getNombreLocal()).setValue(local);
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(local.getNombreLocal()).setValue(local);
 
         finish();
     }

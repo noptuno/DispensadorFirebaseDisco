@@ -1,7 +1,5 @@
 package com.example.dispensadorfirebase.clase;
 
-import com.google.android.gms.dynamic.IFragmentWrapper;
-
 import java.io.Serializable;
 
 public class Datos implements Serializable {

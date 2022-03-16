@@ -1,5 +1,7 @@
 package com.example.dispensadorfirebase.administrador;
 
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterLocal;
+import com.example.dispensadorfirebase.app.variables;
 import com.example.dispensadorfirebase.clase.Local;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -42,7 +45,6 @@ public class ListaLocales extends AppCompatActivity {
     AlertDialog Adialog;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-    String NOMBREBASEDEDATOSFIREBASE= "FIREBASEDISCO";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

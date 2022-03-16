@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="15dp"
-        android:background="@drawable/freshfondovertical"
+        android:background="@drawable/backgroudefecto"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/freshlogodisco" />
+            app:srcCompat="@drawable/logotata" />
 
         <Space
             android:layout_width="match_parent"

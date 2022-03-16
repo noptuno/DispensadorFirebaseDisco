@@ -5,7 +5,7 @@
     android:id="@+id/constrainTablet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/freshfondohorizonal"
+    android:background="@drawable/backgroudefecto"
     tools:context=".aplicaciones.TabletDispensador">
 
     <Button
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
             android:clickable="false"
-            app:srcCompat="@drawable/freshlogodisco" />
+            app:srcCompat="@drawable/logotata" />
 
         <TextView
             android:id="@+id/txttnombresector"

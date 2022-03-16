@@ -119,7 +119,7 @@ private LinearLayout layout;
 
             nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroDispensador());
-           // layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+            layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
 
 
             itemView.setOnClickListener(new View.OnClickListener() {
