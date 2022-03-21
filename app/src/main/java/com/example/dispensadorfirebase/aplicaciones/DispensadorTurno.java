@@ -410,13 +410,13 @@ public class DispensadorTurno extends AppCompatActivity{
         byte[] nombreproducto= "Su Turno es: ".getBytes(encoding);
         byte[] numeroimprimir = (""+datos.getNumeroDispensador()).getBytes();
 
-        Bitmap starLogoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.logotata2);
+        Bitmap starLogoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.logodiscopeque);
 
         ICommandBuilder builder = StarIoExt.createCommandBuilder(StarIoExt.Emulation.EscPos);
         builder.appendCodePage(ICommandBuilder.CodePageType.UTF8);
         builder.beginDocument();
         builder.appendAlignment(ICommandBuilder.AlignmentPosition.Center);
-        builder.appendBitmap(starLogoImage, true);
+        builder.appendBitmap(starLogoImage, false);
         builder.appendLineFeed();
 
         //*********************************

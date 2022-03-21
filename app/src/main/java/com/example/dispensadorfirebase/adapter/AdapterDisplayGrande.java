@@ -119,7 +119,7 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
 
             nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroatendiendo());
-            layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+            //layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
             android:clickable="false"
-            app:srcCompat="@drawable/logotata" />
+            app:srcCompat="@drawable/logo_disco" />
 
         <TextView
             android:id="@+id/txttnombresector"
@@ -99,7 +99,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/diseno_redondo_dos"
-                android:backgroundTint="#5E5858"
+                android:backgroundTint="@color/purple_700"
                 android:text="99"
                 android:textAlignment="center"
                 android:textColor="@color/white"

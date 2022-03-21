@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="15dp"
-        android:background="#E91E63"
+        android:background="@drawable/fondos_rotiseria_horizontal"
         android:gravity="center"
         android:orientation="horizontal">
 

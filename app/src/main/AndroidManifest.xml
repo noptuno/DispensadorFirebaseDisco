@@ -37,13 +37,11 @@
             </intent-filter>
         </receiver>
 
-
         <activity
             android:name=".inicio.InicioOpcionDispositivo"
             android:exported="true"
             android:label="Seleccionar Dispositivo"
             android:screenOrientation="portrait">
-
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -59,7 +57,6 @@
                                       </intent-filter>
                               -->
 
-
         </activity>
 
         <activity
@@ -67,8 +64,6 @@
             android:exported="true"
             android:label="Menu Principal"
             android:screenOrientation="portrait">
-
-
 
 
         </activity>

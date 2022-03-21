@@ -1,6 +1,7 @@
 package com.example.dispensadorfirebase.adapter;
 
 import android.graphics.Color;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +9,12 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.clase.SectorLocal;
+import com.google.android.gms.dynamic.IFragmentWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,10 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
 
             elementoTitular = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_note_sectors_imprimir, parent, false);
+
+           // LinearLayout a = elementoTitular.findViewById(R.id.layoutsec);
+
+           // a.setBackground(ContextCompat.getDrawable(context, R.drawable.fondos_rotiseria_vertical));
         }
 
         return new NoteViewHolder(elementoTitular);
@@ -97,8 +104,6 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
 
 
 
-
-
     public class NoteViewHolder extends RecyclerView.ViewHolder {
         private TextView nombre;
         private TextView numero;
@@ -111,6 +116,7 @@ private LinearLayout layout;
             nombre = (TextView) item.findViewById(R.id.txtnombresec);
             numero = (TextView) item.findViewById(R.id.txtnumerosec);
             layout = (LinearLayout) item.findViewById(R.id.layoutsec);
+
         //falta color
 
         }
@@ -119,8 +125,8 @@ private LinearLayout layout;
 
             nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroDispensador());
-            layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
-
+            //layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+           // layout.setBackgroundResource(R.drawable.fondos_rotiseria_horizontal); funciona
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
