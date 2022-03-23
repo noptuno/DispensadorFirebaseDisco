@@ -24,7 +24,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginRight="8dp"
             android:padding="5dp"
-            app:srcCompat="@drawable/logotata" />
+            app:srcCompat="@drawable/logo_disco" />
 
         <LinearLayout
             android:layout_width="match_parent"

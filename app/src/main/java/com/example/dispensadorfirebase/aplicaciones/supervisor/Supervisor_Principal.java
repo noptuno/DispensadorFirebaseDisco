@@ -56,7 +56,10 @@ import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
 import com.example.dispensadorfirebase.inicio.InicioOpcionDispositivo;
 import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
+import com.example.dispensadorfirebase.principaltemp.notificador.Constants;
 import com.example.dispensadorfirebase.principaltemp.notificador.FlashSupervisor;
+import com.example.dispensadorfirebase.principaltemp.notificador.MyIntentService;
+import com.example.dispensadorfirebase.principaltemp.notificador.Supervisor;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -179,14 +182,13 @@ public class Supervisor_Principal extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
 
-        CargarDatos();
+      //  CargarDatos();
 
         adapter.setOnDetailListener(new AdapterSupervisorPrincipal.OnNoteDetailListener() {
             @Override
             public void onDetail(SectorLocal note) {
 
-
-                        note.setNotificacion(0);
+                note.setNotificacion(0);
                 note.setNotificaciondeshabilitar(1);
                // actualizarReciclerView();
                 databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
@@ -195,9 +197,50 @@ public class Supervisor_Principal extends AppCompatActivity {
         });
 
 
+        IntentFilter filter = new IntentFilter(
+                com.example.dispensadorfirebase.aplicaciones.supervisor.Constants.ACTION_RUN_ISERVICE);
 
+
+        filter.addAction(com.example.dispensadorfirebase.aplicaciones.supervisor.Constants.ACTION_PROGRESS_EXIT);
+
+
+        Supervisor_Principal.ResponseReceiver receiver = new Supervisor_Principal.ResponseReceiver();
+        registerReceiver(receiver,filter);
+
+
+        Intent intent = new Intent(this, MyIntentServiceSupervisor.class);
+        intent.setAction(Constants.ACTION_RUN_ISERVICE);
+        startService(intent);
 
     }
+    private class ResponseReceiver extends BroadcastReceiver {
+
+        // Sin instancias
+        private ResponseReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+
+                case Constants.ACTION_RUN_ISERVICE:
+                    //list.clear();
+
+                    ArrayList<SectorLocal> listaSectores = (ArrayList<SectorLocal>) intent.getSerializableExtra(Constants.EXTRA_PROGRESS);
+                   // SectorLocal sectores = (SectorLocal) intent.getSerializableExtra(Constants.EXTRA_PROGRESS);
+                    leerSectoresLocales(listaSectores);
+                    //datos = (Datos) intent.getSerializableExtra(Constants.EXTRA_PROGRESS);
+
+                   // actualziar();
+                    break;
+
+                case Constants.ACTION_PROGRESS_EXIT:
+
+                    break;
+            }
+        }
+    }
+
 
     private boolean validaryguardar(String pass) {
 
@@ -258,9 +301,7 @@ public class Supervisor_Principal extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
                 Log.e("---> Consulta Base", "ENTRO: ");
-
 
                 list.clear();
 
@@ -270,7 +311,7 @@ public class Supervisor_Principal extends AppCompatActivity {
 
                     if (sectores.getEstado()==1){
 
-                        leerSectoresLocales(sectores);
+                       // leerSectoresLocales(sectores);
 
                     }
                 }
@@ -278,7 +319,6 @@ public class Supervisor_Principal extends AppCompatActivity {
                 if (!(listtemp.size() >0)){
                     regresarConfiguracion();
                 }
-
 
                 Adialog.dismiss();
 
@@ -302,47 +342,56 @@ public class Supervisor_Principal extends AppCompatActivity {
 
 
     @SuppressLint("NotifyDataSetChanged")
-    private void leerSectoresLocales(SectorLocal sectores) {
-        String Color = sectores.getColorSector();
-        try {
-            db = new SectorDB(this);
+    private void leerSectoresLocales(ArrayList<SectorLocal>  lista) {
+            list.clear();
+        for (SectorLocal sectores : lista) {
 
 
-            SectoresElegidos sec = db.validarSector(sectores.getNombreSector());
+            try {
+                db = new SectorDB(this);
 
-            if (sec!=null){
 
-                list.add(sectores);
+                SectoresElegidos sec = db.validarSector(sectores.getNombreSector());
 
-                if (sectores.getNotificacion()==1 && sectores.getNotificaciondeshabilitar()==0){
+                if (sec!=null){
 
-                    setPendingIntent();
-                    createNotificationChannel();
-                    createNotification(sectores.getNombreSector().toString());
+                    list.add(sectores);
+
+                    if (sectores.getNotificacion()==1 && sectores.getNotificaciondeshabilitar()==0){
+
+                        setPendingIntent();
+                        createNotificationChannel();
+                        createNotification(sectores.getNombreSector().toString());
+                    }
+
+                    if (sectores.getLlamarsupervisor() == 1){
+
+                        //sectores.setLlamarsupervisor(0);
+                        setPendingIntent();
+                        createNotificationChannel();
+                        createNotification(sectores.getNombreSector().toString());
+                        sectores.setLlamarsupervisor(0);
+
+                        // actualizarReciclerView();
+                        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(sectores.getNombreSector()).setValue(sectores);
+
+                        // nobuscar = true;
+                        //databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(sectores.getNombreSector()).setValue(sectores);
+
+                    }
+
                 }
+                actualizarReciclerView();
 
-                if (sectores.getLlamarsupervisor() == 1){
+            } catch (Exception e) {
+                Log.e("error", "mensaje mostrar bse local");
+            }
 
-                    //sectores.setLlamarsupervisor(0);
-                    setPendingIntent();
-                    createNotificationChannel();
-                    createNotification(sectores.getNombreSector().toString());
-                    sectores.setLlamarsupervisor(0);
 
-                    // actualizarReciclerView();
-                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(sectores.getNombreSector()).setValue(sectores);
-
-                   // nobuscar = true;
-                    //databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(sectores.getNombreSector()).setValue(sectores);
-
-                }
-
-                }
-            actualizarReciclerView();
-
-        } catch (Exception e) {
-            Log.e("error", "mensaje mostrar bse local");
         }
+
+
+
     }
 
 
