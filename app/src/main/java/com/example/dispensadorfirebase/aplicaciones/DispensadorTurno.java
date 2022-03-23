@@ -406,21 +406,23 @@ public class DispensadorTurno extends AppCompatActivity{
         int limite = datos.getLimite();
 
         Charset encoding = Charset.forName("CP437");
-        byte[] nombresector= datos.getNombreSector().getBytes(encoding);
-        byte[] nombreproducto= "Su Turno es: ".getBytes(encoding);
-        byte[] numeroimprimir = (""+datos.getNumeroDispensador()).getBytes();
+        byte[] nombresector= (" "+datos.getNombreSector()).getBytes(encoding);
+        byte[] nombreproducto= "   Su Turno es: ".getBytes(encoding);
+        byte[] numeroimprimir = (" "+datos.getNumeroDispensador()).getBytes();
+
 
         Bitmap starLogoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.logodiscopeque);
 
         ICommandBuilder builder = StarIoExt.createCommandBuilder(StarIoExt.Emulation.EscPos);
         builder.appendCodePage(ICommandBuilder.CodePageType.UTF8);
         builder.beginDocument();
-        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Center);
+        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
         builder.appendBitmap(starLogoImage, false);
         builder.appendLineFeed();
 
+
         //*********************************
-        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Center);
+        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
         builder.appendMultiple(2, 2);
         builder.appendAbsolutePosition(nombresector,0);
         builder.appendLineFeed();
@@ -428,14 +430,14 @@ public class DispensadorTurno extends AppCompatActivity{
         builder.appendAbsolutePosition(nombreproducto,0);
         builder.appendLineFeed();
         builder.appendLineSpace(50);
-        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Center);
+        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
         builder.appendMultiple(10, 10);
         builder.appendAbsolutePosition(numeroimprimir,0);
         builder.appendLineFeed();
-        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Center);
+        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
 
         builder.appendMultiple(0, 0);
-        builder.appendAbsolutePosition(("Fecha: " + fecha).getBytes(),0);
+        builder.appendAbsolutePosition(("   Fecha: " + fecha).getBytes(),0);
         builder.appendLineFeed();
         //**********************
 
@@ -470,13 +472,13 @@ public class DispensadorTurno extends AppCompatActivity{
                     databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
                 } else {
-                    Toast.makeText(DispensadorTurno.this, "ERROR A: imprimir", Toast.LENGTH_LONG).show();
+                    Toast.makeText(DispensadorTurno.this, "Impreso desconectada, volver a iniciar la app", Toast.LENGTH_LONG).show();
                 }
             }
 
 
         } catch (Exception e) {
-            Toast.makeText(DispensadorTurno.this, "ERROR B: imprimir", Toast.LENGTH_LONG).show();
+            Toast.makeText(DispensadorTurno.this, "ERROR Codigo de impresión", Toast.LENGTH_LONG).show();
 
 
         }

@@ -5,7 +5,7 @@
     android:id="@+id/constrainLayoutGrande"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondodisplay"
+    android:background="@color/white"
     tools:context=".aplicaciones.DisplayGrande">
 
     <Button
@@ -23,7 +23,7 @@
         android:id="@+id/reciclerviewgrande"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
