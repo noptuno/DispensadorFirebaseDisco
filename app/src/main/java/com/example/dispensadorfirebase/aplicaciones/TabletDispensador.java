@@ -196,13 +196,14 @@ public class TabletDispensador extends AppCompatActivity {
 
 
         actionBar = getSupportActionBar();
+        /*
         constrain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 hidebarras();
             }
         });
-
+*/
     }
 
     private void botonregresar() {
@@ -321,8 +322,29 @@ public class TabletDispensador extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
 
-        hidebarras();
+       // hidebarras();
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
+
+    private void hideSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+
 
     void hidebarras() {
 
@@ -420,20 +442,20 @@ public class TabletDispensador extends AppCompatActivity {
                         datos.reset();
                         Registrar();
                         dialogg.dismiss();
-                        hidebarras();
+                       // hidebarras();
 
                     }else{
 
                         Toast.makeText(TabletDispensador.this,"Acceso Denegado", Toast.LENGTH_SHORT).show();
                         dialogg.dismiss();
-                        hidebarras();
+                       // hidebarras();
                     }
 
                 } else {
 
                     mPassword.setError("Faltan Datos");
                     mPassword.requestFocus();
-                    hidebarras();
+                    //hidebarras();
                 }
             }
         });

@@ -120,6 +120,7 @@ public class DisplayGrande extends AppCompatActivity {
         CargarDatos();
 
         actionBar = getSupportActionBar();
+        /*
         hidebarras();
         constrain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +128,7 @@ public class DisplayGrande extends AppCompatActivity {
                 hidebarras();
             }
         });
-
+*/
 
     }
 
@@ -383,6 +384,27 @@ public class DisplayGrande extends AppCompatActivity {
         //se creo una actividad para gejecutar este metodo
         //firebaseDatabase.setPersistenceEnabled(true);
         databaseReference = firebaseDatabase.getReference();
+    }
+
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
+
+    private void hideSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
 
