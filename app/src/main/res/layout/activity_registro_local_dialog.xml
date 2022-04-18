@@ -7,6 +7,17 @@
     tools:context=".administrador.CrearLocalDialog">
 
     <Button
+        android:id="@+id/btnSubir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="SUBIR"
+        app:layout_constraintEnd_toStartOf="@+id/btnGuardar"
+        app:layout_constraintHorizontal_bias="0.524"
+        app:layout_constraintStart_toEndOf="@+id/btnCancelar"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
+
+    <Button
         android:id="@+id/btnGuardar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

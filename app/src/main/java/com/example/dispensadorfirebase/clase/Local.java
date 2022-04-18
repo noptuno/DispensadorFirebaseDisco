@@ -5,6 +5,15 @@ public class Local {
     String NombreLocal;
     int NumeroLocal;
     String EstadoLocal;
+    String logo;
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
 
     public Local() {
     }
@@ -17,10 +26,11 @@ public class Local {
         EstadoLocal = estadoLocal;
     }
 
-    public Local(String nombreLocal, int numeroLocal, String estadoLocal) {
+    public Local(String nombreLocal, int numeroLocal, String estadoLocal,String logo) {
         NombreLocal = nombreLocal;
         NumeroLocal = numeroLocal;
         EstadoLocal = estadoLocal;
+        this.logo = logo;
     }
 
     public String getNombreLocal() {
