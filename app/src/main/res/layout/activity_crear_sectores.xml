@@ -189,6 +189,20 @@
                 android:padding="10dp">
 
                 <Button
+                    android:id="@+id/btnsubirH"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="FondoH" />
+
+                <Button
+                    android:id="@+id/btnSubirV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="FondoV" />
+
+                <Button
                     android:id="@+id/btnAñadirSector"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

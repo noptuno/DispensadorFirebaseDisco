@@ -1,5 +1,6 @@
 package com.example.dispensadorfirebase.administrador;
 
+import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.BASEDATOSSECTORESTEMP;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
@@ -160,7 +161,7 @@ public class AsignarSectoress extends AppCompatActivity {
 
                 SectorLocal datos = new SectorLocal(0,0,0,limite,0,nombre,color,0,0,1,0);
 
-                databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(setor.getNombre()).setValue(datos);
+                databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(setor.getNombre()).setValue(datos);
             }
 
         } catch (Exception e) {
@@ -174,7 +175,7 @@ public class AsignarSectoress extends AppCompatActivity {
 
             setProgressDialog();
 
-            databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
+            databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

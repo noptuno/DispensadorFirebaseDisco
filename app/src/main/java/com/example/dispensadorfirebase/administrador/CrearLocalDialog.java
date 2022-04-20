@@ -1,5 +1,6 @@
 package com.example.dispensadorfirebase.administrador;
 
+import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.Nullable;
@@ -43,7 +44,7 @@ public class CrearLocalDialog extends AppCompatActivity {
     TextView EstadoLocal;
     Button Guardar,Cancelar,subir;
 
-
+    Uri descargarFoto;
     //variables lcoales
 
     Local local;
@@ -94,14 +95,12 @@ public class CrearLocalDialog extends AppCompatActivity {
                 String val1= NumeroLocal.getText().toString();
                 int num=Integer.parseInt(val1);
                 String est = "true";
-                String logo = "https//asdasd.com.uy.a.jpg";
-
-
+                String logo = "null";
+                if (!descargarFoto.toString().equals("")){
+                   logo = descargarFoto.toString();
+                }
                 Local local=new Local(nom,num,est,logo);
-
                 RegistroFirebase(local);
-
-
 
 
             }
@@ -122,18 +121,22 @@ public class CrearLocalDialog extends AppCompatActivity {
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getApplicationContext(), "Se Subio", Toast.LENGTH_LONG).show();
+
+                   descargarFoto = taskSnapshot.getUploadSessionUri();
+
+                   Toast.makeText(getApplicationContext(),"Cargo Imagen",Toast.LENGTH_SHORT).show();
                 }
             });
 
         }
+
     }
 
     private void RegistroFirebase(Local local) {
 
         //validar que el nombre no se repita
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(local.getNombreLocal()).setValue(local);
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
 
         finish();
     }

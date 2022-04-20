@@ -4,6 +4,7 @@ import static com.example.dispensadorfirebase.app.variables.BASEDATOSSECTORESTEM
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -12,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -35,12 +38,16 @@ import com.example.dispensadorfirebase.app.variables;
 import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.Sectores;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 
@@ -48,8 +55,9 @@ public class CrearSectores extends AppCompatActivity {
     String localseleccionado;
     ArrayList<Sectores> listnombresectores;
     private AdapterSectores adapter; //CAMBIAR ADAPTER SECTORES
-
-    private Button btnregistrar, btnnuevosector, btnred, btnblue, btnorange, btngreen, btnpurple,btnblueOscuro;
+    private static final int GALERY_INTENT_V = 1;
+    private static final int GALERY_INTENT_H = 2;
+    private Button btnregistrar, btnnuevosector, btnred, btnblue, btnorange, btngreen, btnpurple,btnblueOscuro,subirh,subirv;
     private EditText nombre, limite;
     private TextView txtcolorseleccionado;
     private String color = "#B30D0D";
@@ -60,6 +68,10 @@ public class CrearSectores extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
 
+    private  StorageReference mstorage;
+    Uri fondoh, fondov;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +79,11 @@ public class CrearSectores extends AppCompatActivity {
 
         //FIREBASE
         inicializarFirebase();
+        mstorage = FirebaseStorage.getInstance().getReference();
+
+        subirh = findViewById(R.id.btnsubirH);
+        subirv = findViewById(R.id.btnSubirV);
+
 
         listnombresectores = new ArrayList<>();
         layoutPrincipal = findViewById(R.id.layoutbotones);
@@ -91,6 +108,27 @@ public class CrearSectores extends AppCompatActivity {
             }
         });
 */
+
+        subirh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent,GALERY_INTENT_H);
+
+            }
+        });
+                subirv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType("image/*");
+                        startActivityForResult(intent,GALERY_INTENT_V);
+                    }
+                });
+
         btnregistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +139,12 @@ public class CrearSectores extends AppCompatActivity {
                         sector.setColor(color);
                         sector.setEstado(1);
                         sector.setLimite(Integer.parseInt(limite.getText().toString()));
+
+                        if (!fondoh.toString().isEmpty() && !fondov.toString().isEmpty()){
+                            sector.setFondoV(fondov.toString());
+                            sector.setFondoH(fondoh.toString());
+                        }
+
                         registrarSector(sector);
                         limpiar();
 
@@ -172,6 +216,40 @@ public class CrearSectores extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Uri uri = data.getData();
+        StorageReference filePath = mstorage.child("fotos").child(uri.getLastPathSegment());
+        if (requestCode == GALERY_INTENT_V && resultCode == RESULT_OK){
+
+
+            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    fondov = taskSnapshot.getUploadSessionUri();
+
+                }
+            });
+
+        }else  if (requestCode == GALERY_INTENT_H && resultCode == RESULT_OK){
+
+            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    fondoh = taskSnapshot.getUploadSessionUri();
+
+                }
+            });
+
+        }
+
+    }
+
+
+
     private void CloseTeclado() {
 
         View view = this.getCurrentFocus();
@@ -184,7 +262,7 @@ public class CrearSectores extends AppCompatActivity {
 
     public void registrarSector(Sectores sector) {
 
-        databaseReference.child(BASEDATOSSECTORESTEMP).child(sector.getNombre()).setValue(sector);
+        databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).child(sector.getNombre()).setValue(sector);
 
     }
 
@@ -261,7 +339,7 @@ public class CrearSectores extends AppCompatActivity {
 
         setProgressDialog();
 
-        databaseReference.child(BASEDATOSSECTORESTEMP).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

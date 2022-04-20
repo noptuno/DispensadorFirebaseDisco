@@ -1,5 +1,6 @@
 package com.example.dispensadorfirebase.administrador;
 
+import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.NonNull;
@@ -117,7 +118,7 @@ public class ListaLocales extends AppCompatActivity {
 
         setProgressDialog();
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

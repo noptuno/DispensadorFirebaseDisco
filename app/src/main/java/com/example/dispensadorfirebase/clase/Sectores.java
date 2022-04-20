@@ -7,6 +7,24 @@ public class Sectores {
     int limite;
     String color;
     int estado;
+    String fondoH;
+    String fondoV;
+
+    public String getFondoH() {
+        return fondoH;
+    }
+
+    public void setFondoH(String fondoH) {
+        this.fondoH = fondoH;
+    }
+
+    public String getFondoV() {
+        return fondoV;
+    }
+
+    public void setFondoV(String fondoV) {
+        this.fondoV = fondoV;
+    }
 
     public int getEstado() {
         return estado;
@@ -19,11 +37,13 @@ public class Sectores {
     public Sectores() {
     }
 
-    public Sectores(String nombre, int limite, String color, int estado) {
+    public Sectores(String nombre, int limite, String color, int estado,String fondoH,String fondoV) {
         this.nombre = nombre;
         this.limite = limite;
         this.color = color;
         this.estado = estado;
+        this.fondoH = fondoH;
+        this.fondoV = fondoV;
     }
 
     public String getNombre() {
