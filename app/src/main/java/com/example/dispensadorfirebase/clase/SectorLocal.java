@@ -15,6 +15,24 @@ public class SectorLocal implements Serializable {
             int notificaciondeshabilitar;
             int estado;
             int llamarsupervisor;
+            String fondoh;
+            String fondov;
+
+    public String getFondoh() {
+        return fondoh;
+    }
+
+    public void setFondoh(String fondoh) {
+        this.fondoh = fondoh;
+    }
+
+    public String getFondov() {
+        return fondov;
+    }
+
+    public void setFondov(String fondov) {
+        this.fondov = fondov;
+    }
 
     public int getLlamarsupervisor() {
         return llamarsupervisor;
@@ -24,7 +42,7 @@ public class SectorLocal implements Serializable {
         this.llamarsupervisor = llamarsupervisor;
     }
 
-    public SectorLocal(int numeroatendiendo, int ultimoNumeroDispensador, int cantidadEspera, int limite, int numeroDispensador, String nombreSector, String colorSector, int notificacion, int notificaciondeshabilitar, int estado, int llamarsupervisor) {
+    public SectorLocal(int numeroatendiendo, int ultimoNumeroDispensador, int cantidadEspera, int limite, int numeroDispensador, String nombreSector, String colorSector, int notificacion, int notificaciondeshabilitar, int estado, int llamarsupervisor, String fondoh, String fondov) {
         this.numeroatendiendo = numeroatendiendo;
         this.ultimoNumeroDispensador = ultimoNumeroDispensador;
         this.cantidadEspera = cantidadEspera;
@@ -36,6 +54,8 @@ public class SectorLocal implements Serializable {
         this.notificaciondeshabilitar = notificaciondeshabilitar;
         this.estado = estado;
         this.llamarsupervisor = llamarsupervisor;
+        this.fondoh = fondoh;
+        this.fondov = fondov;
     }
 
     public int getEstado() {

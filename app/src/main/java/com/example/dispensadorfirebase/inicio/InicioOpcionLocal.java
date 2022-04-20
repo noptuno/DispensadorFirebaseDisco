@@ -1,5 +1,6 @@
 package com.example.dispensadorfirebase.inicio;
 
+import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.NonNull;
@@ -339,7 +340,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
         setProgressDialog();
 
-        databaseReferencelocales.child(NOMBREBASEDEDATOSFIREBASE).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReferencelocales.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

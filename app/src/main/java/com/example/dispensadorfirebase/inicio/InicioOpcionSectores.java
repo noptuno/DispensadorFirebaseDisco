@@ -1,5 +1,6 @@
 package com.example.dispensadorfirebase.inicio;
 
+import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.NonNull;
@@ -234,7 +235,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
         setProgressDialog();
 
-        this.databaseReferencesectores.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addListenerForSingleValueEvent(new ValueEventListener() {
+        this.databaseReferencesectores.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -251,6 +252,7 @@ private TextView localseleccionado, dispositivoseleccionado;
                         SectoresElegidos sector = new SectoresElegidos();
                         sector.setNombre(sectores.getNombreSector());
                         sector.setUltimonumero(sectores.getNumeroatendiendo());
+
                         registrarSectorElegido(sector);
 
                         mostrarBaseLocalSectoresElegidos();

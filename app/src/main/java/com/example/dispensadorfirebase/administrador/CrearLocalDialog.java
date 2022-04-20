@@ -44,12 +44,16 @@ public class CrearLocalDialog extends AppCompatActivity {
     TextView EstadoLocal;
     Button Guardar,Cancelar,subir;
 
-    Uri descargarFoto;
+    Uri descargarFoto= Uri.parse("");
     //variables lcoales
 
     Local local;
 
     private static final int GALERY_INTENT = 1;
+
+    private Uri linkUriLogo = Uri.parse("");
+    private Uri contentlogo = Uri.parse("");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,9 +100,6 @@ public class CrearLocalDialog extends AppCompatActivity {
                 int num=Integer.parseInt(val1);
                 String est = "true";
                 String logo = "null";
-                if (!descargarFoto.toString().equals("")){
-                   logo = descargarFoto.toString();
-                }
                 Local local=new Local(nom,num,est,logo);
                 RegistroFirebase(local);
 
@@ -109,24 +110,15 @@ public class CrearLocalDialog extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == GALERY_INTENT && resultCode == RESULT_OK){
 
-            Uri uri = data.getData();
+            linkUriLogo = data.getData();
 
-            StorageReference filePath = mstorage.child("fotos").child(uri.getLastPathSegment());
-            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                   descargarFoto = taskSnapshot.getUploadSessionUri();
-
-                   Toast.makeText(getApplicationContext(),"Cargo Imagen",Toast.LENGTH_SHORT).show();
-                }
-            });
 
         }
 
@@ -134,11 +126,21 @@ public class CrearLocalDialog extends AppCompatActivity {
 
     private void RegistroFirebase(Local local) {
 
-        //validar que el nombre no se repita
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).child(linkUriLogo.getLastPathSegment());
+            filePath.putFile(linkUriLogo).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-        finish();
+                    linkUriLogo = taskSnapshot.getUploadSessionUri();
+                    local.setLogo(linkUriLogo.toString());
+                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
+                    finish();
+                }
+
+            });
+
+
     }
 
     private void inicializarFirebase() {

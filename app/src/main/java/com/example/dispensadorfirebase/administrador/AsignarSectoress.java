@@ -127,7 +127,7 @@ public class AsignarSectoress extends AppCompatActivity {
                 @Override
                 public void onDetail(SectorLocal note) {
 
-                    databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
+                    databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
 
                 }
             });
@@ -158,10 +158,14 @@ public class AsignarSectoress extends AppCompatActivity {
                 String nombre = setor.getNombre();
                 int limite =  setor.getLimite();
                 String color =  setor.getColor();
+                String fondoV = setor.getFondoV();
+                String fondoH= setor.getFondoH();
 
-                SectorLocal datos = new SectorLocal(0,0,0,limite,0,nombre,color,0,0,1,0);
+                SectorLocal datos = new SectorLocal(0,0,0,limite,0,nombre,color,0,0,1,0,fondoH,fondoV);
 
                 databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(setor.getNombre()).setValue(datos);
+
+
             }
 
         } catch (Exception e) {
@@ -277,7 +281,7 @@ public class AsignarSectoress extends AppCompatActivity {
     private void cargarListaNombresSectores() {
 
 
-        databaseReference.child(BASEDATOSSECTORESTEMP).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

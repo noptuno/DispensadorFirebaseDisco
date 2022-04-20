@@ -1,5 +1,6 @@
 package com.example.dispensadorfirebase.administrador;
 
+import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.BASEDATOSSECTORESTEMP;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
@@ -69,7 +70,7 @@ public class CrearSectores extends AppCompatActivity {
     DatabaseReference databaseReference;
 
     private  StorageReference mstorage;
-    Uri fondoh, fondov;
+    Uri fondoh = Uri.parse(""), fondov= Uri.parse("");
 
 
     @Override
@@ -220,7 +221,9 @@ public class CrearSectores extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Uri uri = data.getData();
-        StorageReference filePath = mstorage.child("fotos").child(uri.getLastPathSegment());
+
+        StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).child(uri.getLastPathSegment());
+
         if (requestCode == GALERY_INTENT_V && resultCode == RESULT_OK){
 
 
