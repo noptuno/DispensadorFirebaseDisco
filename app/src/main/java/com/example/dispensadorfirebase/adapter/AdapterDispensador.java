@@ -1,11 +1,17 @@
 package com.example.dispensadorfirebase.adapter;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,6 +22,7 @@ import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.google.android.gms.dynamic.IFragmentWrapper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +32,7 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
     private OnNoteSelectedListener onNoteSelectedListener;
     private OnNoteDetailListener onDetailListener;
     private int CantidadSectores;
-
+private Context context;
 
     public AdapterDispensador(int cantidad) {
         this.notes = new ArrayList<>();
@@ -40,8 +47,10 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
     @Override
     public NoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-
         View elementoTitular;
+
+
+
 
         if (CantidadSectores ==1){
             elementoTitular = LayoutInflater.from(parent.getContext())
@@ -59,6 +68,7 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
 
            // a.setBackground(ContextCompat.getDrawable(context, R.drawable.fondos_rotiseria_vertical));
         }
+        context = elementoTitular.getContext();
 
         return new NoteViewHolder(elementoTitular);
     }
@@ -125,7 +135,13 @@ private LinearLayout layout;
 
             nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroDispensador());
-            //layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+
+
+            File f = new File(getRealPathFromURI(Uri.parse(sector.getFondoh())));
+            Drawable d = Drawable.createFromPath(f.getAbsolutePath());
+            layout.setBackground(d);
+
+            layout.setBackground(d);
            // layout.setBackgroundResource(R.drawable.fondos_rotiseria_horizontal); funciona
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -137,6 +153,17 @@ private LinearLayout layout;
                     }
                 }
             });
+        }
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        Cursor cursor = context.getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            return contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            return cursor.getString(idx);
         }
     }
 }

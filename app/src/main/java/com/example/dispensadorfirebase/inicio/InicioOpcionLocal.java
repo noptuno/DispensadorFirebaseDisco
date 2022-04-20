@@ -77,13 +77,12 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
 
         inicializarFirebase();
-        //ocultarbarra();
+
+
         list = new ArrayList<>();
         adapter = new AdapterLocal();
 
-
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
-        //Acciones layout
 
 
         // funcionaldiades
@@ -289,8 +288,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         editor.apply();
 
 
-
-
     }
 
     @Override
@@ -336,8 +333,11 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
             actionBar.hide();
         }
     }
+
+
     private void cargarLista() {
 
+        //TODO revisar
         setProgressDialog();
 
         databaseReferencelocales.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -408,7 +408,8 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         builder.setView(ll);
 
         Adialog = builder.create();
-        Adialog.show();
+        //TODO revisar
+        //Adialog.show();
         Adialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {

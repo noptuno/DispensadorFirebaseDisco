@@ -7,11 +7,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +24,7 @@ import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
 import com.example.dispensadorfirebase.clase.Datos;
 import com.example.dispensadorfirebase.clase.Local;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -27,6 +32,8 @@ import com.example.dispensadorfirebase.app.variables;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
 
 public class CrearLocalDialog extends AppCompatActivity {
 
@@ -53,7 +60,7 @@ public class CrearLocalDialog extends AppCompatActivity {
 
     private Uri linkUriLogo = Uri.parse("");
     private Uri contentlogo = Uri.parse("");
-
+private ImageView img;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +71,7 @@ public class CrearLocalDialog extends AppCompatActivity {
       EstadoLocal= findViewById(R.id.txtEstadoLocal);
       Guardar= findViewById(R.id.btnGuardar);
       Cancelar= findViewById(R.id.btnCancelar);
-
+        img = findViewById(R.id.imgview);
         subir = findViewById(R.id.btnSubir);
 
       inicializarFirebase();
@@ -120,9 +127,42 @@ public class CrearLocalDialog extends AppCompatActivity {
             linkUriLogo = data.getData();
 
 
+
         }
 
     }
+
+    private void mostrarimagen(Uri linkUriLogo) {
+
+
+
+        String link = linkUriLogo.toString();
+        Uri linkuri = Uri.parse(link);
+
+
+        File f = new File(getRealPathFromURI(linkuri));
+        Drawable d = Drawable.createFromPath(f.getAbsolutePath());
+       // img.setImageURI(linkUriLogo);
+        img.setImageDrawable(d);
+
+
+
+
+
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            return contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            return cursor.getString(idx);
+        }
+    }
+
+
 
     private void RegistroFirebase(Local local) {
 
@@ -132,10 +172,24 @@ public class CrearLocalDialog extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    linkUriLogo = taskSnapshot.getUploadSessionUri();
-                    local.setLogo(linkUriLogo.toString());
-                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
-                    finish();
+
+                    Task<Uri> descargarFoto = taskSnapshot.getStorage().getDownloadUrl();
+                    descargarFoto.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+
+                            img.setImageURI(uri);
+
+                            //mostrarimagen(uri);
+                          //  local.setLogo(uri.toString());
+
+                        }
+                    });
+
+
+                   // databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
+                   // finish();
                 }
 
             });
