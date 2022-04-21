@@ -6,8 +6,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="@color/white"
+    android:background="@color/black"
     tools:context=".principaltemp.Dispensador">
+
+    <ImageView
+        android:id="@+id/imviewlogolocal"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/freshlogodisco" />
 
     <Button
         android:id="@+id/btn_salir"
@@ -24,11 +34,10 @@
         android:id="@+id/reciclerviewprincipal"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="0dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imviewlogolocal" />
 
     <LinearLayout
         android:id="@+id/linearLayout5"
@@ -49,7 +58,7 @@
             android:layout_weight="2"
             android:gravity="center|right"
             android:text="dmr.com.uy"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
 

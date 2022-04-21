@@ -1,5 +1,6 @@
 package com.example.dispensadorfirebase.aplicaciones;
 
+import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.NonNull;
@@ -105,14 +106,6 @@ public class TabletDispensador extends AppCompatActivity {
 
                 botonregresar();
 
-
-
-
-
-
-
-
-
             }
         });
 
@@ -144,12 +137,9 @@ public class TabletDispensador extends AppCompatActivity {
                 // setProgressDialog();
                 delay();
 
+                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
-                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
-
-
-
-            }
+                }
         });
 
 
@@ -281,7 +271,7 @@ public class TabletDispensador extends AppCompatActivity {
 
         setProgressDialog();
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
@@ -300,7 +290,6 @@ public class TabletDispensador extends AppCompatActivity {
                         }
 
                     }
-
 
                 }
 
@@ -500,8 +489,8 @@ public class TabletDispensador extends AppCompatActivity {
             datos.setNotificacion(1);
         }
 
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
 
 

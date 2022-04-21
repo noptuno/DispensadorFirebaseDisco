@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -20,6 +21,7 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -31,6 +33,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -44,9 +47,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterDispensador;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
+import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
 import com.example.dispensadorfirebase.inicio.InicioOpcionDispositivo;
@@ -102,6 +109,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private SectorDB db;
     private SharedPreferences pref;
     private Button configurarnuevamente;
+    private ImageView logo;
 
     @Override
     protected void onPostResume() {
@@ -130,7 +138,7 @@ public class DispensadorTurno extends AppCompatActivity{
             }
         });
 
-
+        logo = findViewById(R.id.imviewlogolocal);
 
         list = new ArrayList<>();
         adapter = new AdapterDispensador(listtemp.size());
@@ -185,6 +193,7 @@ public class DispensadorTurno extends AppCompatActivity{
         recyclerView.setAdapter(adapter);
 
         usb();
+
 
         CargarDatos();
 
@@ -319,12 +328,22 @@ public class DispensadorTurno extends AppCompatActivity{
     @Override
     public void onBackPressed() {
 
-
        // botonregresar();
         // super.onBackPressed();
+    }
 
+
+    private void cargarLogo(String LinkLogo) {
+
+        Uri fondo = Uri.parse(LinkLogo);
+        Glide.with(getApplicationContext()).load(fondo).into(logo);
 
     }
+
+
+
+
+
 
     private void CargarDatos() {
 

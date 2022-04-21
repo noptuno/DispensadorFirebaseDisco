@@ -123,7 +123,7 @@ private Context context;
     public class NoteViewHolder extends RecyclerView.ViewHolder {
         private TextView nombre;
         private TextView numero;
-        private ImageView logolocal;
+
 
 private LinearLayout layout;
 
@@ -133,7 +133,7 @@ private LinearLayout layout;
             nombre = (TextView) item.findViewById(R.id.txtnombresec);
             numero = (TextView) item.findViewById(R.id.txtnumerosec);
             layout = (LinearLayout) item.findViewById(R.id.layoutsec);
-            logolocal = item.findViewById(R.id.imglogolocal);
+
 
 
         //falta color
@@ -144,12 +144,15 @@ private LinearLayout layout;
 
             nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroDispensador());
-            Uri fondo = Uri.parse(sector.getFondoh());
 
-
+            Uri fondo;
+            if (CantidadSectores>1){
+                fondo = Uri.parse(sector.getFondoh());
+            }else{
+                fondo = Uri.parse(sector.getFondov());
+            }
            // File f = new File(getRealPathFromURI(Uri.parse(sector.getFondoh())));
           //  Drawable d = Drawable.createFromPath(f.getAbsolutePath());
-
             Glide.with(context).load(fondo).into(new SimpleTarget<Drawable>() {
                 @Override
                 public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {

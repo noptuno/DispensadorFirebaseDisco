@@ -22,7 +22,7 @@
         android:id="@+id/layoutsec"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="15dp"
+        android:layout_margin="5dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -31,23 +31,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="2" />
 
-        <ImageView
-            android:id="@+id/imglogolocal"
-            android:layout_width="350dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/logo_disco" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="4" />
-
         <TextView
             android:id="@+id/txtnombresec"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
+            android:layout_weight="2"
             android:gravity="center"
             android:text="PESCADERIA"
             android:textColor="#F8F7F7"
@@ -78,7 +66,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="3" />
+            android:layout_weight="2" />
 
     </LinearLayout>
 
