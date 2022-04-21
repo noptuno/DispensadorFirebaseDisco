@@ -40,6 +40,7 @@ import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.Sectores;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -222,35 +223,65 @@ public class CrearSectores extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Uri uri = data.getData();
 
-        StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).child(uri.getLastPathSegment());
+
 
         if (requestCode == GALERY_INTENT_V && resultCode == RESULT_OK){
 
 
+
+
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).child(uri.getLastPathSegment());
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    fondov = taskSnapshot.getUploadSessionUri();
+
+                    Task<Uri> descargarFoto = taskSnapshot.getStorage().getDownloadUrl();
+                    descargarFoto.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            fondov = uri;
+
+                        }
+                    });
+
+
 
                 }
+
             });
 
-        }else  if (requestCode == GALERY_INTENT_H && resultCode == RESULT_OK){
 
+        }else  if (requestCode == GALERY_INTENT_H && resultCode == RESULT_OK) {
+
+
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).child(uri.getLastPathSegment());
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    fondoh = taskSnapshot.getUploadSessionUri();
+
+                    Task<Uri> descargarFoto = taskSnapshot.getStorage().getDownloadUrl();
+                    descargarFoto.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            fondoh = uri;
+
+                        }
+                    });
+
+
 
                 }
+
             });
+
+
 
         }
-
     }
-
 
 
     private void CloseTeclado() {
@@ -264,6 +295,7 @@ public class CrearSectores extends AppCompatActivity {
     }
 
     public void registrarSector(Sectores sector) {
+
 
         databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).child(sector.getNombre()).setValue(sector);
 

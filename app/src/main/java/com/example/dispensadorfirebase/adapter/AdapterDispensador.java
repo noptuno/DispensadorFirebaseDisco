@@ -2,9 +2,11 @@ package com.example.dispensadorfirebase.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -18,11 +20,15 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.google.android.gms.dynamic.IFragmentWrapper;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,6 +123,7 @@ private Context context;
     public class NoteViewHolder extends RecyclerView.ViewHolder {
         private TextView nombre;
         private TextView numero;
+        private ImageView logolocal;
 
 private LinearLayout layout;
 
@@ -126,6 +133,8 @@ private LinearLayout layout;
             nombre = (TextView) item.findViewById(R.id.txtnombresec);
             numero = (TextView) item.findViewById(R.id.txtnumerosec);
             layout = (LinearLayout) item.findViewById(R.id.layoutsec);
+            logolocal = item.findViewById(R.id.imglogolocal);
+
 
         //falta color
 
@@ -135,14 +144,23 @@ private LinearLayout layout;
 
             nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroDispensador());
+            Uri fondo = Uri.parse(sector.getFondoh());
 
 
-            File f = new File(getRealPathFromURI(Uri.parse(sector.getFondoh())));
-            Drawable d = Drawable.createFromPath(f.getAbsolutePath());
-            layout.setBackground(d);
+           // File f = new File(getRealPathFromURI(Uri.parse(sector.getFondoh())));
+          //  Drawable d = Drawable.createFromPath(f.getAbsolutePath());
 
-            layout.setBackground(d);
-           // layout.setBackgroundResource(R.drawable.fondos_rotiseria_horizontal); funciona
+            Glide.with(context).load(fondo).into(new SimpleTarget<Drawable>() {
+                @Override
+                public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                    layout.setBackground(resource);
+                }
+            });
+
+
+           //  Glide.with(context).load(uri).into(logolocal);
+
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -32,7 +32,7 @@
             android:layout_weight="2" />
 
         <ImageView
-            android:id="@+id/imageView7"
+            android:id="@+id/imglogolocal"
             android:layout_width="350dp"
             android:layout_height="100dp"
             android:layout_weight="1"

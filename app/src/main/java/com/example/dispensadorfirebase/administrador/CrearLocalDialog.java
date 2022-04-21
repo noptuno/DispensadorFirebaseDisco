@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.aplicaciones.DispensadorTurno;
 import com.example.dispensadorfirebase.clase.Datos;
@@ -179,17 +180,17 @@ private ImageView img;
                         public void onSuccess(Uri uri) {
 
 
-                            img.setImageURI(uri);
-
-                            //mostrarimagen(uri);
-                          //  local.setLogo(uri.toString());
-
+                           // Glide.with(CrearLocalDialog.this).load(uri).into(img);
+                           // img.setImageURI(uri);
+                           // mostrarimagen(uri);
+                            local.setLogo(uri.toString());
+                            databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
+                            finish();
                         }
                     });
 
 
-                   // databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
-                   // finish();
+
                 }
 
             });
