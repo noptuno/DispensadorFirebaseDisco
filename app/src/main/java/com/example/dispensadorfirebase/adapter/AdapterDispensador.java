@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +26,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.clase.SectorLocal;
+import com.example.dispensadorfirebase.clase.Sectores;
 import com.google.android.gms.dynamic.IFragmentWrapper;
 
 import java.io.File;
@@ -38,13 +40,12 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
     private OnNoteSelectedListener onNoteSelectedListener;
     private OnNoteDetailListener onDetailListener;
     private int CantidadSectores;
-private Context context;
+    private Context context;
 
     public AdapterDispensador(int cantidad) {
         this.notes = new ArrayList<>();
         this.CantidadSectores = cantidad;
     }
-
 
     public AdapterDispensador(List<SectorLocal> notes) {
         this.notes = notes;
@@ -54,9 +55,6 @@ private Context context;
     public NoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View elementoTitular;
-
-
-
 
         if (CantidadSectores ==1){
             elementoTitular = LayoutInflater.from(parent.getContext())
@@ -82,12 +80,15 @@ private Context context;
     @Override
     public void onBindViewHolder(NoteViewHolder view, int pos) {
         view.bind(notes.get(pos));
+
     }
+
 
     @Override
     public int getItemCount() {
         return notes.size();
     }
+
 
     public List<SectorLocal> getNotes() {
         return notes;
@@ -96,6 +97,7 @@ private Context context;
     public void setNotes(List<SectorLocal> notes) {
         this.notes = notes;
     }
+
 
     public void setOnNoteSelectedListener(OnNoteSelectedListener onNoteSelectedListener) {
         this.onNoteSelectedListener = onNoteSelectedListener;
@@ -118,14 +120,11 @@ private Context context;
         return notes.get(position);
     }
 
-
-
     public class NoteViewHolder extends RecyclerView.ViewHolder {
         private TextView nombre;
         private TextView numero;
-
-
-private LinearLayout layout;
+        private LinearLayout layout;
+        private boolean ejecutar = false;
 
         public NoteViewHolder(View item) {
             super(item);
@@ -134,36 +133,32 @@ private LinearLayout layout;
             numero = (TextView) item.findViewById(R.id.txtnumerosec);
             layout = (LinearLayout) item.findViewById(R.id.layoutsec);
 
-
-
-        //falta color
-
         }
+
 
         public void bind(final SectorLocal sector) {
 
             nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroDispensador());
+            layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
 
-            Uri fondo;
+            Uri fondo = null;
             if (CantidadSectores>1){
+
                 fondo = Uri.parse(sector.getFondoh());
             }else{
                 fondo = Uri.parse(sector.getFondov());
             }
+
+            CargarImagen(fondo,layout);
+
+
            // File f = new File(getRealPathFromURI(Uri.parse(sector.getFondoh())));
           //  Drawable d = Drawable.createFromPath(f.getAbsolutePath());
-            Glide.with(context).load(fondo).into(new SimpleTarget<Drawable>() {
-                @Override
-                public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
-                    layout.setBackground(resource);
-                }
-            });
+
 
 
            //  Glide.with(context).load(uri).into(logolocal);
-
-
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -175,6 +170,20 @@ private LinearLayout layout;
                 }
             });
         }
+    }
+
+
+    private void CargarImagen(Uri fondo,LinearLayout layout){
+
+        Glide.with(context).load(fondo).into(new SimpleTarget<Drawable>() {
+            @Override
+            public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+
+                layout.setBackground(resource);
+
+            }
+        });
+
     }
 
     private String getRealPathFromURI(Uri contentURI) {

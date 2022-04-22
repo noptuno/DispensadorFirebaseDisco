@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -111,7 +112,7 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
         private TextView nombre;
         private TextView numero;
         private LinearLayout layout;
-
+        private boolean ejecutar = false;
         public NoteViewHolder(View item) {
             super(item);
 
@@ -127,21 +128,33 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
             nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroatendiendo());
             //layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+            Uri fondo = null;
 
-            Uri fondo;
             if (CantidadSectores>1){
-                fondo = Uri.parse(sector.getFondoh());
-            }else{
-                fondo = Uri.parse(sector.getFondov());
-            }
-            // File f = new File(getRealPathFromURI(Uri.parse(sector.getFondoh())));
-            //  Drawable d = Drawable.createFromPath(f.getAbsolutePath());
-            Glide.with(context).load(fondo).into(new SimpleTarget<Drawable>() {
-                @Override
-                public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
-                    layout.setBackground(resource);
+                if (!sector.getFondoh().equals("null")){
+                    fondo = Uri.parse(sector.getFondoh());
+                }else{
+                    layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+                    ejecutar = true;
                 }
-            });
+            }else{
+
+                if (!sector.getFondoh().equals("null")){
+                    fondo = Uri.parse(sector.getFondov());
+                }else{
+                    layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+                    ejecutar = true;
+                }
+
+
+            }
+
+
+            if (!ejecutar){
+                ejecutar = CargarImagen(fondo,layout);
+            }
+
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -154,5 +167,24 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
                 }
             });
         }
+
+        private Boolean CargarImagen(Uri fondo,LinearLayout layout){
+
+            final Boolean[] a = {false};
+
+            Glide.with(context).load(fondo).into(new SimpleTarget<Drawable>() {
+                @Override
+                public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+
+                    layout.setBackground(resource);
+
+                    a[0] = true;
+
+                }
+            });
+
+            return a[0];
+        }
+
     }
 }

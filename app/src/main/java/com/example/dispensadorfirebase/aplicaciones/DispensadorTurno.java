@@ -322,16 +322,12 @@ public class DispensadorTurno extends AppCompatActivity{
 
         userAnswer.requestFocus();
 
-
     }
 
     @Override
     public void onBackPressed() {
 
-       // botonregresar();
-        // super.onBackPressed();
     }
-
 
     private void cargarLogo(String LinkLogo) {
 
@@ -339,11 +335,6 @@ public class DispensadorTurno extends AppCompatActivity{
         Glide.with(getApplicationContext()).load(fondo).into(logo);
 
     }
-
-
-
-
-
 
     private void CargarDatos() {
 
@@ -361,11 +352,13 @@ public class DispensadorTurno extends AppCompatActivity{
                     if (sectores.getEstado()==1){
 
                         for (SectoresElegidos sec : listtemp) {
+
                             if (sec.getNombre().equals(sectores.getNombreSector())){
 
                                 list.add(sectores);
 
                             }
+
                             Log.i("---> Base de ds: ", sectores.toString());
                         }
                     }
