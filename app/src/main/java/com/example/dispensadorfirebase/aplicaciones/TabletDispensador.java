@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -26,11 +27,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.aplicaciones.supervisor.Supervisor_Principal;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
@@ -78,8 +81,8 @@ public class TabletDispensador extends AppCompatActivity {
     private SharedPreferences pref;
     ArrayList<SectoresElegidos> listtemp = new ArrayList<>();;
     private Button configurarnuevamente;
-
-
+    String LOGOLOCAL=null;
+private ImageView logolocal;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +100,7 @@ public class TabletDispensador extends AppCompatActivity {
         click2 = MediaPlayer.create(TabletDispensador.this, R.raw.ckickk);
         constrain = findViewById(R.id.constrainTablet);
 
+        logolocal = findViewById(R.id.logolocaltablet);
 
         configurarnuevamente = findViewById(R.id.btn_configurar3);
 
@@ -183,7 +187,9 @@ public class TabletDispensador extends AppCompatActivity {
             }
         });
 
-
+        if (!LOGOLOCAL.equals("NO")){
+            cargarLogo(LOGOLOCAL);
+        }
 
         actionBar = getSupportActionBar();
         /*
@@ -195,6 +201,15 @@ public class TabletDispensador extends AppCompatActivity {
         });
 */
     }
+
+    private void cargarLogo(String LinkLogo) {
+
+        Uri fondo = Uri.parse(LinkLogo);
+        Glide.with(getApplicationContext()).load(fondo).into(logolocal);
+
+
+    }
+
 
     private void botonregresar() {
 
@@ -591,6 +606,7 @@ public class TabletDispensador extends AppCompatActivity {
         }else{
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
+            LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
         }
 
 

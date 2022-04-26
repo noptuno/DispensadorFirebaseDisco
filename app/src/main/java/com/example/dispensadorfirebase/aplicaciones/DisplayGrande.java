@@ -16,6 +16,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
@@ -32,11 +34,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterDispensador;
 import com.example.dispensadorfirebase.adapter.AdapterDisplayGrande;
@@ -52,6 +56,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -75,8 +80,10 @@ public class DisplayGrande extends AppCompatActivity {
     ArrayList<SectoresElegidos> listtemp = new ArrayList<>();
     private SectorDB db = new SectorDB(this);
     private SharedPreferences pref;
+    String LOGOLOCAL=null;
 
 
+private ImageView logolocal;
     private Button configurarnuevamente;
 
     @Override
@@ -85,6 +92,9 @@ public class DisplayGrande extends AppCompatActivity {
         setContentView(R.layout.activity_display_grande);
 
         configurarnuevamente = findViewById(R.id.btn_configurar);
+
+
+        logolocal = findViewById(R.id.logolocaldisplay);
 
         configurarnuevamente.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +130,10 @@ public class DisplayGrande extends AppCompatActivity {
 
         CargarDatos();
 
+        if (!LOGOLOCAL.equals("NO")){
+            cargarLogo(LOGOLOCAL);
+        }
+
         actionBar = getSupportActionBar();
         /*
         hidebarras();
@@ -132,6 +146,16 @@ public class DisplayGrande extends AppCompatActivity {
 */
 
     }
+
+
+    private void cargarLogo(String LinkLogo) {
+
+        Uri fondo = Uri.parse(LinkLogo);
+        Glide.with(getApplicationContext()).load(fondo).into(logolocal);
+
+
+    }
+
 
 
     private void botonregresar() {
@@ -208,6 +232,7 @@ public class DisplayGrande extends AppCompatActivity {
 
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
+            LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
         }
 
 

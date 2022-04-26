@@ -84,7 +84,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
 
-
         // funcionaldiades
 
         adapter.setOnNoteSelectedListener(new AdapterLocal.OnNoteSelectedListener() {
@@ -95,6 +94,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                 Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionSectores.class);
                 intent.putExtra("LOCAL", note.getNombreLocal());
                 intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+                intent.putExtra("LOGOLOCAL",note.getLogo());
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 

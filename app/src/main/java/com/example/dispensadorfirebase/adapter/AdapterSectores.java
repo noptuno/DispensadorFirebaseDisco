@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dispensadorfirebase.R;
-import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.Sectores;
 
 import java.util.ArrayList;
@@ -97,7 +96,7 @@ private LinearLayout layout;
             nombre = (TextView) item.findViewById(R.id.txtnombresector);
             limite = (TextView) item.findViewById(R.id.txtlimite);
             checkBox = (CheckBox) item.findViewById(R.id.checkBox);
-            layout = (LinearLayout) item.findViewById(R.id.layout);
+            layout = (LinearLayout) item.findViewById(R.id.layoutlocal);
             habilitado  = (TextView) item.findViewById(R.id.textView3);
 
 

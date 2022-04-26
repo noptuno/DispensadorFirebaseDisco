@@ -5,7 +5,7 @@
     android:id="@+id/constrainTablet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondos_tablet_rotiseria_horizontal"
+    android:background="@color/black"
     tools:context=".aplicaciones.TabletDispensador">
 
     <Button
@@ -56,12 +56,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/logolocaltablet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
             android:clickable="false"
-            app:srcCompat="@drawable/logo_disco" />
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/logo_dmr_milrollos" />
 
         <TextView
             android:id="@+id/txttnombresector"

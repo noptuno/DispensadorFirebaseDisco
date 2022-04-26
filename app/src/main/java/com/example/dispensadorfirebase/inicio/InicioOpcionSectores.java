@@ -72,7 +72,7 @@ private Button configurar;
 private TextView localseleccionado, dispositivoseleccionado;
     String NOMBRELOCALSELECCIONADO=null;
     String NOMBREDELDISPOSITIVO=null;
-
+    String LOGOLOCAL=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +86,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
         NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
-
+        LOGOLOCAL = getIntent().getStringExtra("LOGOLOCAL");
 
 
         configurar = findViewById(R.id.btnGuardarConfig);
@@ -142,6 +142,7 @@ private TextView localseleccionado, dispositivoseleccionado;
                     editor.putString("ESTADO", "SI");
                     editor.putString("LOCAL", NOMBRELOCALSELECCIONADO);
                     editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+                    editor.putString("LOGOLOCAL",LOGOLOCAL);
                     editor.apply();
 
 

@@ -96,12 +96,19 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     private boolean validaryguardar(){
         boolean v = false;
         String pass = password.getText().toString();
+
+
+
+
         if (pass.equals("dmr")){
             v = true;
         }
 
+
             return v;
     }
+
+
 
     private void abriraplicacion() {
 

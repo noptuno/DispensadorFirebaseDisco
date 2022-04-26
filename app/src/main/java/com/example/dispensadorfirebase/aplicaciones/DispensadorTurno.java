@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -24,6 +25,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -68,6 +70,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.starmicronics.starioextension.ICommandBuilder;
 import com.starmicronics.starioextension.StarIoExt;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,7 +94,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private AlertDialog Adialog;
     static final int MENSAJERESULT = 0;
     MediaPlayer click, click2;
-
+Bitmap starLogoImage = null;
     ConstraintLayout constrain;
     ActionBar actionBar;
     FirebaseDatabase firebaseDatabase;
@@ -102,7 +105,7 @@ public class DispensadorTurno extends AppCompatActivity{
     int numeroactual;
     String NOMBRELOCALSELECCIONADO=null;
     String NOMBREDELDISPOSITIVO=null;
-
+    String LOGOLOCAL=null;
     AdapterDispensador adapter;
     ArrayList<SectorLocal> list;
     ArrayList<SectoresElegidos> listtemp= new ArrayList<>();
@@ -197,6 +200,10 @@ public class DispensadorTurno extends AppCompatActivity{
 
         CargarDatos();
 
+        if (!LOGOLOCAL.equals("NO")){
+            cargarLogo(LOGOLOCAL);
+        }
+
 
     }
 
@@ -218,6 +225,7 @@ public class DispensadorTurno extends AppCompatActivity{
         }else{
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
+            LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
         }
 
 
@@ -334,11 +342,37 @@ public class DispensadorTurno extends AppCompatActivity{
         Uri fondo = Uri.parse(LinkLogo);
         Glide.with(getApplicationContext()).load(fondo).into(logo);
 
+        File f = new File(getRealPathFromURI(fondo));
+        String filePath = f.getPath();
+        Bitmap a = BitmapFactory.decodeFile(filePath);
+
+        if (a!=null){
+            starLogoImage = a;
+        }else{
+            starLogoImage =BitmapFactory.decodeResource(context.getResources(), R.drawable.logodmrpequeno);
+        }
+
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        Cursor cursor = getApplicationContext().getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            return contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            return cursor.getString(idx);
+        }
     }
 
     private void CargarDatos() {
 
         setProgressDialog();
+
+
+
+
+
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -445,7 +479,8 @@ public class DispensadorTurno extends AppCompatActivity{
         byte[] numeroimprimir = (" "+datos.getNumeroDispensador()).getBytes();
 
 
-        Bitmap starLogoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.logodiscopeque);
+       // Bitmap starLogoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.logodiscopeque);
+
 
         ICommandBuilder builder = StarIoExt.createCommandBuilder(StarIoExt.Emulation.EscPos);
         builder.appendCodePage(ICommandBuilder.CodePageType.UTF8);
@@ -503,7 +538,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
                     }
 
-                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
+                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
                 } else {
                     Toast.makeText(DispensadorTurno.this, "Impreso desconectada, volver a iniciar la app", Toast.LENGTH_LONG).show();

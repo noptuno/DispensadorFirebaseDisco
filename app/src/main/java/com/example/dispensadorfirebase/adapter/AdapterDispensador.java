@@ -83,12 +83,10 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
 
     }
 
-
     @Override
     public int getItemCount() {
         return notes.size();
     }
-
 
     public List<SectorLocal> getNotes() {
         return notes;
@@ -98,7 +96,6 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
         this.notes = notes;
     }
 
-
     public void setOnNoteSelectedListener(OnNoteSelectedListener onNoteSelectedListener) {
         this.onNoteSelectedListener = onNoteSelectedListener;
     }
@@ -106,7 +103,6 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
     public void setOnDetailListener(OnNoteDetailListener onDetailListener) {
         this.onDetailListener = onDetailListener;
     }
-
 
     public interface OnNoteSelectedListener {
         void onClick(SectorLocal note);
@@ -121,6 +117,7 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
     }
 
     public class NoteViewHolder extends RecyclerView.ViewHolder {
+
         private TextView nombre;
         private TextView numero;
         private LinearLayout layout;
@@ -129,18 +126,22 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
         public NoteViewHolder(View item) {
             super(item);
 
+
             nombre = (TextView) item.findViewById(R.id.txtnombresec);
             numero = (TextView) item.findViewById(R.id.txtnumerosec);
             layout = (LinearLayout) item.findViewById(R.id.layoutsec);
+
 
         }
 
 
         public void bind(final SectorLocal sector) {
 
+
             nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroDispensador());
             layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+
 
             Uri fondo = null;
             if (CantidadSectores>1){
@@ -150,15 +151,16 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
                 fondo = Uri.parse(sector.getFondov());
             }
 
+
             CargarImagen(fondo,layout);
+
 
 
            // File f = new File(getRealPathFromURI(Uri.parse(sector.getFondoh())));
           //  Drawable d = Drawable.createFromPath(f.getAbsolutePath());
-
-
-
            //  Glide.with(context).load(uri).into(logolocal);
+
+
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -171,7 +173,6 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
             });
         }
     }
-
 
     private void CargarImagen(Uri fondo,LinearLayout layout){
 
