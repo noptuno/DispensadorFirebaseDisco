@@ -21,17 +21,17 @@
     <LinearLayout
         android:id="@+id/layoutsec"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="380dp"
         android:layout_margin="15dp"
-        android:background="#E91E63"
+        android:background="@color/black"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/txtnombresec"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="FARMACEUTICA "
             android:textColor="#F8F7F7"
@@ -40,12 +40,12 @@
 
         <TextView
             android:id="@+id/txtnumerosec"
-            android:layout_width="150dp"
-            android:layout_height="350dp"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:background="@drawable/fondoturnoblanco"
             android:gravity="center"
             android:text="10"

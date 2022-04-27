@@ -21,20 +21,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
-        android:background="@drawable/fondos_carniceria_vertical"
+        android:background="@color/black"
         android:gravity="center"
         android:orientation="vertical">
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="3.5" />
 
         <TextView
             android:id="@+id/txtnombresec"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:gravity="center"
             android:text="PESCADERIA"
             android:textColor="#F8F7F7"
@@ -66,7 +66,7 @@
             <TextView
                 android:id="@+id/txtnumerosec"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="350dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="5dp"
@@ -83,7 +83,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2" />
+            android:layout_weight="1.5" />
 
     </LinearLayout>
 

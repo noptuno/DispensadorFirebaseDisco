@@ -29,6 +29,10 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
     private OnNoteDetailListener onDetailListener;
     private int CantidadSectores;
     private Context context;
+    private boolean ejecutado = false;
+    private int numerofuncion = 0;
+
+
     public AdapterDisplayGrande(int cantidad) {
         this.notes = new ArrayList<>();
         this.CantidadSectores = cantidad;
@@ -125,36 +129,25 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
 
         public void bind(final SectorLocal sector) {
 
-            nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroatendiendo());
-            //layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
-            Uri fondo = null;
 
-            if (CantidadSectores>1){
-                if (!sector.getFondoh().equals("null")){
+            if (!ejecutado){
+
+                nombre.setText(sector.getNombreSector());
+                layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+                Uri fondo = null;
+                if (CantidadSectores>1){
                     fondo = Uri.parse(sector.getFondoh());
                 }else{
-                    layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
-                    ejecutar = true;
-                }
-            }else{
-
-                if (!sector.getFondoh().equals("null")){
                     fondo = Uri.parse(sector.getFondov());
-                }else{
-                    layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
-                    ejecutar = true;
+                }
+                CargarImagen(fondo,layout);
+                numerofuncion++;
+                if (numerofuncion == CantidadSectores){
+                    ejecutado=true;
                 }
 
-
             }
-
-
-            if (!ejecutar){
-                ejecutar = CargarImagen(fondo,layout);
-            }
-
-
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

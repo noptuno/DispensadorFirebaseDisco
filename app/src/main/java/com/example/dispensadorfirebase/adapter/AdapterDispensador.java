@@ -41,6 +41,9 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
     private OnNoteDetailListener onDetailListener;
     private int CantidadSectores;
     private Context context;
+private boolean ejecutado = false;
+private int numerofuncion = 0;
+
 
     public AdapterDispensador(int cantidad) {
         this.notes = new ArrayList<>();
@@ -137,22 +140,27 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
 
         public void bind(final SectorLocal sector) {
 
-
-            nombre.setText(sector.getNombreSector());
             numero.setText("" +sector.getNumeroDispensador());
-            layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+
+            if (!ejecutado){
+
+                nombre.setText(sector.getNombreSector());
+                layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+                Uri fondo = null;
+                if (CantidadSectores>1){
+                    fondo = Uri.parse(sector.getFondoh());
+                }else{
+                    fondo = Uri.parse(sector.getFondov());
+                }
+                CargarImagen(fondo,layout);
 
 
-            Uri fondo = null;
-            if (CantidadSectores>1){
+                numerofuncion++;
+                if (numerofuncion == CantidadSectores){
+                    ejecutado=true;
+                }
 
-                fondo = Uri.parse(sector.getFondoh());
-            }else{
-                fondo = Uri.parse(sector.getFondov());
             }
-
-
-            CargarImagen(fondo,layout);
 
 
 

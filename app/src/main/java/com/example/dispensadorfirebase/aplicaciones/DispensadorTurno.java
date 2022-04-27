@@ -144,6 +144,7 @@ Bitmap starLogoImage = null;
         logo = findViewById(R.id.imviewlogolocal);
 
         list = new ArrayList<>();
+
         adapter = new AdapterDispensador(listtemp.size());
 
 
