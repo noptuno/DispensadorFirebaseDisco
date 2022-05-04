@@ -95,6 +95,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                 intent.putExtra("LOCAL", note.getNombreLocal());
                 intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                 intent.putExtra("LOGOLOCAL",note.getLogo());
+                intent.putExtra("LOGOLOCALIMPRE",note.getLogoImpresion());
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 

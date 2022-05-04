@@ -147,13 +147,13 @@ private int numerofuncion = 0;
                 nombre.setText(sector.getNombreSector());
                 layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
                 Uri fondo = null;
+
                 if (CantidadSectores>1){
                     fondo = Uri.parse(sector.getFondoh());
                 }else{
                     fondo = Uri.parse(sector.getFondov());
                 }
                 CargarImagen(fondo,layout);
-
 
                 numerofuncion++;
                 if (numerofuncion == CantidadSectores){

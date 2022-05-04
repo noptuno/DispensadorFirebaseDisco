@@ -138,9 +138,6 @@ private LinearLayout layout;
             layout.setBackgroundColor(color);
 
 
-
-
-
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

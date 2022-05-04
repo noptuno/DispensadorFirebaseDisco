@@ -6,6 +6,7 @@ public class Local {
     int NumeroLocal;
     String EstadoLocal;
     String logo;
+    String logoImpresion;
 
     public String getLogo() {
         return logo;
@@ -18,6 +19,14 @@ public class Local {
     public Local() {
     }
 
+    public String getLogoImpresion() {
+        return logoImpresion;
+    }
+
+    public void setLogoImpresion(String logoImpresion) {
+        this.logoImpresion = logoImpresion;
+    }
+
     public String getEstadoLocal() {
         return EstadoLocal;
     }
@@ -26,11 +35,12 @@ public class Local {
         EstadoLocal = estadoLocal;
     }
 
-    public Local(String nombreLocal, int numeroLocal, String estadoLocal,String logo) {
+    public Local(String nombreLocal, int numeroLocal, String estadoLocal,String logo,String logoimpresion) {
         NombreLocal = nombreLocal;
         NumeroLocal = numeroLocal;
         EstadoLocal = estadoLocal;
         this.logo = logo;
+        this.logoImpresion = logoimpresion;
     }
 
     public String getNombreLocal() {

@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
@@ -71,6 +72,7 @@ import com.starmicronics.starioextension.ICommandBuilder;
 import com.starmicronics.starioextension.StarIoExt;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -106,6 +108,7 @@ Bitmap starLogoImage = null;
     String NOMBRELOCALSELECCIONADO=null;
     String NOMBREDELDISPOSITIVO=null;
     String LOGOLOCAL=null;
+    String LOGOLOCALIMPRE=null;
     AdapterDispensador adapter;
     ArrayList<SectorLocal> list;
     ArrayList<SectoresElegidos> listtemp= new ArrayList<>();
@@ -201,8 +204,8 @@ Bitmap starLogoImage = null;
 
         CargarDatos();
 
-        if (!LOGOLOCAL.equals("NO")){
-            cargarLogo(LOGOLOCAL);
+        if (!LOGOLOCAL.equals("NO") && !LOGOLOCALIMPRE.equals("NO")){
+            cargarLogo(LOGOLOCAL,LOGOLOCALIMPRE);
         }
 
 
@@ -227,6 +230,7 @@ Bitmap starLogoImage = null;
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
             LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
+            LOGOLOCALIMPRE= pref.getString("LOGOLOCALIMPRE","NO");
         }
 
 
@@ -338,20 +342,30 @@ Bitmap starLogoImage = null;
 
     }
 
-    private void cargarLogo(String LinkLogo) {
+    private void cargarLogo(String logolocal,String logoimpre) {
 
-        Uri fondo = Uri.parse(LinkLogo);
-        Glide.with(getApplicationContext()).load(fondo).into(logo);
+        Uri templogolocal = Uri.parse(logolocal);
+        Uri templogolocalimpre = Uri.parse(logoimpre);
 
-        File f = new File(getRealPathFromURI(fondo));
-        String filePath = f.getPath();
-        Bitmap a = BitmapFactory.decodeFile(filePath);
+        Glide.with(getApplicationContext()).load(templogolocal).into(logo);
 
-        if (a!=null){
-            starLogoImage = a;
-        }else{
-            starLogoImage =BitmapFactory.decodeResource(context.getResources(), R.drawable.logodmrpequeno);
-        }
+
+        Glide.with(getApplicationContext()).load(templogolocalimpre).into(new SimpleTarget<Drawable>() {
+            @Override
+            public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+
+                Bitmap bitmap = ((BitmapDrawable)resource).getBitmap();
+
+                if (bitmap!=null){
+                    starLogoImage = bitmap;
+                }else{
+                    starLogoImage = null;
+                }
+            }
+        });
+
+
+
 
     }
 
@@ -369,9 +383,6 @@ Bitmap starLogoImage = null;
     private void CargarDatos() {
 
         setProgressDialog();
-
-
-
 
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
@@ -480,15 +491,19 @@ Bitmap starLogoImage = null;
         byte[] numeroimprimir = (" "+datos.getNumeroDispensador()).getBytes();
 
 
-       // Bitmap starLogoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.logodiscopeque);
+        //Bitmap starLogoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.logodiscopeque);
 
 
         ICommandBuilder builder = StarIoExt.createCommandBuilder(StarIoExt.Emulation.EscPos);
         builder.appendCodePage(ICommandBuilder.CodePageType.UTF8);
         builder.beginDocument();
-        builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
-        builder.appendBitmap(starLogoImage, false);
-        builder.appendLineFeed();
+        if (starLogoImage!=null){
+
+            builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
+            builder.appendBitmap(starLogoImage, false);
+            builder.appendLineFeed();
+        }
+
 
 
         //*********************************

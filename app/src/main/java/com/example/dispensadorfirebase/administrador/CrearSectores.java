@@ -27,6 +27,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -62,6 +63,7 @@ public class CrearSectores extends AppCompatActivity {
     private Button btnregistrar, btnnuevosector, btnred, btnblue, btnorange, btngreen, btnpurple,btnblueOscuro,subirh,subirv;
     private EditText nombre, limite;
     private TextView txtcolorseleccionado;
+
     private String color = "#B30D0D";
     private LinearLayout layoutPrincipal;
     AlertDialog Adialog;

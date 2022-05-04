@@ -73,6 +73,8 @@ private TextView localseleccionado, dispositivoseleccionado;
     String NOMBRELOCALSELECCIONADO=null;
     String NOMBREDELDISPOSITIVO=null;
     String LOGOLOCAL=null;
+    String LOGOLOCALIMPRE=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,10 +85,11 @@ private TextView localseleccionado, dispositivoseleccionado;
         ocultarbarra();
 
 
-
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
         NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
         LOGOLOCAL = getIntent().getStringExtra("LOGOLOCAL");
+        LOGOLOCALIMPRE = getIntent().getStringExtra("LOGOLOCALIMPRE");
+
 
 
         configurar = findViewById(R.id.btnGuardarConfig);
@@ -132,10 +135,9 @@ private TextView localseleccionado, dispositivoseleccionado;
                     }
 
 
-                    intent.putExtra("LOCAL", NOMBRELOCALSELECCIONADO);
-                    intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
 
                     SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = pref.edit();
@@ -143,9 +145,8 @@ private TextView localseleccionado, dispositivoseleccionado;
                     editor.putString("LOCAL", NOMBRELOCALSELECCIONADO);
                     editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                     editor.putString("LOGOLOCAL",LOGOLOCAL);
+                    editor.putString("LOGOLOCALIMPRE",LOGOLOCALIMPRE);
                     editor.apply();
-
-
 
                     InicioOpcionSectores.this.finish();
 

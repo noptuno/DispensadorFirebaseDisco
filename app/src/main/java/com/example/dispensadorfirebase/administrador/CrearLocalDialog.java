@@ -50,7 +50,7 @@ public class CrearLocalDialog extends AppCompatActivity {
     //varaibles layout
     EditText NombreLocal,NumeroLocal;
     TextView EstadoLocal;
-    Button Guardar,Cancelar,subir;
+    Button Guardar,Cancelar,subir,subirimpre;
 
     Uri descargarFoto= Uri.parse("");
     //variables lcoales
@@ -58,9 +58,15 @@ public class CrearLocalDialog extends AppCompatActivity {
     Local local;
 
     private static final int GALERY_INTENT = 1;
+    private static final int GALERY_INTENT_IMPRE = 2;
 
-    private Uri linkUriLogo = Uri.parse("");
-    private Uri contentlogo = Uri.parse("");
+    private Uri logoLocal = Uri.parse("");
+    private Uri logoimpreLocal = Uri.parse("");
+
+
+    private ImageView imglogo, imgimpre;
+
+
 private ImageView img;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +80,10 @@ private ImageView img;
       Cancelar= findViewById(R.id.btnCancelar);
         img = findViewById(R.id.imgview);
         subir = findViewById(R.id.btnSubir);
+        subirimpre = findViewById(R.id.btnsubirlogoimpre);
+
+        imglogo = findViewById(R.id.imgview);
+        imgimpre = findViewById(R.id.imageviewimpre);
 
       inicializarFirebase();
 
@@ -88,6 +98,19 @@ private ImageView img;
                 startActivityForResult(intent,GALERY_INTENT);
             }
         });
+
+
+        subirimpre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent,GALERY_INTENT_IMPRE);
+            }
+        });
+
+
 
 
 
@@ -108,8 +131,16 @@ private ImageView img;
                 int num=Integer.parseInt(val1);
                 String est = "true";
                 String logo = "null";
-                Local local=new Local(nom,num,est,logo);
+                String logoimpresion = "null";
+                Local local=new Local(nom,num,est,logo,logoimpresion);
+
+
+                if (!logoimpreLocal.toString().isEmpty() && !logoLocal.toString().isEmpty()){
+                    local.setLogo(logoLocal.toString());
+                    local.setLogoImpresion(logoimpreLocal.toString());
+                }
                 RegistroFirebase(local);
+
 
 
             }
@@ -123,11 +154,54 @@ private ImageView img;
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Uri uri = data.getData();
+
         if (requestCode == GALERY_INTENT && resultCode == RESULT_OK){
 
-            linkUriLogo = data.getData();
+
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(uri.getLastPathSegment());
+            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    Task<Uri> descargarFoto = taskSnapshot.getStorage().getDownloadUrl();
+                    descargarFoto.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            Glide.with(CrearLocalDialog.this).load(uri).into(imglogo);
+
+                            logoLocal = uri;
 
 
+
+                        }
+                    });
+                }
+            });
+
+
+        }else if(requestCode == GALERY_INTENT_IMPRE && resultCode == RESULT_OK){
+
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(uri.getLastPathSegment());
+            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    Task<Uri> descargarFoto = taskSnapshot.getStorage().getDownloadUrl();
+                    descargarFoto.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                             Glide.with(CrearLocalDialog.this).load(uri).into(imgimpre);
+                           //  img.setImageURI(uri);
+                            // mostrarimagen(uri);
+                            logoimpreLocal = uri;
+
+                        }
+                    });
+                }
+            });
 
         }
 
@@ -168,33 +242,9 @@ private ImageView img;
     private void RegistroFirebase(Local local) {
 
 
-            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).child(linkUriLogo.getLastPathSegment());
-            filePath.putFile(linkUriLogo).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-
-                    Task<Uri> descargarFoto = taskSnapshot.getStorage().getDownloadUrl();
-                    descargarFoto.addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-
-
-                           // Glide.with(CrearLocalDialog.this).load(uri).into(img);
-                           // img.setImageURI(uri);
-                           // mostrarimagen(uri);
-                            local.setLogo(uri.toString());
-                            databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
-                            finish();
-                        }
-                    });
-
-
-
-                }
-
-            });
-
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
+        finish();
 
     }
 
