@@ -3,6 +3,7 @@ package com.example.dispensadorfirebase.aplicaciones;
 import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -57,6 +58,7 @@ import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterDispensador;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Local;
+import com.example.dispensadorfirebase.clase.SectorHistorico;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
 import com.example.dispensadorfirebase.inicio.InicioOpcionDispositivo;
@@ -68,11 +70,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.starmicronics.starioextension.ICommandBuilder;
 import com.starmicronics.starioextension.StarIoExt;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -342,14 +350,14 @@ Bitmap starLogoImage = null;
 
     }
 
+
+
     private void cargarLogo(String logolocal,String logoimpre) {
 
         Uri templogolocal = Uri.parse(logolocal);
         Uri templogolocalimpre = Uri.parse(logoimpre);
 
         Glide.with(getApplicationContext()).load(templogolocal).into(logo);
-
-
         Glide.with(getApplicationContext()).load(templogolocalimpre).into(new SimpleTarget<Drawable>() {
             @Override
             public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
@@ -364,10 +372,9 @@ Bitmap starLogoImage = null;
             }
         });
 
-
-
-
     }
+
+
 
     private String getRealPathFromURI(Uri contentURI) {
         Cursor cursor = getApplicationContext().getContentResolver().query(contentURI, null, null, null, null);
@@ -554,6 +561,8 @@ Bitmap starLogoImage = null;
 
                     }
 
+                   // registrarHistorico(datos,fecha);
+
                     databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
                 } else {
@@ -570,8 +579,90 @@ Bitmap starLogoImage = null;
 
     }
 
+    private void registrarHistorico(SectorLocal sector,String fecha) {
 
-     private void usb() {
+        //Crear Clase de Registro
+
+        SectorHistorico historico = new SectorHistorico();
+
+        historico.setCliente(NOMBREBASEDEDATOSFIREBASE);
+        historico.setLocal(BASEDATOSLOCALES);
+        historico.setTicket(sector.getUltimoNumeroDispensador());
+        historico.setFecha_entrega(fecha);
+        historico.setHora_entrega(fecha);
+        historico.setFecha_atencion("");
+        historico.setHora_atencion("");
+
+
+        Gson gson = new Gson();
+        String JSON = gson.toJson(historico);
+
+        String NombreHistorico = "historico1.txt";
+        String[] archivos = fileList();
+
+
+        if (existe(archivos, NombreHistorico)){
+
+          // grabar(JSON,NombreHistorico);
+
+                try{
+                    InputStreamReader archivo = new InputStreamReader(openFileInput(NombreHistorico));
+                    BufferedReader br = new BufferedReader(archivo);
+                    String linea = br.readLine();
+                    String todo = "";
+
+                    while (linea != null) {
+                        todo = todo + linea + "\n";
+                        linea = br.readLine();
+                    }
+                    br.close();
+                    archivo.close();
+                    Log.e("Print Json",todo );
+
+                }catch (Exception e){
+
+                }
+
+
+
+
+        }else{
+            grabar(JSON,NombreHistorico);
+        }
+
+
+        //Crear Json
+        //Crear archivo con fecha actual || valdiar que exita
+        //agregarle los datos del Json
+
+        //Luego subir el archivo txt a la firebase
+
+    }
+
+    private boolean existe(String[] archivos, String archbusca) {
+        for (int f = 0; f < archivos.length; f++)
+            if (archbusca.equals(archivos[f]))
+                return true;
+        return false;
+    }
+
+    public void grabar(String v,String NombreHistorico) {
+        try {
+
+            OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput(NombreHistorico, Activity.MODE_PRIVATE));
+            archivo.write(v+"\r\n");
+            archivo.flush();
+            archivo.close();
+        } catch (IOException e) {
+        }
+        Toast t = Toast.makeText(this, "Los datos fueron grabados",Toast.LENGTH_SHORT);
+        t.show();
+    }
+
+
+
+
+    private void usb() {
 
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
