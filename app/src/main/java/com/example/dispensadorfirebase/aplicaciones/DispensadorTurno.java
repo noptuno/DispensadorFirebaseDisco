@@ -57,6 +57,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterDispensador;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
+import com.example.dispensadorfirebase.clase.ClaseHistorico;
 import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorHistorico;
 import com.example.dispensadorfirebase.clase.SectorLocal;
@@ -87,6 +88,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 public class DispensadorTurno extends AppCompatActivity{
@@ -561,7 +563,7 @@ Bitmap starLogoImage = null;
 
                     }
 
-                   // registrarHistorico(datos,fecha);
+                    registrarHistorico(datos,fecha);
 
                     databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
@@ -583,53 +585,82 @@ Bitmap starLogoImage = null;
 
         //Crear Clase de Registro
 
-        SectorHistorico historico = new SectorHistorico();
+        SectorHistorico datos = new SectorHistorico();
 
-        historico.setCliente(NOMBREBASEDEDATOSFIREBASE);
-        historico.setLocal(BASEDATOSLOCALES);
-        historico.setTicket(sector.getUltimoNumeroDispensador());
-        historico.setFecha_entrega(fecha);
-        historico.setHora_entrega(fecha);
-        historico.setFecha_atencion("");
-        historico.setHora_atencion("");
-
+        datos.setCliente(NOMBREBASEDEDATOSFIREBASE);
+        datos.setLocal(BASEDATOSLOCALES);
+        datos.setTicket(sector.getUltimoNumeroDispensador());
+        datos.setFecha_entrega(fecha);
+        datos.setHora_entrega(fecha);
+        datos.setFecha_atencion("");
+        datos.setHora_atencion("");
 
         Gson gson = new Gson();
+
+        List<SectorHistorico> menu = new ArrayList<>();
+        menu.add(datos);
+
+        ClaseHistorico historico = new ClaseHistorico("IDCLASE", menu);
         String JSON = gson.toJson(historico);
 
-        String NombreHistorico = "historico1.txt";
-        String[] archivos = fileList();
 
+        String NombreHistorico = "historico6.txt";
+        String[] archivos = fileList();
 
         if (existe(archivos, NombreHistorico)){
 
           // grabar(JSON,NombreHistorico);
 
                 try{
+
                     InputStreamReader archivo = new InputStreamReader(openFileInput(NombreHistorico));
                     BufferedReader br = new BufferedReader(archivo);
                     String linea = br.readLine();
                     String todo = "";
 
                     while (linea != null) {
+
                         todo = todo + linea + "\n";
                         linea = br.readLine();
                     }
+
                     br.close();
                     archivo.close();
-                    Log.e("Print Json",todo );
+
+                    ClaseHistorico generalInfoObject = gson.fromJson(todo, ClaseHistorico.class);
+
+                    generalInfoObject.setHistorico(menu);
+
+                    String JSONn = gson.toJson(generalInfoObject);
+
+                    Log.e("Print Json",JSONn );
+
+                    grabar(JSONn,NombreHistorico);
 
                 }catch (Exception e){
 
                 }
 
-
-
+/*
+            BufferedWriter out = null;
+            try {
+                out = new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(NombreHistorico, true)));
+                out.write(JSON+"\r\n");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+*/
 
         }else{
             grabar(JSON,NombreHistorico);
         }
-
 
         //Crear Json
         //Crear archivo con fecha actual || valdiar que exita
@@ -640,10 +671,18 @@ Bitmap starLogoImage = null;
     }
 
     private boolean existe(String[] archivos, String archbusca) {
-        for (int f = 0; f < archivos.length; f++)
-            if (archbusca.equals(archivos[f]))
-                return true;
-        return false;
+
+        Boolean a = false;
+        for (int f = 0; f < archivos.length; f++){
+            Log.e("Base Archivos: ",archivos[f]);
+            if (archbusca.equals(archivos[f])){
+                a = true;
+                break;
+            }
+
+        }
+
+        return a;
     }
 
     public void grabar(String v,String NombreHistorico) {
@@ -658,9 +697,6 @@ Bitmap starLogoImage = null;
         Toast t = Toast.makeText(this, "Los datos fueron grabados",Toast.LENGTH_SHORT);
         t.show();
     }
-
-
-
 
     private void usb() {
 
@@ -832,6 +868,99 @@ Bitmap starLogoImage = null;
             }
         }
     }
+/*
+    private static String SPACE = "  ";
 
+    public static String formatJson(String json) {
+        StringBuffer result = new StringBuffer();
 
+        int length = json.length();
+        int number = 0;
+        char key = 0;
+
+        // Atraviesa la cadena de entrada.
+        for (int i = 0; i < length; i++) {
+            // 1. Obtiene el personaje actual.
+            key = json.charAt(i);
+
+            // 2. Si el carácter actual es un corchete frontal o un corchete frontal, haga lo siguiente:
+            if ((key == '[') || (key == '{')) {
+                // (1) Si hay caracteres antes y los caracteres son ":", imprima: avance de línea y sangría de cadena de caracteres.
+                if ((i - 1 > 0) && (json.charAt(i - 1) == ':')) {
+                    result.append('\n');
+                    result.append("allow");
+                    result.append(":");
+                    //result.append(indent(number));
+                }
+
+                // (2) Imprimir: carácter actual.
+                result.append(key);
+
+                // (3) Deben seguirse los corchetes delanteros, los corchetes delanteros y los saltos de línea. Impresión: avance de línea.
+                result.append('\n');
+
+                // (4) Cada vez que aparecen el corchete frontal y el corchete frontal, el número de sangría aumenta en uno. Impresión: sangra la nueva línea.
+                number++;
+                result.append(indent(number));
+
+                // (5) Pasar al siguiente ciclo.
+                continue;
+            }
+
+            // 3. Si el carácter actual es un corchete posterior o un corchete posterior, haga lo siguiente:
+            if ((key == ']') || (key == '}')) {
+                // (1) Los corchetes traseros, los corchetes traseros, deben envolver antes. Impresión: avance de línea.
+                result.append('\n');
+
+                // (2) Cada vez que aparecen el corchete trasero y el corchete trasero, el número de sangría se reduce en uno. Impresión: sangría.
+                number--;
+                result.append(indent(number));
+
+                // (3) Imprimir: carácter actual.
+                result.append(key);
+
+                // (4) Si hay caracteres después del carácter actual y el carácter no es ",", imprime: salto de línea.
+                if (((i + 1) < length) && (json.charAt(i + 1) != ',')) {
+                    //result.append('\n');
+                }
+
+                // (5) Continuar con el siguiente ciclo.
+                continue;
+            }
+            // 4. Si el carácter actual es una coma. Salto de línea después de la coma y sangría sin cambiar el número de sangrías.
+            if ((key == ',')) {
+                result.append(key);
+                //result.append('\n');
+                result.append(indent(number));
+                continue;
+            }
+            // 5. Imprimir: carácter actual.
+            result.append(key);
+        }
+        return result.toString();
+    }
+    private static String indent(int number) {
+        StringBuffer result = new StringBuffer();
+        for (int i = 0; i < number; i++) {
+            result.append(SPACE);
+        }
+        return result.toString();
+    }
+
+    public static String formatJson2(String json) {
+        StringBuffer result = new StringBuffer();
+        result.append("{");
+        result.append("\n");
+        result.append(SPACE);
+        // Agregar cadena json
+        result.append('"');
+        result.append("allow");
+        result.append('"');
+        result.append(":");
+        result.append(json);
+        result.append("\n");
+        result.append("}");
+        return result.toString();
+    }
+    */
 }

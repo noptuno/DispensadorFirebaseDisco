@@ -1,5 +1,9 @@
 package com.example.dispensadorfirebase.clase;
 
+
+import java.util.List;
+
+
 public class SectorHistorico {
     String cliente;
     String local;
@@ -11,6 +15,7 @@ public class SectorHistorico {
     //tablet->
     String fecha_atencion;
     String hora_atencion;
+
 
     public SectorHistorico() {
 
