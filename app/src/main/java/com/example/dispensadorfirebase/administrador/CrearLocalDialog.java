@@ -41,7 +41,7 @@ public class CrearLocalDialog extends AppCompatActivity {
 
     private  StorageReference mstorage;
 
-
+String CLIENTE = "DISCO";
     //referencia firebase
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -159,7 +159,7 @@ private ImageView img;
         if (requestCode == GALERY_INTENT && resultCode == RESULT_OK){
 
 
-            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(uri.getLastPathSegment());
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(uri.getLastPathSegment());
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -183,7 +183,7 @@ private ImageView img;
 
         }else if(requestCode == GALERY_INTENT_IMPRE && resultCode == RESULT_OK){
 
-            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(uri.getLastPathSegment());
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(uri.getLastPathSegment());
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -243,8 +243,8 @@ private ImageView img;
 
 
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
-        finish();
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
+        //finish();
 
     }
 

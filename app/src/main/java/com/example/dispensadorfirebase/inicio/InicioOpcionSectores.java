@@ -27,7 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.provider.Settings.Secure;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterLocal;
 import com.example.dispensadorfirebase.adapter.AdapterSectorLocal;
@@ -72,6 +72,7 @@ private Button configurar;
 private TextView localseleccionado, dispositivoseleccionado;
     String NOMBRELOCALSELECCIONADO=null;
     String NOMBREDELDISPOSITIVO=null;
+    String CLIENTE=null;
     String LOGOLOCAL=null;
     String LOGOLOCALIMPRE=null;
 
@@ -84,7 +85,7 @@ private TextView localseleccionado, dispositivoseleccionado;
         inicializarFirebase();
         ocultarbarra();
 
-
+        CLIENTE= getIntent().getStringExtra("CLIENTE");
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
         NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
         LOGOLOCAL = getIntent().getStringExtra("LOGOLOCAL");
@@ -139,16 +140,32 @@ private TextView localseleccionado, dispositivoseleccionado;
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
 
-                    SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString("ESTADO", "SI");
-                    editor.putString("LOCAL", NOMBRELOCALSELECCIONADO);
-                    editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
-                    editor.putString("LOGOLOCAL",LOGOLOCAL);
-                    editor.putString("LOGOLOCALIMPRE",LOGOLOCALIMPRE);
-                    editor.apply();
+                        try {
 
-                    InicioOpcionSectores.this.finish();
+                            SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString("ESTADO", "SI");
+                            editor.putString("CLIENTE", CLIENTE);
+                            editor.putString("LOCAL", NOMBRELOCALSELECCIONADO);
+                            editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+                            editor.putString("LOGOLOCAL",LOGOLOCAL);
+                            editor.putString("LOGOLOCALIMPRE",LOGOLOCALIMPRE);
+                            editor.apply();
+
+
+                            String id = Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
+                            // guardar base de datos Firebase
+                            Toast.makeText(InicioOpcionSectores.this, "Guardo: " + id , Toast.LENGTH_LONG).show();
+
+                            InicioOpcionSectores.this.finish();
+
+                        }catch (Exception e){
+
+                            Toast.makeText(InicioOpcionSectores.this, "Hubo un Error", Toast.LENGTH_LONG).show();
+
+                        }
+
+
 
                 }else{
                     Toast.makeText(InicioOpcionSectores.this, "Debe Elegir menos Sectores para Este Dispositivo", Toast.LENGTH_LONG).show();
@@ -237,7 +254,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
         setProgressDialog();
 
-        this.databaseReferencesectores.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addListenerForSingleValueEvent(new ValueEventListener() {
+        this.databaseReferencesectores.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

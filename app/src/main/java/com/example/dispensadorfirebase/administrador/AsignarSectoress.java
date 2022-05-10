@@ -49,8 +49,10 @@ public class AsignarSectoress extends AppCompatActivity {
         AlertDialog Adialog;
         FirebaseDatabase firebaseDatabase;
         DatabaseReference databaseReference;
-
+        String CLIENTE;
        String NOMBRELOCALSELECCIONADO=null;
+
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -61,7 +63,7 @@ public class AsignarSectoress extends AppCompatActivity {
 
 
             NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
-
+            CLIENTE = getIntent().getStringExtra("CLIENTE");
 
             listnombresectores = new ArrayList<>();
             listsectoreslocal = new ArrayList<>();
@@ -85,6 +87,7 @@ public class AsignarSectoress extends AppCompatActivity {
                 public void onClick(View view) {
 
                     Intent intent = new Intent(AsignarSectoress.this, CrearSectores.class);
+                    intent.putExtra("CLIENTE", CLIENTE);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
@@ -127,7 +130,7 @@ public class AsignarSectoress extends AppCompatActivity {
                 @Override
                 public void onDetail(SectorLocal note) {
 
-                    databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
+                    databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
 
                 }
             });
@@ -163,7 +166,7 @@ public class AsignarSectoress extends AppCompatActivity {
 
                 SectorLocal datos = new SectorLocal(0,0,0,limite,0,nombre,color,0,0,1,0,fondoH,fondoV);
 
-                databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(setor.getNombre()).setValue(datos);
+                databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(setor.getNombre()).setValue(datos);
 
 
             }
@@ -179,7 +182,7 @@ public class AsignarSectoress extends AppCompatActivity {
 
             setProgressDialog();
 
-            databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
+            databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -281,7 +284,7 @@ public class AsignarSectoress extends AppCompatActivity {
     private void cargarListaNombresSectores() {
 
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSSECTORESTEMP).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

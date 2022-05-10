@@ -116,6 +116,7 @@ Bitmap starLogoImage = null;
     private UsbManager usbManager;
     int numeroactual;
     String NOMBRELOCALSELECCIONADO=null;
+    String CLIENTE=null;
     String NOMBREDELDISPOSITIVO=null;
     String LOGOLOCAL=null;
     String LOGOLOCALIMPRE=null;
@@ -241,6 +242,7 @@ Bitmap starLogoImage = null;
             NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
             LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
             LOGOLOCALIMPRE= pref.getString("LOGOLOCALIMPRE","NO");
+            CLIENTE= pref.getString("CLIENTE","NO");
         }
 
 
@@ -394,7 +396,7 @@ Bitmap starLogoImage = null;
         setProgressDialog();
 
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -565,7 +567,7 @@ Bitmap starLogoImage = null;
 
                     registrarHistorico(datos,fecha);
 
-                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
+                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
                 } else {
                     Toast.makeText(DispensadorTurno.this, "Impreso desconectada, volver a iniciar la app", Toast.LENGTH_LONG).show();

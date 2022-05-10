@@ -72,6 +72,8 @@ public class CrearSectores extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
 
+    String CLIENTE;
+
     private  StorageReference mstorage;
     Uri fondoh = Uri.parse(""), fondov= Uri.parse("");
 
@@ -87,7 +89,7 @@ public class CrearSectores extends AppCompatActivity {
 
         subirh = findViewById(R.id.btnsubirH);
         subirv = findViewById(R.id.btnSubirV);
-
+        CLIENTE = getIntent().getStringExtra("CLIENTE");
 
         listnombresectores = new ArrayList<>();
         layoutPrincipal = findViewById(R.id.layoutbotones);
@@ -230,9 +232,7 @@ public class CrearSectores extends AppCompatActivity {
         if (requestCode == GALERY_INTENT_V && resultCode == RESULT_OK){
 
 
-
-
-            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).child(uri.getLastPathSegment());
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSSECTORESTEMP).child(uri.getLastPathSegment());
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -258,7 +258,7 @@ public class CrearSectores extends AppCompatActivity {
         }else  if (requestCode == GALERY_INTENT_H && resultCode == RESULT_OK) {
 
 
-            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).child(uri.getLastPathSegment());
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSSECTORESTEMP).child(uri.getLastPathSegment());
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -299,7 +299,7 @@ public class CrearSectores extends AppCompatActivity {
     public void registrarSector(Sectores sector) {
 
 
-        databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).child(sector.getNombre()).setValue(sector);
+        databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSSECTORESTEMP).child(sector.getNombre()).setValue(sector);
 
     }
 
@@ -376,7 +376,7 @@ public class CrearSectores extends AppCompatActivity {
 
         setProgressDialog();
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSSECTORESTEMP).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSSECTORESTEMP).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

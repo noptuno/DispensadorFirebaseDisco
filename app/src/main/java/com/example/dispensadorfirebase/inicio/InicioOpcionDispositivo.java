@@ -25,7 +25,7 @@ import com.google.android.gms.dynamic.IFragmentWrapper;
 public class InicioOpcionDispositivo extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private String NOMBREDELDISPOSITIVO;
-    private EditText password;
+    private EditText password,nombrecliente;
     Button btnconfirmar;
     Spinner dispositivo;
     String dispositivo_seleccionado= null;
@@ -38,6 +38,7 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         setContentView(R.layout.activity_inicio_opcion_dispositivo);
 
         btnconfirmar = findViewById(R.id.btnconfirmar);
+        nombrecliente = findViewById(R.id.editcliente);
         dispositivo = findViewById(R.id.spinner_dispositivo);
         password = findViewById(R.id.editPassword);
 
@@ -50,7 +51,7 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         btnconfirmar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (dispositivo_seleccionado.equals("Seleccione")){
+                if (dispositivo_seleccionado.equals("Seleccione") && nombrecliente.getText().toString().length()==0){
 
                     Toast.makeText(InicioOpcionDispositivo.this, "Debe Seleccionar el Dispositivo", Toast.LENGTH_LONG).show();
 
@@ -62,6 +63,7 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
 
                         Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
                         intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
+                        intent.putExtra("CLIENTE",nombrecliente.getText());
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 

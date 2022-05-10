@@ -67,7 +67,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
     DatabaseReference databaseReferencelocales;
     ActionBar actionBar;
     String NOMBREDELDISPOSITIVO=null;
-
+    String CLIENTE=null;
     private SharedPreferences pref;
 
     @Override
@@ -83,6 +83,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         adapter = new AdapterLocal();
 
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
+        CLIENTE = getIntent().getStringExtra("CLIENTE");
 
         // funcionaldiades
 
@@ -94,6 +95,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                 Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionSectores.class);
                 intent.putExtra("LOCAL", note.getNombreLocal());
                 intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+                intent.putExtra("CLIENTE", CLIENTE);
                 intent.putExtra("LOGOLOCAL",note.getLogo());
                 intent.putExtra("LOGOLOCALIMPRE",note.getLogoImpresion());
                 startActivity(intent);

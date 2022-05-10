@@ -46,6 +46,7 @@ public class ListaLocales extends AppCompatActivity {
     AlertDialog Adialog;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    String CLIENTE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,7 @@ public class ListaLocales extends AppCompatActivity {
         list = new ArrayList<>();
         adapter = new AdapterLocal();
 
-
+        CLIENTE = getIntent().getStringExtra("CLIENTE");
 
         //varaibles layout
         RegistroLocales = findViewById(R.id.btnCrearLocal);
@@ -76,7 +77,7 @@ public class ListaLocales extends AppCompatActivity {
             public void onClick(View view) {
 
                 Intent intent = new Intent(ListaLocales.this, CrearLocalDialog.class);
-
+                intent.putExtra("CLIENTE", CLIENTE);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
@@ -95,6 +96,7 @@ public class ListaLocales extends AppCompatActivity {
 
                 Intent intent = new Intent(ListaLocales.this, AsignarSectoress.class);
                 intent.putExtra("LOCAL", note.getNombreLocal());
+                intent.putExtra("CLIENTE", CLIENTE);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
@@ -111,14 +113,13 @@ public class ListaLocales extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         cargarLista();
 
-
     }
 
     private void cargarLista() {
 
         setProgressDialog();
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
