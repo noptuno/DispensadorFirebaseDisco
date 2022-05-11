@@ -135,13 +135,13 @@ private TextView localseleccionado, dispositivoseleccionado;
                          intent = new Intent(InicioOpcionSectores.this, Supervisor_Principal.class);
                     }
 
-
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
 
                         try {
 
+                            String id = Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
                             SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = pref.edit();
                             editor.putString("ESTADO", "SI");
@@ -150,12 +150,12 @@ private TextView localseleccionado, dispositivoseleccionado;
                             editor.putString("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                             editor.putString("LOGOLOCAL",LOGOLOCAL);
                             editor.putString("LOGOLOCALIMPRE",LOGOLOCALIMPRE);
+                            editor.putString("ID",id);
                             editor.apply();
 
 
-                            String id = Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
                             // guardar base de datos Firebase
-                            Toast.makeText(InicioOpcionSectores.this, "Guardo: " + id , Toast.LENGTH_LONG).show();
+                           // Toast.makeText(InicioOpcionSectores.this, "Guardo: " + id , Toast.LENGTH_LONG).show();
 
                             InicioOpcionSectores.this.finish();
 

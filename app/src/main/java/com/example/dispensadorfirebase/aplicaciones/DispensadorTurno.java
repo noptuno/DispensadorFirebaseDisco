@@ -491,9 +491,12 @@ Bitmap starLogoImage = null;
         byte[] printData = {0};
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date date = new Date();
 
         String fecha = dateFormat.format(date);
+
+        String Fechacorta = dateFormatcorta.format(date);
         int limite = datos.getLimite();
 
         Charset encoding = Charset.forName("CP437");
@@ -550,7 +553,6 @@ Bitmap starLogoImage = null;
                 int result = connection.bulkTransfer(usbEndpointOut, printData, printData.length, 1000);
                 if (result != -1) {
 
-
                     datos.sumarDispensdor();
                     //txt_numeroActualDispensdor.setText(datos.getNumeroDispensador()+"");
 
@@ -565,7 +567,7 @@ Bitmap starLogoImage = null;
 
                     }
 
-                    registrarHistorico(datos,fecha);
+                    registrarHistorico(datos,Fechacorta);
 
                     databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
 
@@ -587,35 +589,27 @@ Bitmap starLogoImage = null;
 
         //Crear Clase de Registro
 
+        String nombreArchivo = (fecha.replace("/","-")+".txt").trim();
         SectorHistorico datos = new SectorHistorico();
 
-        datos.setCliente(NOMBREBASEDEDATOSFIREBASE);
+        datos.setCliente(CLIENTE);
         datos.setLocal(BASEDATOSLOCALES);
+        datos.setSector(sector.getNombreSector());
         datos.setTicket(sector.getUltimoNumeroDispensador());
         datos.setFecha_entrega(fecha);
         datos.setHora_entrega(fecha);
         datos.setFecha_atencion("");
         datos.setHora_atencion("");
 
-        Gson gson = new Gson();
-
-        List<SectorHistorico> menu = new ArrayList<>();
-        menu.add(datos);
-
-        ClaseHistorico historico = new ClaseHistorico("IDCLASE", menu);
-        String JSON = gson.toJson(historico);
-
-
-        String NombreHistorico = "historico6.txt";
         String[] archivos = fileList();
 
-        if (existe(archivos, NombreHistorico)){
+        Gson gson = new Gson();
 
-          // grabar(JSON,NombreHistorico);
+        if (existe(archivos, nombreArchivo)){
 
                 try{
 
-                    InputStreamReader archivo = new InputStreamReader(openFileInput(NombreHistorico));
+                    InputStreamReader archivo = new InputStreamReader(openFileInput(nombreArchivo));
                     BufferedReader br = new BufferedReader(archivo);
                     String linea = br.readLine();
                     String todo = "";
@@ -631,13 +625,17 @@ Bitmap starLogoImage = null;
 
                     ClaseHistorico generalInfoObject = gson.fromJson(todo, ClaseHistorico.class);
 
-                    generalInfoObject.setHistorico(menu);
+                    List<SectorHistorico> tickets = generalInfoObject.getHistorico();
+
+                    tickets.add(datos);
+
+                    generalInfoObject.setHistorico(tickets);
 
                     String JSONn = gson.toJson(generalInfoObject);
 
-                    Log.e("Print Json",JSONn );
+                    Log.e("Json agregado",JSONn );
 
-                    grabar(JSONn,NombreHistorico);
+                    grabar(JSONn,fecha);
 
                 }catch (Exception e){
 
@@ -661,7 +659,15 @@ Bitmap starLogoImage = null;
 */
 
         }else{
-            grabar(JSON,NombreHistorico);
+
+            List<SectorHistorico> menu = new ArrayList<>();
+            menu.add(datos);
+
+            ClaseHistorico historico = new ClaseHistorico(NOMBREDELDISPOSITIVO, menu);
+            String JSON = gson.toJson(historico);
+
+            Log.e("json Crear",JSON );
+            grabar(JSON,nombreArchivo);
         }
 
         //Crear Json
@@ -691,7 +697,7 @@ Bitmap starLogoImage = null;
         try {
 
             OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput(NombreHistorico, Activity.MODE_PRIVATE));
-            archivo.write(v+"\r\n");
+            archivo.write(v);
             archivo.flush();
             archivo.close();
         } catch (IOException e) {

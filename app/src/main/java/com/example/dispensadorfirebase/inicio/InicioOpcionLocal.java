@@ -67,7 +67,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
     DatabaseReference databaseReferencelocales;
     ActionBar actionBar;
     String NOMBREDELDISPOSITIVO=null;
-    String CLIENTE=null;
+    String CLIENTE = null;
     private SharedPreferences pref;
 
     @Override
@@ -75,9 +75,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_opcion_local);
 
-
         inicializarFirebase();
-
 
         list = new ArrayList<>();
         adapter = new AdapterLocal();
@@ -127,12 +125,13 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         String estado = pref.getString("ESTADO", "NO");
         String configuracion = pref.getString("CONFIGURACIONDMR", "NO");
 
+
         if (configuracion.equals("SI")){
 
-
+            CLIENTE = pref.getString("CLIENTE", "NO");
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
 
-            if (NOMBREDELDISPOSITIVO!="NO"){
+            if (!NOMBREDELDISPOSITIVO.equals("NO") && !CLIENTE.equals("NO")){
 
 
                 if (estado.equals("SI")) {
@@ -343,7 +342,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         //TODO revisar
         setProgressDialog();
 
-        databaseReferencelocales.child(NOMBREBASEDEDATOSFIREBASE).child(BASEDATOSLOCALES).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReferencelocales.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

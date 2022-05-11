@@ -64,11 +64,7 @@ public class ListaLocales extends AppCompatActivity {
         //varaibles layout
         RegistroLocales = findViewById(R.id.btnCrearLocal);
 
-
-
-
         //variables lcoales
-
 
         //Acciones layout
 
@@ -84,7 +80,6 @@ public class ListaLocales extends AppCompatActivity {
 
             }
         });
-
 
 
         // funcionaldiades
@@ -118,7 +113,6 @@ public class ListaLocales extends AppCompatActivity {
     private void cargarLista() {
 
         setProgressDialog();
-
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -140,9 +134,7 @@ public class ListaLocales extends AppCompatActivity {
                 Toast.makeText(ListaLocales.this, "Hubo un Problema con la red", Toast.LENGTH_LONG).show();
                 Adialog.dismiss();
             }
-
         });
-
     }
 
 

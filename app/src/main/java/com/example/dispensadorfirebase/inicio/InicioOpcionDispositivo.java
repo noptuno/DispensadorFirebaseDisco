@@ -32,6 +32,8 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     ActionBar actionBar;
     private SharedPreferences pref;
     private String estado = "NO";
+    private String CLIENTE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +65,7 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
 
                         Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
                         intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
-                        intent.putExtra("CLIENTE",nombrecliente.getText());
+                        intent.putExtra("CLIENTE",nombrecliente.getText().toString());
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
@@ -90,6 +92,7 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("CONFIGURACIONDMR", "SI");
         editor.putString("DISPOSITIVO", dispositivo_seleccionado);
+        editor.putString("CLIENTE", nombrecliente.getText().toString());
         editor.apply();
 
 
@@ -98,8 +101,6 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     private boolean validaryguardar(){
         boolean v = false;
         String pass = password.getText().toString();
-
-
 
 
         if (pass.equals("dmr")){
@@ -122,21 +123,20 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
 
 
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
+            CLIENTE = pref.getString("CLIENTE", "NO");
 
-            if (NOMBREDELDISPOSITIVO!="NO"){
+            if (!NOMBREDELDISPOSITIVO.equals("NO") && !CLIENTE.equals("NO")){
 
                     Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
                     intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+                    intent.putExtra("CLIENTE", CLIENTE);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     finish();
 
             }
 
-
         }
-
-
 
     }
 
