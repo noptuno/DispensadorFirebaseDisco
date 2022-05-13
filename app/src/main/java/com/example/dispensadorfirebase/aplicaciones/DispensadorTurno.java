@@ -65,6 +65,8 @@ import com.example.dispensadorfirebase.clase.SectoresElegidos;
 import com.example.dispensadorfirebase.inicio.InicioOpcionDispositivo;
 import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
 import com.example.dispensadorfirebase.principaltemp.MensajeActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -90,6 +92,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class DispensadorTurno extends AppCompatActivity{
 
@@ -193,8 +196,10 @@ Bitmap starLogoImage = null;
             public void onClick(SectorLocal note) {
 
                 click2.start();
-                //mostrarEspera(note);
+                //mostrarEspera(note);;
                 sumar(note);
+
+
 
             }
 
@@ -273,7 +278,30 @@ Bitmap starLogoImage = null;
 
     void sumar(SectorLocal note){
 
-        imprimirNumero(note);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat horaFormatcorta = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        Date date = new Date();
+
+        String fechaCompleta = dateFormat.format(date);
+
+        String fechaCorta = dateFormatcorta.format(date);
+
+        String horaCorta = horaFormatcorta.format(date);
+
+
+
+
+        guardarFirebase(note,fechaCompleta,fechaCorta,horaCorta);
+
+
+
+
+
+
+
+
+
 
     }
     private void leerSectoresLocales() {
@@ -486,40 +514,41 @@ Bitmap starLogoImage = null;
         }
     }
 
-    private void imprimirNumero(SectorLocal datos) {
+    private Boolean Imprimir(byte[] printData){
+        Boolean ret = false;
+        try {
+            if (connection!=null){
+                int result = connection.bulkTransfer(usbEndpointOut, printData, printData.length, 1000);
+                if (result != -1) {
+                    ret = true;
 
-        byte[] printData = {0};
+                } else {
+                    ret = false;
+                    Toast.makeText(DispensadorTurno.this, "Impreso desconectada, volver a iniciar la app", Toast.LENGTH_LONG).show();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
-        SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        Date date = new Date();
+                }
+            }
+        } catch (Exception e) {
+            ret = false;
+        }
+        return ret;
+    }
 
-        String fecha = dateFormat.format(date);
-
-        String Fechacorta = dateFormatcorta.format(date);
-        int limite = datos.getLimite();
+    private byte[] PrepararDocumento(SectorLocal datos,String fechaCompleta) {
 
         Charset encoding = Charset.forName("CP437");
         byte[] nombresector= (" "+datos.getNombreSector()).getBytes(encoding);
         byte[] nombreproducto= "   Su Turno es: ".getBytes(encoding);
         byte[] numeroimprimir = (" "+datos.getNumeroDispensador()).getBytes();
-
-
         //Bitmap starLogoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.logodiscopeque);
-
-
         ICommandBuilder builder = StarIoExt.createCommandBuilder(StarIoExt.Emulation.EscPos);
         builder.appendCodePage(ICommandBuilder.CodePageType.UTF8);
         builder.beginDocument();
         if (starLogoImage!=null){
-
             builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
             builder.appendBitmap(starLogoImage, false);
             builder.appendLineFeed();
         }
-
-
-
         //*********************************
         builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
         builder.appendMultiple(2, 2);
@@ -536,56 +565,53 @@ Bitmap starLogoImage = null;
         builder.appendAlignment(ICommandBuilder.AlignmentPosition.Left);
 
         builder.appendMultiple(0, 0);
-        builder.appendAbsolutePosition(("   Fecha: " + fecha).getBytes(),0);
+        builder.appendAbsolutePosition(("   Fecha: " + fechaCompleta).getBytes(),0);
         builder.appendLineFeed();
         //**********************
-
         builder.appendCutPaper(ICommandBuilder.CutPaperAction.PartialCutWithFeed);
-
-
         builder.endDocument();
-        printData = builder.getCommands();
 
-
-        try {
-
-            if (connection!=null){
-                int result = connection.bulkTransfer(usbEndpointOut, printData, printData.length, 1000);
-                if (result != -1) {
-
-                    datos.sumarDispensdor();
-                    //txt_numeroActualDispensdor.setText(datos.getNumeroDispensador()+"");
-
-                    if (datos.getCantidadEspera()>limite){
-
-                        datos.setNotificacion(1);
-
-                    }else{
-
-                        datos.setNotificacion(0);
-                        datos.setNotificaciondeshabilitar(0);
-
-                    }
-
-                    registrarHistorico(datos,Fechacorta);
-
-                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
-
-                } else {
-                    Toast.makeText(DispensadorTurno.this, "Impreso desconectada, volver a iniciar la app", Toast.LENGTH_LONG).show();
-                }
-            }
-
-
-        } catch (Exception e) {
-            Toast.makeText(DispensadorTurno.this, "ERROR Codigo de impresión", Toast.LENGTH_LONG).show();
-
-
-        }
+        return  builder.getCommands();
 
     }
 
-    private void registrarHistorico(SectorLocal sector,String fecha) {
+    private void guardarFirebase(SectorLocal datos, String fechaCompleta, String fechaCorta, String horaCorta) {
+
+        SectorLocal datosSinCambios = datos;
+
+        int limite = datos.getLimite();
+
+        datos.sumarDispensdor();
+
+        if (datos.getCantidadEspera()>limite){
+            datos.setNotificacion(1);
+        }else{
+            datos.setNotificacion(0);
+            datos.setNotificaciondeshabilitar(0);
+        }
+
+        SectorLocal datosConCambios = datos;
+
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datosConCambios).addOnCompleteListener(new OnCompleteListener<Void>()
+        {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                byte[] escpos = PrepararDocumento(datosSinCambios,fechaCompleta);
+
+                if(Imprimir(escpos)){
+
+                    registrarHistorico(datosSinCambios,fechaCorta,horaCorta);
+
+                }
+
+            }
+        });
+
+    }
+
+    private void registrarHistorico(SectorLocal sector,String fecha,String hora) {
 
         //Crear Clase de Registro
 
@@ -593,11 +619,11 @@ Bitmap starLogoImage = null;
         SectorHistorico datos = new SectorHistorico();
 
         datos.setCliente(CLIENTE);
-        datos.setLocal(BASEDATOSLOCALES);
+        datos.setLocal(NOMBRELOCALSELECCIONADO);
         datos.setSector(sector.getNombreSector());
         datos.setTicket(sector.getUltimoNumeroDispensador());
         datos.setFecha_entrega(fecha);
-        datos.setHora_entrega(fecha);
+        datos.setHora_entrega(hora);
         datos.setFecha_atencion("");
         datos.setHora_atencion("");
 
@@ -623,58 +649,28 @@ Bitmap starLogoImage = null;
                     br.close();
                     archivo.close();
 
-                    ClaseHistorico generalInfoObject = gson.fromJson(todo, ClaseHistorico.class);
-
-                    List<SectorHistorico> tickets = generalInfoObject.getHistorico();
-
+                    ClaseHistorico historico = gson.fromJson(todo, ClaseHistorico.class);
+                    List<SectorHistorico> tickets = historico.getHistorico();
                     tickets.add(datos);
+                    historico.setHistorico(tickets);
+                    String JSONn = gson.toJson(historico);
+                    grabar(JSONn,nombreArchivo);
+                    Log.e("Json grabado ",JSONn);
 
-                    generalInfoObject.setHistorico(tickets);
-
-                    String JSONn = gson.toJson(generalInfoObject);
-
-                    Log.e("Json agregado",JSONn );
-
-                    grabar(JSONn,fecha);
 
                 }catch (Exception e){
-
+                    Log.e("erro a", e.toString());
                 }
-
-/*
-            BufferedWriter out = null;
-            try {
-                out = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(NombreHistorico, true)));
-                out.write(JSON+"\r\n");
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-*/
 
         }else{
 
-            List<SectorHistorico> menu = new ArrayList<>();
-            menu.add(datos);
-
-            ClaseHistorico historico = new ClaseHistorico(NOMBREDELDISPOSITIVO, menu);
+            List<SectorHistorico> tickets = new ArrayList<>();
+            tickets.add(datos);
+            ClaseHistorico historico = new ClaseHistorico(NOMBREDELDISPOSITIVO, tickets);
             String JSON = gson.toJson(historico);
-
-            Log.e("json Crear",JSON );
             grabar(JSON,nombreArchivo);
+
         }
-
-        //Crear Json
-        //Crear archivo con fecha actual || valdiar que exita
-        //agregarle los datos del Json
-
-        //Luego subir el archivo txt a la firebase
 
     }
 
@@ -693,6 +689,8 @@ Bitmap starLogoImage = null;
         return a;
     }
 
+
+
     public void grabar(String v,String NombreHistorico) {
         try {
 
@@ -701,6 +699,7 @@ Bitmap starLogoImage = null;
             archivo.flush();
             archivo.close();
         } catch (IOException e) {
+            Log.e("error",e.toString());
         }
         Toast t = Toast.makeText(this, "Los datos fueron grabados",Toast.LENGTH_SHORT);
         t.show();

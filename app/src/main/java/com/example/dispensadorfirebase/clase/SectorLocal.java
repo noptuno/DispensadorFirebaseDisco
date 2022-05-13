@@ -156,23 +156,16 @@ public class SectorLocal implements Serializable {
 
     public void sumarDispensdor(){
 
-
         if (numeroDispensador == 99){
 
             this.cantidadEspera++;
             this.numeroDispensador = 1;
             this.ultimoNumeroDispensador = 99;
-
         }else{
             this.cantidadEspera++;
             this.numeroDispensador++;
             this.ultimoNumeroDispensador = numeroDispensador-1;
-
         }
-
-
-
-
     }
 
 
