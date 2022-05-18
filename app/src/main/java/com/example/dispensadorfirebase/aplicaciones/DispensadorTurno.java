@@ -44,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -72,6 +73,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.starmicronics.starioextension.ICommandBuilder;
@@ -292,18 +295,50 @@ Bitmap starLogoImage = null;
 
 
 
-        guardarFirebase(note,fechaCompleta,fechaCorta,horaCorta);
+       // guardarFirebase(note,fechaCompleta,fechaCorta,horaCorta);
+
+        GuardarFirebaseTransaccion(note,fechaCompleta,fechaCorta,horaCorta);
+
+    }
+
+    private void GuardarFirebaseTransaccion(SectorLocal datos, String fechaCompleta,String fechaCorta, String horaCorta) {
 
 
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).runTransaction(new Transaction.Handler() {
+                @Override
+                public Transaction.Result doTransaction(MutableData mutableData) {
+
+                   SectorLocal tabla = mutableData.getValue(SectorLocal.class);
+                    if ( tabla == null) {
+                        return Transaction.success(mutableData);
+                    }
+                    tabla.sumarDispensdor();
+                    mutableData.setValue(tabla);
+                    return Transaction.success(mutableData);
+                }
+
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean committed,
+                                       DataSnapshot currentData) {
+                    // Transaction completed
+
+                    Log.d("TRANSACTION", "postTransaction:onComplete:" + databaseError);
 
 
-
-
-
-
+                    SectorLocal tabla = currentData.getValue(SectorLocal.class);
+                    byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
+                    if(Imprimir(escpos)){
+                        impresoraactiva = true;
+                        registrarHistorico(tabla,fechaCorta,horaCorta);
+                    }else{
+                        impresoraactiva = false;
+                    }
+                }
+            });
 
 
     }
+
     private void leerSectoresLocales() {
 
         db = new SectorDB(this);
@@ -539,7 +574,7 @@ Bitmap starLogoImage = null;
         Charset encoding = Charset.forName("CP437");
         byte[] nombresector= (" "+datos.getNombreSector()).getBytes(encoding);
         byte[] nombreproducto= "   Su Turno es: ".getBytes(encoding);
-        byte[] numeroimprimir = (" "+datos.getNumeroDispensador()).getBytes();
+        byte[] numeroimprimir = (" "+datos.getUltimoNumeroDispensador()).getBytes();
         //Bitmap starLogoImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.logodiscopeque);
         ICommandBuilder builder = StarIoExt.createCommandBuilder(StarIoExt.Emulation.EscPos);
         builder.appendCodePage(ICommandBuilder.CodePageType.UTF8);
@@ -577,8 +612,6 @@ Bitmap starLogoImage = null;
 
     private void guardarFirebase(SectorLocal datos, String fechaCompleta, String fechaCorta, String horaCorta) {
 
-        SectorLocal datosSinCambios = datos;
-
         int limite = datos.getLimite();
 
         datos.sumarDispensdor();
@@ -590,21 +623,21 @@ Bitmap starLogoImage = null;
             datos.setNotificaciondeshabilitar(0);
         }
 
-        SectorLocal datosConCambios = datos;
-
-
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datosConCambios).addOnCompleteListener(new OnCompleteListener<Void>()
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos).addOnCompleteListener(new OnCompleteListener<Void>()
         {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
-                byte[] escpos = PrepararDocumento(datosSinCambios,fechaCompleta);
+                byte[] escpos = PrepararDocumento(datos,fechaCompleta);
 
                 if(Imprimir(escpos)){
 
-                    registrarHistorico(datosSinCambios,fechaCorta,horaCorta);
+                    registrarHistorico(datos,fechaCorta,horaCorta);
 
                 }
+
+
+                
 
             }
         });
@@ -614,6 +647,7 @@ Bitmap starLogoImage = null;
     private void registrarHistorico(SectorLocal sector,String fecha,String hora) {
 
         //Crear Clase de Registro
+
 
         String nombreArchivo = (fecha.replace("/","-")+".txt").trim();
         SectorHistorico datos = new SectorHistorico();
