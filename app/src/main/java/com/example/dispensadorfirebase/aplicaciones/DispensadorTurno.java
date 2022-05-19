@@ -134,6 +134,8 @@ Bitmap starLogoImage = null;
     private Button configurarnuevamente;
     private ImageView logo;
 
+    private boolean internet = true;
+    private boolean imprimir = true;
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -198,19 +200,21 @@ Bitmap starLogoImage = null;
             @Override
             public void onClick(SectorLocal note) {
 
-                click2.start();
-                //mostrarEspera(note);;
-                sumar(note);
+                if (internet){
 
+                        internet = false;
+                        click2.start();
+                        sumar(note);
 
+                }else{
 
+                    Toast.makeText(getApplicationContext(), "Sin Conexion", Toast.LENGTH_LONG).show();
+
+                }
             }
-
         });
 
         actionBar = getSupportActionBar();
-
-
 
         context = getApplicationContext();
 
@@ -219,7 +223,6 @@ Bitmap starLogoImage = null;
         recyclerView.setAdapter(adapter);
 
         usb();
-
 
         CargarDatos();
 
@@ -243,16 +246,19 @@ Bitmap starLogoImage = null;
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
         String estado = pref.getString("ESTADO", "NO");
+
         if (estado.equals("NO")){
+
             regresarConfiguracion();
+
         }else{
+
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
             LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
             LOGOLOCALIMPRE= pref.getString("LOGOLOCALIMPRE","NO");
             CLIENTE= pref.getString("CLIENTE","NO");
         }
-
 
     }
 
@@ -267,16 +273,6 @@ Bitmap starLogoImage = null;
 
         DispensadorTurno.this.finish();
 
-
-    }
-
-    private void mostrarEspera(SectorLocal note) {
-        Intent v = new Intent(DispensadorTurno.this, MensajeActivity.class);
-        v.putExtra("numeroSector", note.getNumeroDispensador());
-        v.putExtra("nombreSector", note.getNombreSector());
-        v.putExtra("colorSector", note.getColorSector());
-        startActivityForResult(v, MENSAJERESULT);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     void sumar(SectorLocal note){
@@ -292,10 +288,15 @@ Bitmap starLogoImage = null;
 
         String horaCorta = horaFormatcorta.format(date);
 
-
-
-
        // guardarFirebase(note,fechaCompleta,fechaCorta,horaCorta);
+
+        /*
+        if (connection != null && connection.claimInterface(usbInterface, true)) {
+            impresoraactiva = true;
+        }else{
+            impresoraactiva = false;
+        }
+        */
 
         GuardarFirebaseTransaccion(note,fechaCompleta,fechaCorta,horaCorta);
 
@@ -303,18 +304,24 @@ Bitmap starLogoImage = null;
 
     private void GuardarFirebaseTransaccion(SectorLocal datos, String fechaCompleta,String fechaCorta, String horaCorta) {
 
-
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).runTransaction(new Transaction.Handler() {
                 @Override
                 public Transaction.Result doTransaction(MutableData mutableData) {
 
                    SectorLocal tabla = mutableData.getValue(SectorLocal.class);
+
                     if ( tabla == null) {
+
                         return Transaction.success(mutableData);
+
                     }
+
                     tabla.sumarDispensdor();
+
                     mutableData.setValue(tabla);
+
                     return Transaction.success(mutableData);
+
                 }
 
                 @Override
@@ -324,19 +331,24 @@ Bitmap starLogoImage = null;
 
                     Log.d("TRANSACTION", "postTransaction:onComplete:" + databaseError);
 
-
                     SectorLocal tabla = currentData.getValue(SectorLocal.class);
-                    byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
-                    if(Imprimir(escpos)){
-                        impresoraactiva = true;
-                        registrarHistorico(tabla,fechaCorta,horaCorta);
-                    }else{
-                        impresoraactiva = false;
+
+                    if(tabla!=null){
+                        byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
+                        internet = true;
+
+                        //validar que la impresora haga la impresion
+                        //implementar sdk impresion
+
+                        if(Imprimir(escpos)){
+                            registrarHistorico(tabla,fechaCorta,horaCorta);
+                        }else{
+                            imprimir=false;
+                        }
+
                     }
                 }
             });
-
-
     }
 
     private void leerSectoresLocales() {
@@ -534,8 +546,6 @@ Bitmap starLogoImage = null;
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
-
-
     void hidebarras() {
         constrain.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -635,9 +645,6 @@ Bitmap starLogoImage = null;
                     registrarHistorico(datos,fechaCorta,horaCorta);
 
                 }
-
-
-                
 
             }
         });
