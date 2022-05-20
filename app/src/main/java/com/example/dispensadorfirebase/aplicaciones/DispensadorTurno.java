@@ -77,6 +77,9 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.printer.sdk.usb.USBPort;
+import com.printer.sdk.utils.Utils;
+import com.printer.sdk.utils.XLog;
 import com.starmicronics.starioextension.ICommandBuilder;
 import com.starmicronics.starioextension.StarIoExt;
 
@@ -112,7 +115,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private AlertDialog Adialog;
     static final int MENSAJERESULT = 0;
     MediaPlayer click, click2;
-Bitmap starLogoImage = null;
+    Bitmap starLogoImage = null;
     ConstraintLayout constrain;
     ActionBar actionBar;
     FirebaseDatabase firebaseDatabase;
@@ -202,9 +205,17 @@ Bitmap starLogoImage = null;
 
                 if (internet){
 
-                        internet = false;
-                        click2.start();
-                        sumar(note);
+                      // internet = false;
+                      // click2.start();
+                    // sumar(note);
+
+                       //  escribirimpresora();
+                    //getPrintingStatus();
+                   // getCurrentStatus();
+                       //  leerimpresora();
+
+                    getCurrentStatus();
+
 
                 }else{
 
@@ -232,6 +243,175 @@ Bitmap starLogoImage = null;
 
 
     }
+
+    private int escribirimpresora(byte[] printData){
+        int ret = 0;
+        try {
+            if (connection!=null){
+                int result = connection.bulkTransfer(usbEndpointOut, printData, printData.length, 1000);
+                if (result != -1) {
+                    ret = result;
+
+                } else {
+                    ret = result;
+                    Toast.makeText(DispensadorTurno.this, "Impreso desconectada, volver a iniciar la app", Toast.LENGTH_LONG).show();
+
+                }
+            }
+        } catch (Exception e) {
+            ret = -1;
+        }
+        return ret;
+    }
+
+    private int leerimpresora(byte[] printData){
+        int ret = 0;
+        try {
+            if (connection!=null){
+                int result = connection.bulkTransfer(usbEndpointIn, printData, printData.length, 1000);
+                if (result != -1) {
+                    ret = result;
+
+                } else {
+                    ret = result;
+
+                }
+            }
+        } catch (Exception e) {
+            ret = -1;
+        }
+        return ret;
+    }
+
+    public void getPrintingStatus() {
+
+
+        int isSendSuccess = 0;
+
+        try {
+            byte[] tempReadBytes = new byte[512];
+            int oldDateReadLen = leerimpresora(tempReadBytes);
+            if (oldDateReadLen != 0) {
+                XLog.e("PrinterInstance", "LEER = " + oldDateReadLen);
+
+            }
+            for(int i = 0; i < 3; ++i) {
+                isSendSuccess = escribirimpresora(new byte[]{29, 40, 72, 6, 0, 48, 48, 49, 50, 51, 52});
+                if (isSendSuccess > 0) {
+                    XLog.d("PrinterInstance", "ESCRIBIR = " + isSendSuccess);
+                    break;
+                }
+            }
+
+            if (isSendSuccess<=0){
+                XLog.d("PrinterInstance", "resultado Negativo o Cero = " + isSendSuccess);
+                getCurrentStatus();
+            }
+        } catch (Exception var10) {
+            var10.printStackTrace();
+            XLog.e("PrinterInstance", "yxz at PrinterInstance.java getPrintingStatus() Exception! ex.getMessage()=" + var10.getMessage());
+        }
+
+    }
+
+    public void getCurrentStatus() {
+
+        int isSendSuccess = 0;
+        try {
+            byte[] tempReadBytes = new byte[512];
+            int oldDateReadLen = leerimpresora(tempReadBytes);
+            if (oldDateReadLen != 0) {
+
+                if (oldDateReadLen < 0){
+                    XLog.d("PrinterInstance", "LEER OK negativo= " + oldDateReadLen);
+                }else{
+                    XLog.d("PrinterInstance", "LEER OK  positivo= " + oldDateReadLen);
+                }
+
+
+            }
+            for(int i = 0; i < 3; ++i) {
+                isSendSuccess = escribirimpresora(new byte[]{29, 40, 72, 6, 0, 48, 48, 49, 50, 51, 52});
+                if (isSendSuccess > 0) {
+                    XLog.d("PrinterInstance", "ESCRIBIR OK = " + isSendSuccess);
+                    break;
+                }
+            }
+
+
+                byte uncapData = this.getDatas(2);
+                XLog.d("PrinterInstance", "TAPA" + uncapData);
+
+                byte otroData = this.getDatas(3);
+                XLog.d("PrinterInstance", "OTRO" + otroData);
+
+                byte paperData = this.getDatas(4);
+                XLog.d("PrinterInstance", "PAPEL" + paperData);
+
+
+        } catch (Exception var10) {
+            var10.printStackTrace();
+            XLog.e("PrinterInstance", "ERROR A" + var10.getMessage());
+        }
+
+    }
+
+
+    public byte getDatas(int statusType) {
+
+        int readLength = -1;
+       // byte[] retStatus = null;
+        byte[] command = new byte[]{16, 4, 0};
+
+        try {
+            switch(statusType) {
+                case 2:
+                    command[2] = 2;
+                    break;
+                case 3:
+                    command[2] = 3;
+                    break;
+                case 4:
+                    command[2] = 4;
+            }
+
+            for(int m = 0; m < 3; ++m) {
+                int sendLength = escribirimpresora(command);
+                if (sendLength <= 0) {
+                    if (m == 2) {
+                        return -2;
+                    }
+                    Thread.sleep(50L);
+                } else {
+                    for(int i = 0; i < 10; ++i) {
+                        byte[] buffer = new byte[1024];
+                        readLength = leerimpresora(buffer);
+                        if (readLength > 0) {
+                            byte[] retStatus = new byte[readLength];
+                            System.arraycopy(buffer, 0, retStatus, 0, readLength);
+                            return retStatus[readLength - 1];
+                        }
+
+                        Thread.sleep(50L);
+                    }
+
+                    if (readLength <= 0) {
+                        if (m == 2) {
+                            return -1;
+                        }
+                    }
+                }
+            }
+        } catch (InterruptedException var9) {
+            var9.printStackTrace();
+            XLog.e("PrinterInstance", "ERROR B" + var9.getMessage());
+            return -1;
+        }
+        return -1;
+    }
+
+
+
 
     private boolean validaryguardar(String pass){
         boolean v = false;
