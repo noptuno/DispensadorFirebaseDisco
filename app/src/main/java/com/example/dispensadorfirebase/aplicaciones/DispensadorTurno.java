@@ -86,6 +86,7 @@ import com.starmicronics.starioextension.StarIoExt;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -107,6 +108,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     private boolean permisosimpresora = false;
     private boolean impresoraactiva = false;
+    private boolean impresorapapel = false;
     private UsbDeviceConnection connection;
     private UsbInterface usbInterface;
     private UsbEndpoint usbEndpointIn = null;
@@ -121,7 +123,9 @@ public class DispensadorTurno extends AppCompatActivity{
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     TextView txt_numeroActualDispensdor,txt_nombresector;
+        Boolean habilitar_boton_imprimir = true;
 
+        private Button btnsubir;
     private UsbManager usbManager;
     int numeroactual;
     String NOMBRELOCALSELECCIONADO=null;
@@ -138,7 +142,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private ImageView logo;
 
     private boolean internet = true;
-    private boolean imprimir = true;
+    private boolean imprimir = false;
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -187,8 +191,6 @@ public class DispensadorTurno extends AppCompatActivity{
         txt_numeroActualDispensdor= findViewById(R.id.txtNumeroActualDispensador);
         txt_nombresector= findViewById(R.id.txtNombreSectorDispensdor);
 
-
-
         /*
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,29 +201,79 @@ public class DispensadorTurno extends AppCompatActivity{
         });
         */
 
+        btnsubir = findViewById(R.id.btnsubir);
+
+        btnsubir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                Date date = new Date();
+                String fechaCorta = dateFormatcorta.format(date);
+
+                String nombredelarchivo = leerHistorico(fechaCorta);
+
+                    if (nombredelarchivo!=null){
+                        try {
+
+
+                            InputStreamReader archivo = new InputStreamReader(openFileInput(nombredelarchivo));
+
+                            File file = new File(String.valueOf(openFileInput(nombredelarchivo)));
+
+                            file.toString();
+
+
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
+
+            }
+        });
         adapter.setOnNoteSelectedListener(new AdapterDispensador.OnNoteSelectedListener() {
             @Override
             public void onClick(SectorLocal note) {
 
-                if (internet){
+              //  valdiar internet = true
+//loag
 
-                      // internet = false;
-                      // click2.start();
-                    // sumar(note);
+                if (habilitar_boton_imprimir){
 
-                       //  escribirimpresora();
-                    //getPrintingStatus();
-                   // getCurrentStatus();
-                       //  leerimpresora();
 
-                    getCurrentStatus();
 
+                    if (impresoraactiva){
+
+                        if (getCurrentStatus()){
+                            impresorapapel = true;
+                            click2.start();
+
+                            habilitar_boton_imprimir = false;
+                            sumar(note);
+
+                        }else{
+                            impresorapapel = false;
+                            //dialog mensaje papel
+                            Toast.makeText(getApplicationContext(), "Error papel mensaje", Toast.LENGTH_LONG).show();
+                        }
+
+                    }else{
+
+                        usb();
+                        //dialog mensaje usb
+                        Toast.makeText(getApplicationContext(), "Error Impresora", Toast.LENGTH_LONG).show();
+
+                    }
 
                 }else{
-
-                    Toast.makeText(getApplicationContext(), "Sin Conexion", Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(getApplicationContext(), "Esperando", Toast.LENGTH_LONG).show();
                 }
+
+
+                    //dialog mensaje internet
+
             }
         });
 
@@ -254,7 +306,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
                 } else {
                     ret = result;
-                    Toast.makeText(DispensadorTurno.this, "Impreso desconectada, volver a iniciar la app", Toast.LENGTH_LONG).show();
+
 
                 }
             }
@@ -283,39 +335,8 @@ public class DispensadorTurno extends AppCompatActivity{
         return ret;
     }
 
-    public void getPrintingStatus() {
-
-
-        int isSendSuccess = 0;
-
-        try {
-            byte[] tempReadBytes = new byte[512];
-            int oldDateReadLen = leerimpresora(tempReadBytes);
-            if (oldDateReadLen != 0) {
-                XLog.e("PrinterInstance", "LEER = " + oldDateReadLen);
-
-            }
-            for(int i = 0; i < 3; ++i) {
-                isSendSuccess = escribirimpresora(new byte[]{29, 40, 72, 6, 0, 48, 48, 49, 50, 51, 52});
-                if (isSendSuccess > 0) {
-                    XLog.d("PrinterInstance", "ESCRIBIR = " + isSendSuccess);
-                    break;
-                }
-            }
-
-            if (isSendSuccess<=0){
-                XLog.d("PrinterInstance", "resultado Negativo o Cero = " + isSendSuccess);
-                getCurrentStatus();
-            }
-        } catch (Exception var10) {
-            var10.printStackTrace();
-            XLog.e("PrinterInstance", "yxz at PrinterInstance.java getPrintingStatus() Exception! ex.getMessage()=" + var10.getMessage());
-        }
-
-    }
-
-    public void getCurrentStatus() {
-
+    public boolean getCurrentStatus() {
+       boolean correcto;
         int isSendSuccess = 0;
         try {
             byte[] tempReadBytes = new byte[512];
@@ -349,11 +370,20 @@ public class DispensadorTurno extends AppCompatActivity{
                 XLog.d("PrinterInstance", "PAPEL" + paperData);
 
 
+                if (uncapData == 18 && otroData == 18 && paperData == 18 && oldDateReadLen >= 0 && isSendSuccess >= 0){
+
+                    correcto = true;
+                }else{
+
+                    correcto = false;
+                }
+
         } catch (Exception var10) {
             var10.printStackTrace();
-            XLog.e("PrinterInstance", "ERROR A" + var10.getMessage());
+            correcto = false;
         }
 
+        return correcto;
     }
 
 
@@ -509,24 +539,27 @@ public class DispensadorTurno extends AppCompatActivity{
                                        DataSnapshot currentData) {
                     // Transaction completed
 
-                    Log.d("TRANSACTION", "postTransaction:onComplete:" + databaseError);
-
                     SectorLocal tabla = currentData.getValue(SectorLocal.class);
 
                     if(tabla!=null){
                         byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
-                        internet = true;
 
                         //validar que la impresora haga la impresion
                         //implementar sdk impresion
 
                         if(Imprimir(escpos)){
                             registrarHistorico(tabla,fechaCorta,horaCorta);
+
                         }else{
-                            imprimir=false;
+                            impresorapapel=false;
+                            Toast.makeText(getApplicationContext(), "Error papel interno mensaje", Toast.LENGTH_LONG).show();
                         }
 
                     }
+
+                    habilitar_boton_imprimir = true;
+
+
                 }
             });
     }
@@ -749,8 +782,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
                 } else {
                     ret = false;
-                    Toast.makeText(DispensadorTurno.this, "Impreso desconectada, volver a iniciar la app", Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(DispensadorTurno.this, "Error impresion Revisar", Toast.LENGTH_LONG).show();
                 }
             }
         } catch (Exception e) {
@@ -800,36 +832,31 @@ public class DispensadorTurno extends AppCompatActivity{
 
     }
 
-    private void guardarFirebase(SectorLocal datos, String fechaCompleta, String fechaCorta, String horaCorta) {
+    private String leerHistorico(String fecha) {
 
-        int limite = datos.getLimite();
+        //Crear Clase de Registro
+Boolean exist = false;
 
-        datos.sumarDispensdor();
+        String nombreArchivo = (fecha.replace("/","-")+".txt").trim();
 
-        if (datos.getCantidadEspera()>limite){
-            datos.setNotificacion(1);
-        }else{
-            datos.setNotificacion(0);
-            datos.setNotificaciondeshabilitar(0);
+
+        String[] archivos = fileList();
+
+
+        if (existe(archivos, nombreArchivo)){
+            exist = true;
+           // seleccionar ese archivo y enviarlo a firebase store archivos
+
         }
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos).addOnCompleteListener(new OnCompleteListener<Void>()
-        {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-                byte[] escpos = PrepararDocumento(datos,fechaCompleta);
-
-                if(Imprimir(escpos)){
-
-                    registrarHistorico(datos,fechaCorta,horaCorta);
-
-                }
-
-            }
-        });
+        if (exist){
+            return nombreArchivo;
+        }else{
+            return nombreArchivo = null;
+        }
 
     }
+
 
     private void registrarHistorico(SectorLocal sector,String fecha,String hora) {
 
@@ -876,6 +903,7 @@ public class DispensadorTurno extends AppCompatActivity{
                     historico.setHistorico(tickets);
                     String JSONn = gson.toJson(historico);
                     grabar(JSONn,nombreArchivo);
+
                     Log.e("Json grabado ",JSONn);
 
 
@@ -895,12 +923,14 @@ public class DispensadorTurno extends AppCompatActivity{
 
     }
 
+
     private boolean existe(String[] archivos, String archbusca) {
 
         Boolean a = false;
         for (int f = 0; f < archivos.length; f++){
             Log.e("Base Archivos: ",archivos[f]);
             if (archbusca.equals(archivos[f])){
+
                 a = true;
                 break;
             }

@@ -9,6 +9,16 @@
     android:background="@color/black"
     tools:context=".principaltemp.Dispensador">
 
+    <Button
+        android:id="@+id/btnsubir"
+        android:layout_width="136dp"
+        android:layout_height="86dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Subir Base"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/imviewlogolocal"
         android:layout_width="100dp"
