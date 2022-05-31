@@ -1,8 +1,10 @@
 package com.example.dispensadorfirebase.aplicaciones;
 
 import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
+import static com.example.dispensadorfirebase.app.variables.BASEDATOSSECTORESTEMP;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -11,6 +13,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,7 +29,9 @@ import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -49,14 +55,19 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.dispensadorfirebase.BuildConfig;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterDispensador;
+import com.example.dispensadorfirebase.administrador.CrearLocalDialog;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.ClaseHistorico;
 import com.example.dispensadorfirebase.clase.Local;
@@ -67,6 +78,8 @@ import com.example.dispensadorfirebase.inicio.InicioOpcionDispositivo;
 import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
 import com.example.dispensadorfirebase.principaltemp.MensajeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -76,6 +89,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.printer.sdk.usb.USBPort;
 import com.printer.sdk.utils.Utils;
@@ -86,11 +102,14 @@ import com.starmicronics.starioextension.StarIoExt;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -140,7 +159,9 @@ public class DispensadorTurno extends AppCompatActivity{
     private SharedPreferences pref;
     private Button configurarnuevamente;
     private ImageView logo;
-
+    private String id;
+    private  StorageReference mstorage;
+    private String dowloadpath = Environment.DIRECTORY_DOWNLOADS;
     private boolean internet = true;
     private boolean imprimir = false;
     @Override
@@ -149,6 +170,20 @@ public class DispensadorTurno extends AppCompatActivity{
 
     }
 
+    private void pedir_permiso_escritura() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int readExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            int writeExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            if (writeExternalPermission != PackageManager.PERMISSION_GRANTED || readExternalPermission != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            }
+        }
+
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,6 +191,7 @@ public class DispensadorTurno extends AppCompatActivity{
         inicializarFirebase();
         validarConfiguracion();
         leerSectoresLocales();
+        pedir_permiso_escritura();
 
         configurarnuevamente = findViewById(R.id.btn_salir);
 
@@ -163,9 +199,7 @@ public class DispensadorTurno extends AppCompatActivity{
             @Override
             public void onClick(View view) {
 
-
                 botonregresar();
-
 
             }
         });
@@ -176,17 +210,13 @@ public class DispensadorTurno extends AppCompatActivity{
 
         adapter = new AdapterDispensador(listtemp.size());
 
-
-
         constrain = findViewById(R.id.constrain);
 
         //valdiar que el los nombres de sectores en firebase coincidan con los nombres de sercotres locales
         //el que no exista que lo elimine
 
-
         click = MediaPlayer.create(DispensadorTurno.this, R.raw.fin);
         click2 = MediaPlayer.create(DispensadorTurno.this, R.raw.ckickk);
-
 
         txt_numeroActualDispensdor= findViewById(R.id.txtNumeroActualDispensador);
         txt_nombresector= findViewById(R.id.txtNombreSectorDispensdor);
@@ -210,25 +240,79 @@ public class DispensadorTurno extends AppCompatActivity{
                 Date date = new Date();
                 String fechaCorta = dateFormatcorta.format(date);
 
-                String nombredelarchivo = leerHistorico(fechaCorta);
+                String nombreArchivo = (fechaCorta.replace("/","-")+".txt").trim();
 
-                    if (nombredelarchivo!=null){
+                String[] archivos =  context.getFilesDir().list();
+
+                if (existe(archivos, nombreArchivo)){
+
+                    File file = new File(context.getFilesDir(), nombreArchivo);
+
+                    Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
+
+                    StorageReference riversRef = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child(fechaCorta.replace("/","-")).child(uri.getLastPathSegment());
+
+                    riversRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+
+                        }
+                    });
+
+                }
+
+
+
+
+
+
+
+
+
+
+/*
                         try {
 
+                            FileInputStream  inputstream = openFileInput(nombredelarchivo);
+                            FileOutputStream outputStream = new FileOutputStream(temp);
+                            int read;
+                            byte[] bytes = new byte[8192];
+                            while ((read = inputstream.read(bytes)) != -1) {
+                                outputStream.write(bytes, 0, read);
+                            }
+                            if (outputStream != null) {
+                                outputStream.close();
+                            }
+                            Uri file = Uri.fromFile(temp);
+                            StorageReference riversRef = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(file.getLastPathSegment());
 
-                            InputStreamReader archivo = new InputStreamReader(openFileInput(nombredelarchivo));
-
-                            File file = new File(String.valueOf(openFileInput(nombredelarchivo)));
-
-                            file.toString();
-
+                            riversRef.putFile(file).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Toast.makeText(getApplicationContext(), "se subio correctamente", Toast.LENGTH_LONG).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getApplicationContext(), "Error subir", Toast.LENGTH_LONG).show();
+                                }
+                            });
 
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
 
+                        */
 
-                    }
 
 
             }
@@ -468,6 +552,7 @@ public class DispensadorTurno extends AppCompatActivity{
             LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
             LOGOLOCALIMPRE= pref.getString("LOGOLOCALIMPRE","NO");
             CLIENTE= pref.getString("CLIENTE","NO");
+            id = pref.getString("ID","NO");
         }
 
     }
@@ -521,15 +606,11 @@ public class DispensadorTurno extends AppCompatActivity{
                    SectorLocal tabla = mutableData.getValue(SectorLocal.class);
 
                     if ( tabla == null) {
-
                         return Transaction.success(mutableData);
-
                     }
 
                     tabla.sumarDispensdor();
-
                     mutableData.setValue(tabla);
-
                     return Transaction.success(mutableData);
 
                 }
@@ -540,7 +621,6 @@ public class DispensadorTurno extends AppCompatActivity{
                     // Transaction completed
 
                     SectorLocal tabla = currentData.getValue(SectorLocal.class);
-
                     if(tabla!=null){
                         byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
 
@@ -732,10 +812,15 @@ public class DispensadorTurno extends AppCompatActivity{
 
     private void inicializarFirebase() {
         FirebaseApp.initializeApp(this);
+        mstorage = FirebaseStorage.getInstance().getReference();
         firebaseDatabase = FirebaseDatabase.getInstance();
         //se creo una actividad para gejecutar este metodo
         //firebaseDatabase.setPersistenceEnabled(true);
         databaseReference = firebaseDatabase.getReference();
+
+
+
+
     }
 
 
@@ -835,7 +920,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private String leerHistorico(String fecha) {
 
         //Crear Clase de Registro
-Boolean exist = false;
+        Boolean exist = false;
 
         String nombreArchivo = (fecha.replace("/","-")+".txt").trim();
 
@@ -845,8 +930,6 @@ Boolean exist = false;
 
         if (existe(archivos, nombreArchivo)){
             exist = true;
-           // seleccionar ese archivo y enviarlo a firebase store archivos
-
         }
 
         if (exist){
@@ -863,11 +946,13 @@ Boolean exist = false;
         //Crear Clase de Registro
 
 
-        String nombreArchivo = (fecha.replace("/","-")+".txt").trim();
+        String nombre = (fecha.replace("/","-")+".txt").trim();
         SectorHistorico datos = new SectorHistorico();
 
         datos.setCliente(CLIENTE);
         datos.setLocal(NOMBRELOCALSELECCIONADO);
+        datos.setId(id);
+        datos.setNombreDispositivo(id);
         datos.setSector(sector.getNombreSector());
         datos.setTicket(sector.getUltimoNumeroDispensador());
         datos.setFecha_entrega(fecha);
@@ -875,40 +960,41 @@ Boolean exist = false;
         datos.setFecha_atencion("");
         datos.setHora_atencion("");
 
-        String[] archivos = fileList();
+
+        String[] archivosEncontrados = context.getFilesDir().list();
 
         Gson gson = new Gson();
 
-        if (existe(archivos, nombreArchivo)){
+        //valdiar que exista
+
+        if (existe(archivosEncontrados, nombre)){
+
 
                 try{
 
-                    InputStreamReader archivo = new InputStreamReader(openFileInput(nombreArchivo));
+                    InputStreamReader archivo = new InputStreamReader(openFileInput(nombre));
                     BufferedReader br = new BufferedReader(archivo);
                     String linea = br.readLine();
                     String todo = "";
-
                     while (linea != null) {
-
                         todo = todo + linea + "\n";
                         linea = br.readLine();
                     }
 
                     br.close();
                     archivo.close();
-
                     ClaseHistorico historico = gson.fromJson(todo, ClaseHistorico.class);
                     List<SectorHistorico> tickets = historico.getHistorico();
                     tickets.add(datos);
                     historico.setHistorico(tickets);
                     String JSONn = gson.toJson(historico);
-                    grabar(JSONn,nombreArchivo);
+                    grabar(JSONn,nombre);
 
                     Log.e("Json grabado ",JSONn);
 
 
                 }catch (Exception e){
-                    Log.e("erro a", e.toString());
+                    // notificacion importante realizar
                 }
 
         }else{
@@ -917,7 +1003,7 @@ Boolean exist = false;
             tickets.add(datos);
             ClaseHistorico historico = new ClaseHistorico(NOMBREDELDISPOSITIVO, tickets);
             String JSON = gson.toJson(historico);
-            grabar(JSON,nombreArchivo);
+            grabar(JSON,nombre);
 
         }
 
@@ -940,18 +1026,19 @@ Boolean exist = false;
         return a;
     }
 
-
-
-    public void grabar(String v,String NombreHistorico) {
+    public void grabar(String v,String direccion_nombre) {
         try {
 
-            OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput(NombreHistorico, Activity.MODE_PRIVATE));
+            OutputStreamWriter archivo = new OutputStreamWriter(openFileOutput(direccion_nombre, Activity.MODE_PRIVATE));
             archivo.write(v);
             archivo.flush();
             archivo.close();
+
+
         } catch (IOException e) {
             Log.e("error",e.toString());
         }
+
         Toast t = Toast.makeText(this, "Los datos fueron grabados",Toast.LENGTH_SHORT);
         t.show();
     }

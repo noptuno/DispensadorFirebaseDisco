@@ -8,6 +8,8 @@ public class SectorHistorico {
     String cliente;
     String local;
     String sector;
+    String id;
+    String nombreDispositivo;
     int ticket;
     //dispensador->
     String fecha_entrega;
@@ -16,6 +18,22 @@ public class SectorHistorico {
     String fecha_atencion;
     String hora_atencion;
 
+
+    public String getNombreDispositivo() {
+        return nombreDispositivo;
+    }
+
+    public void setNombreDispositivo(String nombreDispositivo) {
+        this.nombreDispositivo = nombreDispositivo;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public SectorHistorico() {
 
@@ -85,10 +103,12 @@ public class SectorHistorico {
         this.hora_atencion = hora_atencion;
     }
 
-    public SectorHistorico(String cliente, String local, String sector, int ticket, String fecha_entrega, String hora_entrega, String fecha_atencion, String hora_atencion) {
+    public SectorHistorico(String cliente, String local, String sector,String id,String nombreDispositivo, int ticket, String fecha_entrega, String hora_entrega, String fecha_atencion, String hora_atencion) {
         this.cliente = cliente;
         this.local = local;
         this.sector = sector;
+        this.id = id;
+        this.nombreDispositivo = nombreDispositivo;
         this.ticket = ticket;
         this.fecha_entrega = fecha_entrega;
         this.hora_entrega = hora_entrega;
