@@ -34,6 +34,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -142,9 +143,8 @@ public class DispensadorTurno extends AppCompatActivity{
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     TextView txt_numeroActualDispensdor,txt_nombresector;
-        Boolean habilitar_boton_imprimir = true;
-
-        private Button btnsubir;
+    Boolean habilitar_boton_imprimir = true;
+    private Button btnsubir;
     private UsbManager usbManager;
     int numeroactual;
     String NOMBRELOCALSELECCIONADO=null;
@@ -152,6 +152,8 @@ public class DispensadorTurno extends AppCompatActivity{
     String NOMBREDELDISPOSITIVO=null;
     String LOGOLOCAL=null;
     String LOGOLOCALIMPRE=null;
+    String BDCARGADO = null;
+    String BDFECHACARGADO = null;
     AdapterDispensador adapter;
     ArrayList<SectorLocal> list;
     ArrayList<SectoresElegidos> listtemp= new ArrayList<>();
@@ -236,37 +238,56 @@ public class DispensadorTurno extends AppCompatActivity{
         btnsubir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //METODO SUBIR
+
                 SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Date date = new Date();
                 String fechaCorta = dateFormatcorta.format(date);
-
                 String nombreArchivo = (fechaCorta.replace("/","-")+".txt").trim();
 
-                String[] archivos =  context.getFilesDir().list();
+                if (!BDFECHACARGADO.equals(fechaCorta)){
 
-                if (existe(archivos, nombreArchivo)){
+                    if (!BDCARGADO.equals("true")){
 
-                    File file = new File(context.getFilesDir(), nombreArchivo);
+                        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
 
-                    Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
+                        String[] archivos =  context.getFilesDir().list();
 
-                    StorageReference riversRef = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child(fechaCorta.replace("/","-")).child(uri.getLastPathSegment());
+                        if (existe(archivos, nombreArchivo)){
 
-                    riversRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            File file = new File(context.getFilesDir(), nombreArchivo);
 
+                            Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
+
+                            StorageReference riversRef = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child(fechaCorta.replace("/","-")).child(uri.getLastPathSegment());
+
+                            riversRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    editor.putString("BD","true");
+                                    editor.putString("FECHA",fechaCorta);
+                                    editor.apply();
+                                }
+
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    editor.putString("BD","false");
+                                    editor.putString("FECHA",fechaCorta);
+                                    editor.apply();
+                                }
+                            });
 
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
 
+                    }
 
-                        }
-                    });
 
                 }
+
+
 
 
 
@@ -312,21 +333,16 @@ public class DispensadorTurno extends AppCompatActivity{
                         }
 
                         */
-
-
-
             }
         });
         adapter.setOnNoteSelectedListener(new AdapterDispensador.OnNoteSelectedListener() {
             @Override
             public void onClick(SectorLocal note) {
 
-              //  valdiar internet = true
-//loag
+                // valdiar internet = true
+                // loag
 
                 if (habilitar_boton_imprimir){
-
-
 
                     if (impresoraactiva){
 
@@ -352,13 +368,14 @@ public class DispensadorTurno extends AppCompatActivity{
                     }
 
                 }else{
+
                     Toast.makeText(getApplicationContext(), "Esperando", Toast.LENGTH_LONG).show();
+
                 }
 
-
                     //dialog mensaje internet
-
             }
+
         });
 
         actionBar = getSupportActionBar();
@@ -376,7 +393,6 @@ public class DispensadorTurno extends AppCompatActivity{
         if (!LOGOLOCAL.equals("NO") && !LOGOLOCALIMPRE.equals("NO")){
             cargarLogo(LOGOLOCAL,LOGOLOCALIMPRE);
         }
-
 
     }
 
@@ -553,6 +569,8 @@ public class DispensadorTurno extends AppCompatActivity{
             LOGOLOCALIMPRE= pref.getString("LOGOLOCALIMPRE","NO");
             CLIENTE= pref.getString("CLIENTE","NO");
             id = pref.getString("ID","NO");
+            BDCARGADO = pref.getString("BDCARGADO","NO");
+            BDFECHACARGADO = pref.getString("BDFECHACARGADO","NO");
         }
 
     }
