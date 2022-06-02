@@ -163,9 +163,6 @@ public class DispensadorTurno extends AppCompatActivity{
     private ImageView logo;
     private String id;
     private  StorageReference mstorage;
-    private String dowloadpath = Environment.DIRECTORY_DOWNLOADS;
-    private boolean internet = true;
-    private boolean imprimir = false;
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -239,100 +236,87 @@ public class DispensadorTurno extends AppCompatActivity{
             @Override
             public void onClick(View view) {
 
+
+                //ejecutar
+
+                /*
+                OkHttpClient client = new OkHttpClient().newBuilder()
+                        .build();
+                Request request = new Request.Builder()
+                        .url("https://firebasestorage.googleapis.com/v0/b/discotest-c3cc6.appspot.com/o/TEMP%2FDISCO%2FLOCALES%2FCENTRO%2F02-06-2022%2F02-06-2022.txt?alt=media&token=3074e7f7-b0e8-488c-898b-206298f69592")
+                        .method("GET", null)
+                        .build();
+                Response response = client.newCall(request).execute();
+*/
+
+
+                //validar internet
+
+                //VALIDAR QUE YA SE HAYA EJECUTADO ESTE METODO
+
+               // SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+              //  SharedPreferences.Editor editor = pref.edit();
+              //  editor.putString("BDCARGADO","false");
+             //   editor.apply();
+
                 //METODO SUBIR
 
                 SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 Date date = new Date();
                 String fechaCorta = dateFormatcorta.format(date);
-                String nombreArchivo = (fechaCorta.replace("/","-")+".txt").trim();
 
-                if (!BDFECHACARGADO.equals(fechaCorta)){
+                String[] listaArchivos =  context.getFilesDir().list();
 
-                    if (!BDCARGADO.equals("true")){
+                if (listaArchivos != null){
 
-                        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = pref.edit();
+                    int i = 1;
+                    for (String nombreArchivoSeleccionado : listaArchivos){
 
-                        String[] archivos =  context.getFilesDir().list();
 
-                        if (existe(archivos, nombreArchivo)){
+                        Log.e("Ejecutado","cant " + i++ );
 
-                            File file = new File(context.getFilesDir(), nombreArchivo);
+                        if (nombreArchivoSeleccionado.toLowerCase(Locale.US).endsWith(".txt")){
 
+                            Log.e("encontrado: ",nombreArchivoSeleccionado );
+
+                            File file = new File(context.getFilesDir(), nombreArchivoSeleccionado);
                             Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
 
-                            StorageReference riversRef = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child(fechaCorta.replace("/","-")).child(uri.getLastPathSegment());
+                            StorageReference referenceStorage = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child(fechaCorta.replace("/","-")).child(uri.getLastPathSegment());
 
-                            riversRef.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    editor.putString("BD","true");
-                                    editor.putString("FECHA",fechaCorta);
-                                    editor.apply();
-                                }
 
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    editor.putString("BD","false");
-                                    editor.putString("FECHA",fechaCorta);
-                                    editor.apply();
-                                }
-                            });
+                           try {
+
+                               referenceStorage.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                   @Override
+                                   public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                       Log.e("Archivo Subido","nombreArchivoSeleccionado: " + "Correcto");
+                                       file.delete();
+
+                                   }
+
+                               }).addOnFailureListener(new OnFailureListener() {
+                                   @Override
+                                   public void onFailure(@NonNull Exception e) {
+
+                                       Log.e("Archivo Subido","nombreArchivoSeleccionado: " + "Incorrecto");
+
+                                   }
+                               });
+                           }catch (Exception e){
+                               Log.e("Archivo Subido","nombreArchivoSeleccionado: " + "error");
+                           }
+
 
                         }
 
                     }
 
 
+                }else{
+                    Log.e("Archivo","0" );
                 }
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-                        try {
-
-                            FileInputStream  inputstream = openFileInput(nombredelarchivo);
-                            FileOutputStream outputStream = new FileOutputStream(temp);
-                            int read;
-                            byte[] bytes = new byte[8192];
-                            while ((read = inputstream.read(bytes)) != -1) {
-                                outputStream.write(bytes, 0, read);
-                            }
-                            if (outputStream != null) {
-                                outputStream.close();
-                            }
-                            Uri file = Uri.fromFile(temp);
-                            StorageReference riversRef = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(file.getLastPathSegment());
-
-                            riversRef.putFile(file).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    Toast.makeText(getApplicationContext(), "se subio correctamente", Toast.LENGTH_LONG).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(), "Error subir", Toast.LENGTH_LONG).show();
-                                }
-                            });
-
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        */
             }
         });
         adapter.setOnNoteSelectedListener(new AdapterDispensador.OnNoteSelectedListener() {
@@ -351,20 +335,16 @@ public class DispensadorTurno extends AppCompatActivity{
                             click2.start();
 
                             habilitar_boton_imprimir = false;
-                            sumar(note);
+                            GuardarFirebaseTransaccion(note);
 
                         }else{
                             impresorapapel = false;
-                            //dialog mensaje papel
+                            //todo dialog mensaje
                             Toast.makeText(getApplicationContext(), "Error papel mensaje", Toast.LENGTH_LONG).show();
                         }
 
                     }else{
-
                         usb();
-                        //dialog mensaje usb
-                        Toast.makeText(getApplicationContext(), "Error Impresora", Toast.LENGTH_LONG).show();
-
                     }
 
                 }else{
@@ -441,21 +421,33 @@ public class DispensadorTurno extends AppCompatActivity{
         try {
             byte[] tempReadBytes = new byte[512];
             int oldDateReadLen = leerimpresora(tempReadBytes);
+
             if (oldDateReadLen != 0) {
 
                 if (oldDateReadLen < 0){
                     XLog.d("PrinterInstance", "LEER OK negativo= " + oldDateReadLen);
+
+
+                    //bloquear
+
                 }else{
+
+
                     XLog.d("PrinterInstance", "LEER OK  positivo= " + oldDateReadLen);
+
+
                 }
 
-
             }
+
             for(int i = 0; i < 3; ++i) {
                 isSendSuccess = escribirimpresora(new byte[]{29, 40, 72, 6, 0, 48, 48, 49, 50, 51, 52});
                 if (isSendSuccess > 0) {
                     XLog.d("PrinterInstance", "ESCRIBIR OK = " + isSendSuccess);
                     break;
+                }else{
+
+
                 }
             }
 
@@ -470,7 +462,7 @@ public class DispensadorTurno extends AppCompatActivity{
                 XLog.d("PrinterInstance", "PAPEL" + paperData);
 
 
-                if (uncapData == 18 && otroData == 18 && paperData == 18 && oldDateReadLen >= 0 && isSendSuccess >= 0){
+                if (uncapData == 18 || uncapData == 0 && otroData == 18 && paperData == 18 && oldDateReadLen >= 0 && isSendSuccess >= 0){
 
                     correcto = true;
                 }else{
@@ -570,7 +562,6 @@ public class DispensadorTurno extends AppCompatActivity{
             CLIENTE= pref.getString("CLIENTE","NO");
             id = pref.getString("ID","NO");
             BDCARGADO = pref.getString("BDCARGADO","NO");
-            BDFECHACARGADO = pref.getString("BDFECHACARGADO","NO");
         }
 
     }
@@ -588,7 +579,9 @@ public class DispensadorTurno extends AppCompatActivity{
 
     }
 
-    void sumar(SectorLocal note){
+
+    private void GuardarFirebaseTransaccion(SectorLocal datos) {
+
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
         SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -601,21 +594,6 @@ public class DispensadorTurno extends AppCompatActivity{
 
         String horaCorta = horaFormatcorta.format(date);
 
-       // guardarFirebase(note,fechaCompleta,fechaCorta,horaCorta);
-
-        /*
-        if (connection != null && connection.claimInterface(usbInterface, true)) {
-            impresoraactiva = true;
-        }else{
-            impresoraactiva = false;
-        }
-        */
-
-        GuardarFirebaseTransaccion(note,fechaCompleta,fechaCorta,horaCorta);
-
-    }
-
-    private void GuardarFirebaseTransaccion(SectorLocal datos, String fechaCompleta,String fechaCorta, String horaCorta) {
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).runTransaction(new Transaction.Handler() {
                 @Override
@@ -629,6 +607,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
                     tabla.sumarDispensdor();
                     mutableData.setValue(tabla);
+
                     return Transaction.success(mutableData);
 
                 }
@@ -636,28 +615,25 @@ public class DispensadorTurno extends AppCompatActivity{
                 @Override
                 public void onComplete(DatabaseError databaseError, boolean committed,
                                        DataSnapshot currentData) {
-                    // Transaction completed
 
                     SectorLocal tabla = currentData.getValue(SectorLocal.class);
+
                     if(tabla!=null){
+
                         byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
 
-                        //validar que la impresora haga la impresion
-                        //implementar sdk impresion
-
                         if(Imprimir(escpos)){
+
                             registrarHistorico(tabla,fechaCorta,horaCorta);
 
+
+
                         }else{
+
                             impresorapapel=false;
-                            Toast.makeText(getApplicationContext(), "Error papel interno mensaje", Toast.LENGTH_LONG).show();
+                            //todo dialog mensaje
                         }
-
                     }
-
-                    habilitar_boton_imprimir = true;
-
-
                 }
             });
     }
@@ -885,7 +861,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
                 } else {
                     ret = false;
-                    Toast.makeText(DispensadorTurno.this, "Error impresion Revisar", Toast.LENGTH_LONG).show();
+
                 }
             }
         } catch (Exception e) {
@@ -1109,9 +1085,10 @@ public class DispensadorTurno extends AppCompatActivity{
             if (connection != null && connection.claimInterface(usbInterface, true)) {
                 impresoraactiva = true;
                 Toast.makeText(DispensadorTurno.this, "Conectado", Toast.LENGTH_SHORT).show();
+
             }else{
                 impresoraactiva = false;
-                Toast.makeText(DispensadorTurno.this, "ERROR C conectar", Toast.LENGTH_SHORT).show();
+                //todo dialog mensaje
             }
 
         } catch (Exception var2) {
