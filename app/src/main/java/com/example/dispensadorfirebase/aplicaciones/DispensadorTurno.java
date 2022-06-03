@@ -1,8 +1,9 @@
 package com.example.dispensadorfirebase.aplicaciones;
 
-import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.BASEDATOSSECTORESTEMP;
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
 
 import android.Manifest;
 import android.app.Activity;
@@ -150,6 +151,8 @@ public class DispensadorTurno extends AppCompatActivity{
     String NOMBRELOCALSELECCIONADO=null;
     String CLIENTE=null;
     String NOMBREDELDISPOSITIVO=null;
+
+    String IDNOMBRELOCALSELECCIONADO=null;
     String LOGOLOCAL=null;
     String LOGOLOCALIMPRE=null;
     String BDCARGADO = null;
@@ -161,7 +164,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private SharedPreferences pref;
     private Button configurarnuevamente;
     private ImageView logo;
-    private String id;
+    private String iddispositivo;
     private  StorageReference mstorage;
     @Override
     protected void onPostResume() {
@@ -190,7 +193,7 @@ public class DispensadorTurno extends AppCompatActivity{
         inicializarFirebase();
         validarConfiguracion();
         leerSectoresLocales();
-        pedir_permiso_escritura();
+        //pedir_permiso_escritura();
 
         configurarnuevamente = findViewById(R.id.btn_salir);
 
@@ -282,7 +285,7 @@ public class DispensadorTurno extends AppCompatActivity{
                             File file = new File(context.getFilesDir(), nombreArchivoSeleccionado);
                             Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
 
-                            StorageReference referenceStorage = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child(fechaCorta.replace("/","-")).child(uri.getLastPathSegment());
+                            StorageReference referenceStorage = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child(fechaCorta.replace("/","-")).child(uri.getLastPathSegment());
 
 
                            try {
@@ -326,8 +329,6 @@ public class DispensadorTurno extends AppCompatActivity{
                 // valdiar internet = true
                 // loag
 
-                if (habilitar_boton_imprimir){
-
                     if (impresoraactiva){
 
                         if (getCurrentStatus()){
@@ -338,20 +339,18 @@ public class DispensadorTurno extends AppCompatActivity{
                             GuardarFirebaseTransaccion(note);
 
                         }else{
+
                             impresorapapel = false;
                             //todo dialog mensaje
                             Toast.makeText(getApplicationContext(), "Error papel mensaje", Toast.LENGTH_LONG).show();
                         }
 
                     }else{
+
                         usb();
                     }
 
-                }else{
 
-                    Toast.makeText(getApplicationContext(), "Esperando", Toast.LENGTH_LONG).show();
-
-                }
 
                     //dialog mensaje internet
             }
@@ -560,7 +559,8 @@ public class DispensadorTurno extends AppCompatActivity{
             LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
             LOGOLOCALIMPRE= pref.getString("LOGOLOCALIMPRE","NO");
             CLIENTE= pref.getString("CLIENTE","NO");
-            id = pref.getString("ID","NO");
+            iddispositivo = pref.getString("ID","NO");
+            IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
             BDCARGADO = pref.getString("BDCARGADO","NO");
         }
 
@@ -589,13 +589,12 @@ public class DispensadorTurno extends AppCompatActivity{
         Date date = new Date();
 
         String fechaCompleta = dateFormat.format(date);
-
         String fechaCorta = dateFormatcorta.format(date);
-
         String horaCorta = horaFormatcorta.format(date);
 
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).runTransaction(new Transaction.Handler() {
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).runTransaction(new Transaction.Handler() {
                 @Override
                 public Transaction.Result doTransaction(MutableData mutableData) {
 
@@ -620,23 +619,55 @@ public class DispensadorTurno extends AppCompatActivity{
 
                     if(tabla!=null){
 
+                        registrarHistoricoDispensadorFirebase(tabla,fechaCorta,horaCorta);
+
                         byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
 
                         if(Imprimir(escpos)){
 
-                            registrarHistorico(tabla,fechaCorta,horaCorta);
-
-
+                            //registrarHistorico(tabla,fechaCorta,horaCorta);
 
                         }else{
 
                             impresorapapel=false;
                             //todo dialog mensaje
                         }
+
+                    }else{
+
                     }
                 }
             });
     }
+
+
+    private void registrarHistoricoDispensadorFirebase(SectorLocal sector,String fecha,String hora) {
+
+        String nombre = (fecha.replace("/","-")).trim();
+        int variable = 1;
+        String idReporte = sector.getIdsector()+"-"+sector.getUltimoNumeroDispensador()+"-"+variable;
+
+        SectorHistorico datos = new SectorHistorico();
+
+
+
+        datos.setIdSector(sector.getIdsector());
+        datos.setNombreSector(sector.getNombreSector());
+        datos.setIdDispositivo(iddispositivo);
+        datos.setNombreDispositivo(iddispositivo);
+        datos.setNumeroDispensado(sector.getUltimoNumeroDispensador());
+        datos.setFecha_entrega(fecha);
+        datos.setHora_entrega(hora);
+        datos.setFecha_atencion("");
+        datos.setHora_atencion("");
+
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("REPORTE").child(nombre).child(idReporte).setValue(datos);
+
+
+    }
+
+
 
     private void leerSectoresLocales() {
 
@@ -758,7 +789,7 @@ public class DispensadorTurno extends AppCompatActivity{
         setProgressDialog();
 
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -772,9 +803,10 @@ public class DispensadorTurno extends AppCompatActivity{
 
                         for (SectoresElegidos sec : listtemp) {
 
-                            if (sec.getNombre().equals(sectores.getNombreSector())){
+                            if (sec.getIdSectorFirebase().equals(sectores.getIdsector())){
 
                                 list.add(sectores);
+                                break;
 
                             }
 
@@ -943,16 +975,16 @@ public class DispensadorTurno extends AppCompatActivity{
         String nombre = (fecha.replace("/","-")+".txt").trim();
         SectorHistorico datos = new SectorHistorico();
 
-        datos.setCliente(CLIENTE);
-        datos.setLocal(NOMBRELOCALSELECCIONADO);
-        datos.setId(id);
-        datos.setNombreDispositivo(id);
-        datos.setSector(sector.getNombreSector());
-        datos.setTicket(sector.getUltimoNumeroDispensador());
-        datos.setFecha_entrega(fecha);
-        datos.setHora_entrega(hora);
-        datos.setFecha_atencion("");
-        datos.setHora_atencion("");
+       // datos.setCliente(CLIENTE);
+      //  datos.setLocal(NOMBRELOCALSELECCIONADO);
+       // datos.setId(iddispositivo);
+        //datos.setNombreDispositivo(iddispositivo);
+       // datos.setSector(sector.getNombreSector());
+      //  datos.setTicket(sector.getUltimoNumeroDispensador());
+       // datos.setFecha_entrega(fecha);
+      //  datos.setHora_entrega(hora);
+       // datos.setFecha_atencion("");
+        //datos.setHora_atencion("");
 
 
         String[] archivosEncontrados = context.getFilesDir().list();

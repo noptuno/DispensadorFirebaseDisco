@@ -3,16 +3,16 @@ package com.example.dispensadorfirebase.clase;
 public class SectoresElegidos {
 
     Integer idSector;
-    String nombre;
+    String idSectorFirebase;
     int favorito;
     int ultimonumero;
 
     public SectoresElegidos() {
     }
 
-    public SectoresElegidos(Integer idSector, String nombre, int favorito, int ultimonumero) {
+    public SectoresElegidos(Integer idSector, String idSectorFirebase, int favorito, int ultimonumero) {
         this.idSector = idSector;
-        this.nombre = nombre;
+        this.idSectorFirebase = idSectorFirebase;
         this.favorito = favorito;
         this.ultimonumero = ultimonumero;
     }
@@ -41,18 +41,18 @@ public class SectoresElegidos {
         this.idSector = idSector;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getIdSectorFirebase() {
+        return idSectorFirebase;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setIdSectorFirebase(String idSectorFirebase) {
+        this.idSectorFirebase = idSectorFirebase;
     }
 
     public String toString() {
         return "SectoresElegidos{" +
                 "idSector=" +         idSector +
-                ", NombreSectoro='" +  nombre + '\'' +
+                ", NombreSectoro='" +  idSectorFirebase + '\'' +
                 ", ultimonumer='" +  ultimonumero + '\'' +
                 '}';
     }

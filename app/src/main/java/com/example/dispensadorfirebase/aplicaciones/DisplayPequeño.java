@@ -182,7 +182,7 @@ public class DisplayPequeño extends AppCompatActivity {
                     if (sectores.getEstado()==1){
 
                         for (SectoresElegidos sec : listtemp) {
-                            if (sec.getNombre().equals(sectores.getNombreSector())){
+                            if (sec.getIdSectorFirebase().equals(sectores.getIdsector())){
                                 datos = sectores;
                                 Actualizar();
                                 break;

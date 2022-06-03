@@ -39,7 +39,7 @@ public class SectorDB {
 
         ContentValues cv = new ContentValues();
         cv.put(ConstantsDB.SEC_IDSECTOR, sectores.getIdSector());
-        cv.put(ConstantsDB.SEC_NOMBRE, sectores.getNombre());
+        cv.put(ConstantsDB.SEC_NOMBRE, sectores.getIdSectorFirebase());
         cv.put(ConstantsDB.SEC_NUMEROELEGIDO, sectores.getUltimonumero());
         return cv;
     }
@@ -57,13 +57,13 @@ public class SectorDB {
         db.delete(ConstantsDB.TABLA_SECTORESELEGIDOS, where, new String[]{String.valueOf(codigo)});
         this.closeDB();
     }
-    public Boolean validar(String nombre) {
+    public Boolean validar(String idsector) {
 
         boolean error= false;
         this.openReadableDB();
         String where = ConstantsDB.SEC_NOMBRE+ "= ?";
 
-        Cursor c = db.query(ConstantsDB.TABLA_SECTORESELEGIDOS, null, where, new String[]{nombre}, null, null, null, null);
+        Cursor c = db.query(ConstantsDB.TABLA_SECTORESELEGIDOS, null, where, new String[]{idsector}, null, null, null, null);
         try{
             if( c.getCount()>0) {
                 c.close();
@@ -90,7 +90,7 @@ public class SectorDB {
                 while (c.moveToNext()) {
                     sector = new SectoresElegidos();
                     sector.setIdSector(c.getInt(0));
-                    sector.setNombre(c.getString(1));
+                    sector.setIdSectorFirebase(c.getString(1));
                     sector.setUltimonumero(c.getInt(2));
 
                 }
@@ -159,11 +159,11 @@ public class SectorDB {
 
         try {
             while (c.moveToNext()) {
-                SectoresElegidos sector = new SectoresElegidos();
-                sector.setIdSector(c.getInt(0));
-                sector.setNombre(c.getString(1));
-                sector.setUltimonumero(c.getInt(2));
-                list.add(sector);
+                SectoresElegidos sectorElegido = new SectoresElegidos();
+                sectorElegido.setIdSector(c.getInt(0));
+                sectorElegido.setIdSectorFirebase(c.getString(1));
+                sectorElegido.setUltimonumero(c.getInt(2));
+                list.add(sectorElegido);
             }
         } finally {
             c.close();

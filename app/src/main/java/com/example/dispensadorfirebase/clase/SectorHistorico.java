@@ -5,19 +5,55 @@ import java.util.List;
 
 
 public class SectorHistorico {
-    String cliente;
-    String local;
-    String sector;
-    String id;
+
+    String idSector;
+    String nombreSector;
+    String idDispositivo;
     String nombreDispositivo;
-    int ticket;
-    //dispensador->
+    int numeroDispensado;
     String fecha_entrega;
     String hora_entrega;
-    //tablet->
     String fecha_atencion;
     String hora_atencion;
 
+    public SectorHistorico() {
+    }
+
+    public SectorHistorico(String idSector, String nombreSector, String idDispositivo, String nombreDispositivo, int numeroDispensado, String fecha_entrega, String hora_entrega, String fecha_atencion, String hora_atencion) {
+        this.idSector = idSector;
+        this.nombreSector = nombreSector;
+        this.idDispositivo = idDispositivo;
+        this.nombreDispositivo = nombreDispositivo;
+        this.numeroDispensado = numeroDispensado;
+        this.fecha_entrega = fecha_entrega;
+        this.hora_entrega = hora_entrega;
+        this.fecha_atencion = fecha_atencion;
+        this.hora_atencion = hora_atencion;
+    }
+
+    public String getIdSector() {
+        return idSector;
+    }
+
+    public void setIdSector(String idSector) {
+        this.idSector = idSector;
+    }
+
+    public String getNombreSector() {
+        return nombreSector;
+    }
+
+    public void setNombreSector(String nombreSector) {
+        this.nombreSector = nombreSector;
+    }
+
+    public String getIdDispositivo() {
+        return idDispositivo;
+    }
+
+    public void setIdDispositivo(String idDispositivo) {
+        this.idDispositivo = idDispositivo;
+    }
 
     public String getNombreDispositivo() {
         return nombreDispositivo;
@@ -27,48 +63,12 @@ public class SectorHistorico {
         this.nombreDispositivo = nombreDispositivo;
     }
 
-    public String getId() {
-        return id;
+    public int getNumeroDispensado() {
+        return numeroDispensado;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public SectorHistorico() {
-
-    }
-
-    public String getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(String cliente) {
-        this.cliente = cliente;
-    }
-
-    public String getLocal() {
-        return local;
-    }
-
-    public void setLocal(String local) {
-        this.local = local;
-    }
-
-    public String getSector() {
-        return sector;
-    }
-
-    public void setSector(String sector) {
-        this.sector = sector;
-    }
-
-    public int getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(int ticket) {
-        this.ticket = ticket;
+    public void setNumeroDispensado(int numeroDispensado) {
+        this.numeroDispensado = numeroDispensado;
     }
 
     public String getFecha_entrega() {
@@ -100,19 +100,6 @@ public class SectorHistorico {
     }
 
     public void setHora_atencion(String hora_atencion) {
-        this.hora_atencion = hora_atencion;
-    }
-
-    public SectorHistorico(String cliente, String local, String sector,String id,String nombreDispositivo, int ticket, String fecha_entrega, String hora_entrega, String fecha_atencion, String hora_atencion) {
-        this.cliente = cliente;
-        this.local = local;
-        this.sector = sector;
-        this.id = id;
-        this.nombreDispositivo = nombreDispositivo;
-        this.ticket = ticket;
-        this.fecha_entrega = fecha_entrega;
-        this.hora_entrega = hora_entrega;
-        this.fecha_atencion = fecha_atencion;
         this.hora_atencion = hora_atencion;
     }
 }

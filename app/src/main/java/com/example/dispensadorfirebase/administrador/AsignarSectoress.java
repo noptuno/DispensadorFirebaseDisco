@@ -1,7 +1,7 @@
 package com.example.dispensadorfirebase.administrador;
 
-import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.BASEDATOSSECTORESTEMP;
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.NonNull;
@@ -130,7 +130,7 @@ public class AsignarSectoress extends AppCompatActivity {
                 @Override
                 public void onDetail(SectorLocal note) {
 
-                    databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
+                    databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
 
                 }
             });
@@ -164,9 +164,9 @@ public class AsignarSectoress extends AppCompatActivity {
                 String fondoV = setor.getFondoV();
                 String fondoH= setor.getFondoH();
 
-                SectorLocal datos = new SectorLocal(0,0,0,limite,0,nombre,color,0,0,1,0,fondoH,fondoV);
+                SectorLocal datos = new SectorLocal("0",0,0,0,limite,0,nombre,color,0,0,1,0,fondoH,fondoV);
 
-                databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(setor.getNombre()).setValue(datos);
+                databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(setor.getNombre()).setValue(datos);
 
 
             }
@@ -182,7 +182,7 @@ public class AsignarSectoress extends AppCompatActivity {
 
             setProgressDialog();
 
-            databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
+            databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

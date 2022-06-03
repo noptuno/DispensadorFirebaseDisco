@@ -1,12 +1,44 @@
 package com.example.dispensadorfirebase.clase;
 
 public class Local {
-
-    String NombreLocal;
-    int NumeroLocal;
-    String EstadoLocal;
+    String idLocal;
+    String nombreLocal;
+    int numeroLocal;
+    String estado;
     String logo;
-    String logoImpresion;
+    String logoImpreso;
+
+    public String getIdLocal() {
+        return idLocal;
+    }
+
+    public void setIdLocal(String idLocal) {
+        this.idLocal = idLocal;
+    }
+
+    public String getNombreLocal() {
+        return nombreLocal;
+    }
+
+    public void setNombreLocal(String nombreLocal) {
+        this.nombreLocal = nombreLocal;
+    }
+
+    public int getNumeroLocal() {
+        return numeroLocal;
+    }
+
+    public void setNumeroLocal(int numeroLocal) {
+        this.numeroLocal = numeroLocal;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
     public String getLogo() {
         return logo;
@@ -16,47 +48,26 @@ public class Local {
         this.logo = logo;
     }
 
+    public String getLogoImpreso() {
+        return logoImpreso;
+    }
+
+    public void setLogoImpreso(String logoImpreso) {
+        this.logoImpreso = logoImpreso;
+    }
+
     public Local() {
     }
 
-    public String getLogoImpresion() {
-        return logoImpresion;
-    }
+    public Local(String estado, String idLocal, String logo, String logoImpreso, String nombreLocal, int numeroLocal) {
 
-    public void setLogoImpresion(String logoImpresion) {
-        this.logoImpresion = logoImpresion;
-    }
-
-    public String getEstadoLocal() {
-        return EstadoLocal;
-    }
-
-    public void setEstadoLocal(String estadoLocal) {
-        EstadoLocal = estadoLocal;
-    }
-
-    public Local(String nombreLocal, int numeroLocal, String estadoLocal,String logo,String logoimpresion) {
-        NombreLocal = nombreLocal;
-        NumeroLocal = numeroLocal;
-        EstadoLocal = estadoLocal;
+        this.estado = estado;
+        this.idLocal = idLocal;
         this.logo = logo;
-        this.logoImpresion = logoimpresion;
-    }
+        this.logoImpreso = logoImpreso;
+        this.nombreLocal = nombreLocal;
+        this.numeroLocal = numeroLocal;
 
-    public String getNombreLocal() {
-        return NombreLocal;
-    }
 
-    public void setNombreLocal(String nombreLocal) {
-        NombreLocal = nombreLocal;
     }
-
-    public int getNumeroLocal() {
-        return NumeroLocal;
-    }
-
-    public void setNumeroLocal(int numeroLocal) {
-        NumeroLocal = numeroLocal;
-    }
-
 }

@@ -1,6 +1,6 @@
 package com.example.dispensadorfirebase.administrador;
 
-import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 
 import androidx.annotation.Nullable;
@@ -132,12 +132,12 @@ private ImageView img;
                 String est = "true";
                 String logo = "null";
                 String logoimpresion = "null";
-                Local local=new Local(nom,num,est,logo,logoimpresion);
+                Local local=new Local("ACTIVO","1",logo,logoimpresion,nom,num);
 
 
                 if (!logoimpreLocal.toString().isEmpty() && !logoLocal.toString().isEmpty()){
                     local.setLogo(logoLocal.toString());
-                    local.setLogoImpresion(logoimpreLocal.toString());
+                    local.setLogoImpreso(logoimpreLocal.toString());
                 }
                 RegistroFirebase(local);
 
@@ -159,7 +159,7 @@ private ImageView img;
         if (requestCode == GALERY_INTENT && resultCode == RESULT_OK){
 
 
-            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(uri.getLastPathSegment());
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(uri.getLastPathSegment());
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -183,7 +183,7 @@ private ImageView img;
 
         }else if(requestCode == GALERY_INTENT_IMPRE && resultCode == RESULT_OK){
 
-            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(uri.getLastPathSegment());
+            StorageReference filePath = mstorage.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(uri.getLastPathSegment());
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -243,7 +243,7 @@ private ImageView img;
 
 
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(local.getNombreLocal()).setValue(local);
         //finish();
 
     }

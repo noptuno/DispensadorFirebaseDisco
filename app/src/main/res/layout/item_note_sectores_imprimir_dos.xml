@@ -21,7 +21,7 @@
     <LinearLayout
         android:id="@+id/layoutsec"
         android:layout_width="match_parent"
-        android:layout_height="380dp"
+        android:layout_height="370dp"
         android:layout_margin="15dp"
         android:background="@color/black"
         android:gravity="center"

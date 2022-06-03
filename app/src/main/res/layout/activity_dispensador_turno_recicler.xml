@@ -16,15 +16,16 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Subir Base"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imviewlogolocal"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
         android:layout_marginTop="2dp"
-        android:layout_height="50dp"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

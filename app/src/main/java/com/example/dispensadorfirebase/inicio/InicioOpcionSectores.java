@@ -1,7 +1,8 @@
 package com.example.dispensadorfirebase.inicio;
 
-import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -75,6 +76,7 @@ private TextView localseleccionado, dispositivoseleccionado;
     String CLIENTE=null;
     String LOGOLOCAL=null;
     String LOGOLOCALIMPRE=null;
+    String IDLOCALSELECCIONADO=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +89,8 @@ private TextView localseleccionado, dispositivoseleccionado;
 
         CLIENTE= getIntent().getStringExtra("CLIENTE");
         NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
-        NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCAL");
+        NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCALSELECCIONADO");
+        IDLOCALSELECCIONADO = getIntent().getStringExtra("IDLOCALSELECCIONADO");
         LOGOLOCAL = getIntent().getStringExtra("LOGOLOCAL");
         LOGOLOCALIMPRE = getIntent().getStringExtra("LOGOLOCALIMPRE");
 
@@ -147,6 +150,7 @@ private TextView localseleccionado, dispositivoseleccionado;
                             editor.putString("ESTADO","SI");
                             editor.putString("CLIENTE",CLIENTE);
                             editor.putString("LOCAL",NOMBRELOCALSELECCIONADO);
+                            editor.putString("IDLOCAL",IDLOCALSELECCIONADO);
                             editor.putString("DISPOSITIVO",NOMBREDELDISPOSITIVO);
                             editor.putString("LOGOLOCAL",LOGOLOCAL);
                             editor.putString("LOGOLOCALIMPRE",LOGOLOCALIMPRE);
@@ -189,10 +193,11 @@ private TextView localseleccionado, dispositivoseleccionado;
 
                 //crear base datos local
 
-                SectoresElegidos sector = new SectoresElegidos();
-                sector.setNombre(note.getNombreSector());
-                sector.setUltimonumero(note.getNumeroatendiendo());
-                registrarSectorElegido(sector);
+                SectoresElegidos sectorelegido = new SectoresElegidos();
+
+                sectorelegido.setIdSectorFirebase(note.getIdsector());
+                sectorelegido.setUltimonumero(note.getNumeroatendiendo());
+                registrarSectorElegido(sectorelegido);
                 mostrarBaseLocalSectoresElegidos();
 
                 //aqui uso el habilitador para guardar en el dispositivo los sectores que va a utilizar
@@ -254,7 +259,7 @@ private TextView localseleccionado, dispositivoseleccionado;
 
         setProgressDialog();
 
-        this.databaseReferencesectores.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addListenerForSingleValueEvent(new ValueEventListener() {
+        this.databaseReferencesectores.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDLOCALSELECCIONADO).child("SECTORES").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -266,18 +271,25 @@ private TextView localseleccionado, dispositivoseleccionado;
                 for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
 
                     SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
-                    if (sectores.getEstado()==1){
 
-                        SectoresElegidos sector = new SectoresElegidos();
-                        sector.setNombre(sectores.getNombreSector());
-                        sector.setUltimonumero(sectores.getNumeroatendiendo());
 
-                        registrarSectorElegido(sector);
+                    if (sectores!=null){
 
-                        mostrarBaseLocalSectoresElegidos();
-                        listsectoreslocal.add(sectores);
+                        if (sectores.getEstado()==1){
+
+                            SectoresElegidos sectorElegido = new SectoresElegidos();
+
+                            String idsector = sectores.getIdsector();
+                            sectorElegido.setIdSectorFirebase(idsector);
+                            int ultimonumero = sectores.getUltimoNumeroDispensador();
+                            sectorElegido.setUltimonumero(ultimonumero);
+                            registrarSectorElegido(sectorElegido);
+
+
+                            mostrarBaseLocalSectoresElegidos();
+                            listsectoreslocal.add(sectores);
+                        }
                     }
-
                 }
 
                 Adialog.dismiss();
@@ -294,17 +306,17 @@ private TextView localseleccionado, dispositivoseleccionado;
 
     }
 
-    public boolean registrarSectorElegido(SectoresElegidos sector) {
+    public boolean registrarSectorElegido(SectoresElegidos sectorElegido) {
 
         try {
             db = new SectorDB(this);
 
-            if (db.validar(sector.getNombre())){
-                db.eliminarSector(sector.getNombre());
+            if (db.validar(sectorElegido.getIdSectorFirebase())){
+                db.eliminarSector(sectorElegido.getIdSectorFirebase());
                 cantidadelegida--;
             }else{
                 cantidadelegida++;
-                db.insertarSector(sector);
+                db.insertarSector(sectorElegido);
             }
             cantidadsectoreselegidos.setText("" + cantidadelegida);
 

@@ -75,8 +75,6 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
 
                         Toast.makeText(InicioOpcionDispositivo.this, "Error de contraseña", Toast.LENGTH_LONG).show();
 
-
-
                     }
                 }
             }

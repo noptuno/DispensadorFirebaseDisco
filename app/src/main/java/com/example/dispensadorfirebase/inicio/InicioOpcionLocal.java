@@ -1,7 +1,9 @@
 package com.example.dispensadorfirebase.inicio;
 
-import static com.example.dispensadorfirebase.app.variables.BASEDATOSLOCALES;
+
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -18,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -91,11 +94,13 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
 
                 Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionSectores.class);
-                intent.putExtra("LOCAL", note.getNombreLocal());
+
+                intent.putExtra("LOCALSELECCIONADO", note.getNombreLocal());
+                intent.putExtra("IDLOCALSELECCIONADO", note.getIdLocal());
                 intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
                 intent.putExtra("CLIENTE", CLIENTE);
                 intent.putExtra("LOGOLOCAL",note.getLogo());
-                intent.putExtra("LOGOLOCALIMPRE",note.getLogoImpresion());
+                intent.putExtra("LOGOLOCALIMPRE",note.getLogoImpreso());
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
@@ -341,8 +346,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
         //TODO revisar
         setProgressDialog();
-
-        databaseReferencelocales.child(NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(BASEDATOSLOCALES).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReferencelocales.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

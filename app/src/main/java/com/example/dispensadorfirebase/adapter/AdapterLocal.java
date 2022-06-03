@@ -127,10 +127,15 @@ private LinearLayout layout;
 
             nombre.setText(local.getNombreLocal());
             numero.setText("" +local.getNumeroLocal());
-            estado.setText(local.getEstadoLocal());
+            estado.setText(local.getEstado());
 
-            Uri fondo = Uri.parse(local.getLogo());
-            CargarImagen(fondo,imglogolocal);
+            String a = local.getLogo();
+            if (!a.equals("sin imagen")){
+                Uri fondo = Uri.parse(a);
+                CargarImagen(fondo,imglogolocal);
+            }
+
+
 
             Random random = new Random();
 

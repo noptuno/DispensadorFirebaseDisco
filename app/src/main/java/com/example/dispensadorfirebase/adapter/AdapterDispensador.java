@@ -145,15 +145,28 @@ private int numerofuncion = 0;
             if (!ejecutado){
 
                 nombre.setText(sector.getNombreSector());
+
                 layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
+
                 Uri fondo = null;
 
                 if (CantidadSectores>1){
-                    fondo = Uri.parse(sector.getFondoh());
+
+                    String a = sector.getFondoSectorH();
+                    if (!a.equals("sin imagen")){
+                        fondo = Uri.parse(a);
+                        CargarImagen(fondo,layout);
+                    }
+
                 }else{
-                    fondo = Uri.parse(sector.getFondov());
+
+                    String a = sector.getFondoSectorV();
+                    if (!a.equals("sin imagen")){
+                        fondo = Uri.parse(a);
+                        CargarImagen(fondo,layout);
+                    }
+
                 }
-                CargarImagen(fondo,layout);
 
                 numerofuncion++;
                 if (numerofuncion == CantidadSectores){

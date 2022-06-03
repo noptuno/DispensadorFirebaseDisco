@@ -32,7 +32,6 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
     private boolean ejecutado = false;
     private int numerofuncion = 0;
 
-
     public AdapterDisplayGrande(int cantidad) {
         this.notes = new ArrayList<>();
         this.CantidadSectores = cantidad;
@@ -137,11 +136,23 @@ public class AdapterDisplayGrande extends RecyclerView.Adapter<AdapterDisplayGra
                 layout.setBackgroundColor(Color.parseColor(sector.getColorSector()));
                 Uri fondo = null;
                 if (CantidadSectores>1){
-                    fondo = Uri.parse(sector.getFondoh());
+
+                    if (!sector.getFondoSectorH().equals("sin imagen"))   {
+                        fondo = Uri.parse(sector.getFondoSectorH());
+                        CargarImagen(fondo,layout);
+                    }
+
+
+
                 }else{
-                    fondo = Uri.parse(sector.getFondov());
+
+                    if (!sector.getFondoSectorV().equals("sin imagen"))   {
+                        fondo = Uri.parse(sector.getFondoSectorV());
+                        CargarImagen(fondo,layout);
+                    }
+
                 }
-                CargarImagen(fondo,layout);
+
                 numerofuncion++;
                 if (numerofuncion == CantidadSectores){
                     ejecutado=true;
