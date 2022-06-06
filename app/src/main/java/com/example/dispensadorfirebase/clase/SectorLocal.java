@@ -17,6 +17,24 @@ public class SectorLocal implements Serializable {
             String fondoSectorH;
             String fondoSectorV;
             String idsector;
+            int variableNumero;
+            String ultimaFecha;
+
+    public String getUltimaFecha() {
+        return ultimaFecha;
+    }
+
+    public void setUltimaFecha(String ultimaFecha) {
+        this.ultimaFecha = ultimaFecha;
+    }
+
+    public int getVariableNumero() {
+        return variableNumero;
+    }
+
+    public void setVariableNumero(int variableNumero) {
+        this.variableNumero = variableNumero;
+    }
 
     public int getNumeroatendiendo() {
         return numeroatendiendo;
@@ -130,7 +148,7 @@ public class SectorLocal implements Serializable {
         this.idsector = idsector;
     }
 
-    public SectorLocal(String idSector, int numeroatendiendo, int ultimoNumeroDispensador, int cantidadEspera, int limite, int numeroDispensador, String nombreSector, String colorSector, int notificacion, int notificaciondeshabilitar, int estado, int llamarsupervisor, String fondoh, String fondov) {
+    public SectorLocal(String idSector, int numeroatendiendo, int ultimoNumeroDispensador, int cantidadEspera, int limite, int numeroDispensador, String nombreSector, String colorSector, int notificacion, int notificaciondeshabilitar, int estado, int llamarsupervisor, String fondoh, String fondov, int variableNumero,String ultimaFecha) {
 
         this.idsector = idSector;
         this.numeroatendiendo = numeroatendiendo;
@@ -146,8 +164,10 @@ public class SectorLocal implements Serializable {
         this.llamarsupervisor = llamarsupervisor;
         this.fondoSectorH = fondoh;
         this.fondoSectorV = fondov;
-    }
+        this.variableNumero = variableNumero;
+        this.ultimaFecha = ultimaFecha;
 
+    }
 
 
     public SectorLocal() {
@@ -184,6 +204,7 @@ public class SectorLocal implements Serializable {
             this.cantidadEspera++;
             this.numeroDispensador = 1;
             this.ultimoNumeroDispensador = 99;
+            this.variableNumero++;
         }else{
             this.cantidadEspera++;
             this.numeroDispensador++;
@@ -202,6 +223,7 @@ public class SectorLocal implements Serializable {
 
                 this.numeroatendiendo = 99;
                 this.cantidadEspera++;
+                this.variableNumero--;
 
             }else {
                 this.numeroatendiendo--;
@@ -225,6 +247,7 @@ public class SectorLocal implements Serializable {
         this.numeroDispensador=1;
         this.notificacion=0;
         this.notificaciondeshabilitar=0;
+        this.variableNumero++;
     }
 
 

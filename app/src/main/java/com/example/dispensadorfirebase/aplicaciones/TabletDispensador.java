@@ -2,6 +2,7 @@ package com.example.dispensadorfirebase.aplicaciones;
 
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -38,6 +39,7 @@ import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.aplicaciones.supervisor.Supervisor_Principal;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.Datos;
+import com.example.dispensadorfirebase.clase.SectorHistorico;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
 import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
@@ -48,9 +50,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class TabletDispensador extends AppCompatActivity {
 
@@ -62,16 +69,14 @@ public class TabletDispensador extends AppCompatActivity {
     MediaPlayer click, click2;
     int baselimite;
     Button btnsupervisor;
-
+    String CLIENTE=null;
     LinearLayout layoutsupervisor;
     LinearLayout layoutrollo;
 
     int limiteretroceder = 10;
     int retrocesos = 0;
-
+    String IDNOMBRELOCALSELECCIONADO=null;
     private SectorDB db = new SectorDB(this);
-
-
     Button sumar,restar,reset;
     private AlertDialog Adialog;
     int  Numero_Actual = 0,Cantidad_Espera = 10, Ultimo_numero = 0, limite_espera = 8;
@@ -141,7 +146,8 @@ private ImageView logolocal;
                 // setProgressDialog();
                 delay();
 
-                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
+
+                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).setValue(datos);
 
                 }
         });
@@ -286,7 +292,7 @@ private ImageView logolocal;
 
         setProgressDialog();
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
@@ -366,8 +372,6 @@ private ImageView logolocal;
 
     void sumar(){
 
-
-
         if (datos.sumar()){
 
             sumar.setEnabled(false);
@@ -375,11 +379,10 @@ private ImageView logolocal;
             reset.setEnabled(false);
 
             click2.start();
-
             // setProgressDialog();
             delay();
 
-            Registrar();
+            Registrar(true);
         }else{
             Toast.makeText(TabletDispensador.this, "No hay Clientes para atender", Toast.LENGTH_LONG).show();
         }
@@ -400,7 +403,7 @@ private ImageView logolocal;
             delay();
             retrocesos++;
 
-            Registrar();
+            Registrar(false);
         }else{
             Toast.makeText(TabletDispensador.this, "No hay Clientes en Esperando", Toast.LENGTH_LONG).show();
         }
@@ -444,7 +447,7 @@ private ImageView logolocal;
 
                         retrocesos = 0;
                         datos.reset();
-                        Registrar();
+                        Registrar(false);
                         dialogg.dismiss();
                        // hidebarras();
 
@@ -488,13 +491,20 @@ private ImageView logolocal;
     }
 
 
-    void Registrar(){
+    void Registrar(boolean sum){
 
         click2.start();
         txtnumeroactual.setText(""+datos.getNumeroatendiendo());
         txtcantidadespera.setText(""+datos.getCantidadEspera());
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat horaFormatcorta = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        Date date = new Date();
 
+        String fechaCompleta = dateFormat.format(date);
+        String fechaCorta = dateFormatcorta.format(date);
+        String horaCorta = horaFormatcorta.format(date);
 
         if (datos.getCantidadEspera()<baselimite){
             datos.setNotificacion(0);
@@ -504,12 +514,47 @@ private ImageView logolocal;
             datos.setNotificacion(1);
         }
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getNombreSector()).setValue(datos);
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).setValue(datos);
 
-
-
+        if (sum == true){
+            registrarHistoricoDispensadorFirebase(datos,fechaCorta,horaCorta);
+        }
 
     }
+
+    private void registrarHistoricoDispensadorFirebase(SectorLocal sector,String fecha,String hora) {
+
+        String nombrefecha = (fecha.replace("/","-")).trim();
+        int variable = sector.getVariableNumero();
+        String idReporte = sector.getIdsector()+"-"+sector.getNumeroatendiendo()+"-"+variable;
+
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("REPORTE").child(nombrefecha).child(idReporte).runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+
+                SectorHistorico tablaHistorico = mutableData.getValue(SectorHistorico.class);
+
+                if ( tablaHistorico == null) {
+                    return Transaction.success(mutableData);
+                }
+
+                tablaHistorico.setFecha_atencion(fecha);
+                tablaHistorico.setHora_atencion(hora);
+                mutableData.setValue(tablaHistorico);
+                return Transaction.success(mutableData);
+
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean committed,
+                                   DataSnapshot currentData) {
+
+            }
+        });
+
+    }
+
 
 
     void Actualizar(){
@@ -607,6 +652,12 @@ private ImageView logolocal;
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
             LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
+
+            CLIENTE= pref.getString("CLIENTE","NO");
+            IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
+
+
+
         }
 
 

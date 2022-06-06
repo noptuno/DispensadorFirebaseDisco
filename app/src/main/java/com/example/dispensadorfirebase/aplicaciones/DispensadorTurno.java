@@ -166,6 +166,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private ImageView logo;
     private String iddispositivo;
     private  StorageReference mstorage;
+
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -591,8 +592,7 @@ public class DispensadorTurno extends AppCompatActivity{
         String fechaCompleta = dateFormat.format(date);
         String fechaCorta = dateFormatcorta.format(date);
         String horaCorta = horaFormatcorta.format(date);
-
-
+        datos.setUltimaFecha(fechaCorta);
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).runTransaction(new Transaction.Handler() {
                 @Override
@@ -603,8 +603,16 @@ public class DispensadorTurno extends AppCompatActivity{
                     if ( tabla == null) {
                         return Transaction.success(mutableData);
                     }
+                    String ultimaFecha = tabla.getUltimaFecha();
 
+                    if (!ultimaFecha.equals(fechaCorta)){
+                        tabla.setVariableNumero(0);
+                    }
+
+                    tabla.setUltimaFecha(fechaCorta);
                     tabla.sumarDispensdor();
+
+
                     mutableData.setValue(tabla);
 
                     return Transaction.success(mutableData);
@@ -644,12 +652,9 @@ public class DispensadorTurno extends AppCompatActivity{
     private void registrarHistoricoDispensadorFirebase(SectorLocal sector,String fecha,String hora) {
 
         String nombre = (fecha.replace("/","-")).trim();
-        int variable = 1;
+        int variable = sector.getVariableNumero();
         String idReporte = sector.getIdsector()+"-"+sector.getUltimoNumeroDispensador()+"-"+variable;
-
         SectorHistorico datos = new SectorHistorico();
-
-
 
         datos.setIdSector(sector.getIdsector());
         datos.setNombreSector(sector.getNombreSector());
@@ -661,10 +666,7 @@ public class DispensadorTurno extends AppCompatActivity{
         datos.setFecha_atencion("");
         datos.setHora_atencion("");
 
-
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("REPORTE").child(nombre).child(idReporte).setValue(datos);
-
-
     }
 
 
