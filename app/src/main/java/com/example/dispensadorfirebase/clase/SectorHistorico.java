@@ -15,11 +15,20 @@ public class SectorHistorico {
     String hora_entrega;
     String fecha_atencion;
     String hora_atencion;
+    int limite_superado;
+
+    public int getLimite_superado() {
+        return limite_superado;
+    }
+
+    public void setLimite_superado(int limite_superado) {
+        this.limite_superado = limite_superado;
+    }
 
     public SectorHistorico() {
     }
 
-    public SectorHistorico(String idSector, String nombreSector, String idDispositivo, String nombreDispositivo, int numeroDispensado, String fecha_entrega, String hora_entrega, String fecha_atencion, String hora_atencion) {
+    public SectorHistorico(String idSector, String nombreSector, String idDispositivo, String nombreDispositivo, int numeroDispensado, String fecha_entrega, String hora_entrega, String fecha_atencion, String hora_atencion,int limite_superado) {
         this.idSector = idSector;
         this.nombreSector = nombreSector;
         this.idDispositivo = idDispositivo;
@@ -29,6 +38,7 @@ public class SectorHistorico {
         this.hora_entrega = hora_entrega;
         this.fecha_atencion = fecha_atencion;
         this.hora_atencion = hora_atencion;
+        this.limite_superado = limite_superado;
     }
 
     public String getIdSector() {

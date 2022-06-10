@@ -330,6 +330,9 @@ public class DispensadorTurno extends AppCompatActivity{
                 // valdiar internet = true
                 // loag
 
+
+                try{
+
                     if (impresoraactiva){
 
                         if (getCurrentStatus()){
@@ -350,6 +353,11 @@ public class DispensadorTurno extends AppCompatActivity{
 
                         usb();
                     }
+
+                }catch (Exception e){
+                    Log.e("Hubo Error",e.toString());
+
+                }
 
 
 
@@ -609,6 +617,10 @@ public class DispensadorTurno extends AppCompatActivity{
                         tabla.setVariableNumero(0);
                     }
 
+                    if(tabla.getCantidadEspera()> tabla.getLimite()){
+                        tabla.setNotificacion(1);
+                    }
+
                     tabla.setUltimaFecha(fechaCorta);
                     tabla.sumarDispensdor();
 
@@ -665,6 +677,8 @@ public class DispensadorTurno extends AppCompatActivity{
         datos.setHora_entrega(hora);
         datos.setFecha_atencion("");
         datos.setHora_atencion("");
+        datos.setLimite_superado(sector.getNotificacion());
+
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("REPORTE").child(nombre).child(idReporte).setValue(datos);
     }
