@@ -16,6 +16,6 @@
     <color name="colorletras">#FFC107</color>
     <color name="colorfondodos">#371717</color>
     <color name="colorPrimaryDark">#5A0B26</color>
-
+    <color name="colorAlertas">#FF5722</color>
 
 </resources>

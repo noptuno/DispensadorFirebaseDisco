@@ -1,6 +1,5 @@
 package com.example.dispensadorfirebase.aplicaciones;
 
-import static com.example.dispensadorfirebase.app.variables.BASEDATOSSECTORESTEMP;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
@@ -15,10 +14,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -32,11 +29,10 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +48,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -69,20 +64,14 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.dispensadorfirebase.BuildConfig;
 import com.example.dispensadorfirebase.R;
 import com.example.dispensadorfirebase.adapter.AdapterDispensador;
-import com.example.dispensadorfirebase.administrador.CrearLocalDialog;
 import com.example.dispensadorfirebase.basedatossectoreselegidos.SectorDB;
 import com.example.dispensadorfirebase.clase.ClaseHistorico;
-import com.example.dispensadorfirebase.clase.Local;
 import com.example.dispensadorfirebase.clase.SectorHistorico;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
-import com.example.dispensadorfirebase.inicio.InicioOpcionDispositivo;
 import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
-import com.example.dispensadorfirebase.principaltemp.MensajeActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -95,23 +84,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
-import com.printer.sdk.usb.USBPort;
-import com.printer.sdk.utils.Utils;
 import com.printer.sdk.utils.XLog;
 import com.starmicronics.starioextension.ICommandBuilder;
 import com.starmicronics.starioextension.StarIoExt;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -120,7 +101,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class DispensadorTurno extends AppCompatActivity{
 
@@ -166,7 +146,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private ImageView logo;
     private String iddispositivo;
     private  StorageReference mstorage;
-
+    private AlertDialog dialogError;
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -207,6 +187,8 @@ public class DispensadorTurno extends AppCompatActivity{
             }
         });
 
+        dialogError = ConstruirDialog();
+
         logo = findViewById(R.id.imviewlogolocal);
 
         list = new ArrayList<>();
@@ -220,7 +202,6 @@ public class DispensadorTurno extends AppCompatActivity{
 
         click = MediaPlayer.create(DispensadorTurno.this, R.raw.fin);
         click2 = MediaPlayer.create(DispensadorTurno.this, R.raw.ckickk);
-
         txt_numeroActualDispensdor= findViewById(R.id.txtNumeroActualDispensador);
         txt_nombresector= findViewById(R.id.txtNombreSectorDispensdor);
 
@@ -235,7 +216,6 @@ public class DispensadorTurno extends AppCompatActivity{
         */
 
         btnsubir = findViewById(R.id.btnsubir);
-
         btnsubir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -330,23 +310,24 @@ public class DispensadorTurno extends AppCompatActivity{
                 // valdiar internet = true
                 // loag
 
-
                 try{
 
+
+                    EjecutarImprimirBoton();
                     if (impresoraactiva){
 
                         if (getCurrentStatus()){
+
                             impresorapapel = true;
                             click2.start();
-
                             habilitar_boton_imprimir = false;
                             GuardarFirebaseTransaccion(note);
 
                         }else{
 
                             impresorapapel = false;
-                            //todo dialog mensaje
-                            Toast.makeText(getApplicationContext(), "Error papel mensaje", Toast.LENGTH_LONG).show();
+                            dialogError.show();
+
                         }
 
                     }else{
@@ -381,6 +362,15 @@ public class DispensadorTurno extends AppCompatActivity{
         if (!LOGOLOCAL.equals("NO") && !LOGOLOCALIMPRE.equals("NO")){
             cargarLogo(LOGOLOCAL,LOGOLOCALIMPRE);
         }
+
+
+
+
+    }
+
+    private void EjecutarImprimirBoton() {
+
+
 
     }
 
@@ -435,7 +425,6 @@ public class DispensadorTurno extends AppCompatActivity{
                 if (oldDateReadLen < 0){
                     XLog.d("PrinterInstance", "LEER OK negativo= " + oldDateReadLen);
 
-
                     //bloquear
 
                 }else{
@@ -460,23 +449,37 @@ public class DispensadorTurno extends AppCompatActivity{
             }
 
 
-                byte uncapData = this.getDatas(2);
-                XLog.d("PrinterInstance", "TAPA" + uncapData);
+                byte tapa = this.getDatas(2);
+                XLog.d("PrinterInstance", "TAPA" + tapa);
 
-                byte otroData = this.getDatas(3);
-                XLog.d("PrinterInstance", "OTRO" + otroData);
+                byte otro = this.getDatas(3);
+                XLog.d("PrinterInstance", "OTRO" + otro);
 
-                byte paperData = this.getDatas(4);
-                XLog.d("PrinterInstance", "PAPEL" + paperData);
+                byte papel = this.getDatas(4);
+                XLog.d("PrinterInstance", "PAPEL" + papel);
 
 
-                if (uncapData == 18 || uncapData == 0 && otroData == 18 && paperData == 18 && oldDateReadLen >= 0 && isSendSuccess >= 0){
+                if (oldDateReadLen >= 0 && isSendSuccess >= 0){
 
-                    correcto = true;
+                    if(tapa == 22 || tapa == 50 || tapa == 54 || papel == 0 || papel ==114 || tapa == 86 ||  tapa == 0 ||tapa == 34 || tapa == 52 ){
+
+                        if (tapa == 0 && otro == 18){
+                            correcto = true;
+
+                        }else{
+                            correcto = false;
+                        }
+
+                    }else{
+
+                        correcto = true;
+                    }
+
                 }else{
 
                     correcto = false;
                 }
+
 
         } catch (Exception var10) {
             var10.printStackTrace();
@@ -757,6 +760,29 @@ public class DispensadorTurno extends AppCompatActivity{
         userAnswer.requestFocus();
 
     }
+
+
+    AlertDialog ConstruirDialog(){
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.myDialog));
+
+        builder.setCancelable(false);
+
+
+        builder.setMessage("ERROR PAPEL O TAPA ABIERTA")
+                .setPositiveButton("Reintentar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+
+                    }
+        });
+        // Create the AlertDialog object and return it
+       return builder.create();
+
+    }
+
+
 
     @Override
     public void onBackPressed() {

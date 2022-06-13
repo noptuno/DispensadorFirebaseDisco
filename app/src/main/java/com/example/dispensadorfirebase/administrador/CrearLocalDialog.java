@@ -141,8 +141,6 @@ private ImageView img;
                 }
                 RegistroFirebase(local);
 
-
-
             }
         });
 
