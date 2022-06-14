@@ -4,10 +4,12 @@ public class Variables {
 
     String ROOT;
     String PASSWORD;
+    String TIPOPAPEL;
 
     public Variables(String ROOT, String PASSWORD) {
         this.ROOT = ROOT;
         this.PASSWORD = PASSWORD;
+
     }
 
     public String getROOT() {

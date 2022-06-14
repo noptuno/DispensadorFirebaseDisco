@@ -33,6 +33,7 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     private SharedPreferences pref;
     private String estado = "NO";
     private String CLIENTE;
+    private String supervisor = "NO";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,11 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         nombrecliente = findViewById(R.id.editcliente);
         dispositivo = findViewById(R.id.spinner_dispositivo);
         password = findViewById(R.id.editPassword);
+
+
+        supervisor = getIntent().getStringExtra("supervisor");
+
+
 
         abriraplicacion();
 
@@ -64,7 +70,12 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
                         guardarSharePreferencePrincipal();
 
                         Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
-                        intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
+                        if (supervisor.equals("SI")){
+                            intent.putExtra("DISPOSITIVO", "SUPERVISOR");
+                        }else{
+                            intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
+                        }
+
                         intent.putExtra("CLIENTE",nombrecliente.getText().toString());
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

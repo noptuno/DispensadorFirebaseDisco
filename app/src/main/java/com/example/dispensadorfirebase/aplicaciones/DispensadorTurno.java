@@ -26,6 +26,8 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -147,22 +149,15 @@ public class DispensadorTurno extends AppCompatActivity{
     private String iddispositivo;
     private  StorageReference mstorage;
     private AlertDialog dialogError;
+    private AlertDialog dialogInternet;
+    private AlertDialog dialogImpresora;
+
+
+
+
     @Override
     protected void onPostResume() {
         super.onPostResume();
-
-    }
-
-    private void pedir_permiso_escritura() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int readExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-            int writeExternalPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-            if (writeExternalPermission != PackageManager.PERMISSION_GRANTED || readExternalPermission != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            }
-        }
 
     }
 
@@ -171,9 +166,13 @@ public class DispensadorTurno extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dispensador_turno_recicler);
+
         inicializarFirebase();
+
         validarConfiguracion();
+
         leerSectoresLocales();
+
         //pedir_permiso_escritura();
 
         configurarnuevamente = findViewById(R.id.btn_salir);
@@ -187,7 +186,11 @@ public class DispensadorTurno extends AppCompatActivity{
             }
         });
 
-        dialogError = ConstruirDialog();
+        dialogError = ConstruirDialog("PAPEL");
+
+        dialogInternet = ConstruirDialog("INTERNET");
+
+        dialogImpresora = ConstruirDialog("IMPRESORA ERROR");
 
         logo = findViewById(R.id.imviewlogolocal);
 
@@ -216,6 +219,7 @@ public class DispensadorTurno extends AppCompatActivity{
         */
 
         btnsubir = findViewById(R.id.btnsubir);
+
         btnsubir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -303,6 +307,7 @@ public class DispensadorTurno extends AppCompatActivity{
                 }
             }
         });
+
         adapter.setOnNoteSelectedListener(new AdapterDispensador.OnNoteSelectedListener() {
             @Override
             public void onClick(SectorLocal note) {
@@ -312,35 +317,32 @@ public class DispensadorTurno extends AppCompatActivity{
 
                 try{
 
-
-                    EjecutarImprimirBoton();
-                    if (impresoraactiva){
-
-                        if (getCurrentStatus()){
-
-                            impresorapapel = true;
-                            click2.start();
-                            habilitar_boton_imprimir = false;
-                            GuardarFirebaseTransaccion(note);
-
+                    if (isNetDisponible()){
+                        if (impresoraactiva){
+                            if (getCurrentStatus()){
+                                impresorapapel = true;
+                                click2.start();
+                                habilitar_boton_imprimir = false;
+                                GuardarFirebaseTransaccion(note);
+                            }else{
+                                impresorapapel = false;
+                                dialogError.show();
+                                note.setLlamarsupervisor(1);
+                                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getIdsector()).setValue(note);
+                            }
                         }else{
-
-                            impresorapapel = false;
-                            dialogError.show();
-
+                            usb();
                         }
-
                     }else{
-
-                        usb();
+                        dialogInternet.show();
                     }
 
                 }catch (Exception e){
                     Log.e("Hubo Error",e.toString());
+                    note.setLlamarsupervisor(1);
+                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getIdsector()).setValue(note);
 
                 }
-
-
 
                     //dialog mensaje internet
             }
@@ -368,11 +370,17 @@ public class DispensadorTurno extends AppCompatActivity{
 
     }
 
-    private void EjecutarImprimirBoton() {
+    private boolean isNetDisponible() {
 
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
 
+        return (actNetInfo != null && actNetInfo.isConnected());
     }
+
+
 
     private int escribirimpresora(byte[] printData){
         int ret = 0;
@@ -656,8 +664,6 @@ public class DispensadorTurno extends AppCompatActivity{
                             //todo dialog mensaje
                         }
 
-                    }else{
-
                     }
                 }
             });
@@ -762,7 +768,7 @@ public class DispensadorTurno extends AppCompatActivity{
     }
 
 
-    AlertDialog ConstruirDialog(){
+    AlertDialog ConstruirDialog(String a){
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.myDialog));
@@ -770,7 +776,7 @@ public class DispensadorTurno extends AppCompatActivity{
         builder.setCancelable(false);
 
 
-        builder.setMessage("ERROR PAPEL O TAPA ABIERTA")
+        builder.setMessage("ERROR: " + a)
                 .setPositiveButton("Reintentar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
@@ -830,7 +836,6 @@ public class DispensadorTurno extends AppCompatActivity{
 
         setProgressDialog();
 
-
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -887,8 +892,6 @@ public class DispensadorTurno extends AppCompatActivity{
         databaseReference = firebaseDatabase.getReference();
 
 
-
-
     }
 
 
@@ -912,18 +915,6 @@ public class DispensadorTurno extends AppCompatActivity{
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
-    void hidebarras() {
-        constrain.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-    }
 
     private Boolean Imprimir(byte[] printData){
         Boolean ret = false;
@@ -1168,6 +1159,7 @@ public class DispensadorTurno extends AppCompatActivity{
         } catch (Exception var2) {
 
             impresoraactiva = false;
+            dialogImpresora.show();
             Toast.makeText(DispensadorTurno.this, "ERROR D conectar", Toast.LENGTH_SHORT).show();
         }
 

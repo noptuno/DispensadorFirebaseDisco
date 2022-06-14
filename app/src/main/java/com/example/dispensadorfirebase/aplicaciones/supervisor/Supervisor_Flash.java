@@ -46,12 +46,11 @@ public class Supervisor_Flash extends AppCompatActivity {
                                 Supervisor_Flash.this.finish();
 
                             }else{
-                                Intent mainIntent = new Intent(Supervisor_Flash.this, InicioOpcionLocal.class);
-                                mainIntent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
+                                Intent mainIntent = new Intent(Supervisor_Flash.this, InicioOpcionDispositivo.class);
+                                mainIntent.putExtra("supervisor", "SI");
                                 startActivity(mainIntent);
                                 overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
                                 Supervisor_Flash.this.finish();
-
                             }
 
                 }

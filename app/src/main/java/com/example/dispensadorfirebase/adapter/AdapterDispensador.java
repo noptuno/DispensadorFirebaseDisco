@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -43,6 +44,7 @@ public class AdapterDispensador extends RecyclerView.Adapter<AdapterDispensador.
     private Context context;
 private boolean ejecutado = false;
 private int numerofuncion = 0;
+    private boolean esperar;
 
 
     public AdapterDispensador(int cantidad) {
@@ -125,6 +127,7 @@ private int numerofuncion = 0;
         private TextView numero;
         private LinearLayout layout;
         private boolean ejecutar = false;
+        private boolean esperar = false;
 
         public NoteViewHolder(View item) {
             super(item);
@@ -187,13 +190,32 @@ private int numerofuncion = 0;
                 @Override
                 public void onClick(View view) {
                     if (onNoteSelectedListener != null) {
+                        itemView.setEnabled(false);
                         onNoteSelectedListener.onClick(sector);
+                        delay();
 
                     }
                 }
             });
+
+        }
+
+        private void delay() {
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run() {
+
+                    itemView.setEnabled(true);
+                }
+
+
+            }, 1500);
+
         }
     }
+
+
+
 
     private void CargarImagen(Uri fondo,LinearLayout layout){
 

@@ -1,6 +1,8 @@
 package com.example.dispensadorfirebase.aplicaciones.supervisor;
 
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -98,6 +100,11 @@ public class Supervisor_Principal extends AppCompatActivity {
     private Button regresar;
 
     Boolean Solicitud = false;
+    String CLIENTE=null;
+    String IDNOMBRELOCALSELECCIONADO=null;
+    String LOGOLOCAL=null;
+    String LOGOLOCALIMPRE=null;
+    String BDCARGADO = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,7 +198,8 @@ public class Supervisor_Principal extends AppCompatActivity {
                 note.setNotificacion(0);
                 note.setNotificaciondeshabilitar(1);
                // actualizarReciclerView();
-                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getNombreSector()).setValue(note);
+
+                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getIdsector()).setValue(note);
 
             }
         });
@@ -263,7 +271,17 @@ public class Supervisor_Principal extends AppCompatActivity {
         }else{
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
+            LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
+            LOGOLOCALIMPRE= pref.getString("LOGOLOCALIMPRE","NO");
+            CLIENTE= pref.getString("CLIENTE","NO");
+            IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
+            BDCARGADO = pref.getString("BDCARGADO","NO");
         }
+
+
+
+
+
 
 
     }
