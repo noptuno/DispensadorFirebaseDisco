@@ -15,9 +15,8 @@
     <uses-permission android:name="android.hardware.usb.host" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -28,7 +27,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DispensadorFirebase">
+        <activity
+            android:name=".inicio.InicioSesion"
+            android:exported="true" >
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
 
         <receiver android:name=".app.bootapp">
             <intent-filter>
@@ -45,131 +54,94 @@
 
 
 
-        </activity>
 
+
+        </activity>
         <activity
             android:name=".aplicaciones.supervisor.Supervisor_Flash"
             android:exported="true"
             android:label="Menu Principal"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-
-        </activity>
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".administrador.Menu"
             android:exported="true"
             android:label="Menu Principal"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".aplicaciones.DisplayGrande"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".aplicaciones.TabletDispensador"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".inicio.InicioOpcionSectores"
+            android:exported="true"
+            android:label="Asignar Sectores"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".inicio.InicioOpcionLocal"
+            android:exported="true"
+            android:label="Filtrar por nombre"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".aplicaciones.DisplayPequeño"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".administrador.AsignarSectoress"
+            android:exported="true"
+            android:label="Asignacion de Sectores"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".administrador.CrearSectores"
+            android:exported="true"
+            android:label="Crear Sectores"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".administrador.CrearLocalDialog"
+            android:exported="true"
+            android:label="Crear Local"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".administrador.ListaLocales"
+            android:exported="true"
+            android:label="Lista de Locales"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".aplicaciones.supervisor.Supervisor_Principal"
+            android:exported="true"
+            android:label="Menu Principal"
+            android:screenOrientation="portrait"></activity>
 
-
-
-
-                  </activity>
-
-                  <activity
-                      android:name=".aplicaciones.DisplayGrande"
-                      android:exported="false"
-                      android:screenOrientation="portrait"/>
-                  <activity
-                      android:name=".aplicaciones.TabletDispensador"
-                      android:exported="false"
-                      android:screenOrientation="landscape"/>
-                  <activity
-                      android:name=".inicio.InicioOpcionSectores"
-                      android:exported="true"
-                      android:label="Asignar Sectores"
-                      android:screenOrientation="portrait"/>
-
-
-
-                  <activity
-                      android:name=".inicio.InicioOpcionLocal"
-                      android:exported="true"
-                      android:label="Filtrar por nombre"
-                      android:screenOrientation="portrait"/>
-                  <activity
-                      android:name=".aplicaciones.DisplayPequeño"
-                      android:exported="true"
-                      android:screenOrientation="portrait"/>
-                  <activity
-                      android:name=".administrador.AsignarSectoress"
-                      android:exported="true"
-                      android:label="Asignacion de Sectores"
-                      android:screenOrientation="portrait"/>
-                  <activity
-                      android:name=".administrador.CrearSectores"
-                      android:exported="true"
-                      android:label="Crear Sectores"
-                      android:screenOrientation="portrait"/>
-                  <activity
-                      android:name=".administrador.CrearLocalDialog"
-                      android:exported="true"
-                      android:label="Crear Local"
-                      android:screenOrientation="portrait"/>
-                  <activity
-                      android:name=".administrador.ListaLocales"
-                      android:exported="true"
-                      android:label="Lista de Locales"
-                      android:screenOrientation="portrait"/>
-
-
-
-                  <activity
-                      android:name=".aplicaciones.supervisor.Supervisor_Principal"
-                      android:exported="true"
-                      android:label="Menu Principal"
-                      android:screenOrientation="portrait">
-
-
-                  </activity>
-
-                 <service
+        <service
             android:name=".aplicaciones.supervisor.MyIntentServiceSupervisor"
             android:exported="false" />
 
-
-                  <activity
-                      android:name=".principaltemp.notificador.FlashSupervisor"
-                      android:exported="true"
-                     />
-                  <activity
-                      android:name=".principaltemp.Menu"
-                      android:exported="true"
-                     />
-                  <activity
-                      android:name=".principaltemp.Dispensador"
-                      android:exported="true"
-                      >
-
-
-                  </activity>
-
-                  <activity
-                      android:name=".principaltemp.Tablet"
-                      android:exported="true"
-                      >
-
-                  </activity>
-                  <activity
-                      android:name=".principaltemp.Display"
-                      android:exported="true" />
-                  <activity
-                      android:name=".aplicaciones.DispensadorTurno"
-                      android:exported="true" />
-
-                  <activity
-                      android:name=".principaltemp.MensajeActivity"
-                      android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-                      android:windowSoftInputMode="stateHidden|adjustResize" />
-                  <activity android:name=".principaltemp.notificador.Supervisor" />
-
-
+        <activity
+            android:name=".principaltemp.notificador.FlashSupervisor"
+            android:exported="true" />
+        <activity
+            android:name=".principaltemp.Menu"
+            android:exported="true" />
+        <activity
+            android:name=".principaltemp.Dispensador"
+            android:exported="true"></activity>
+        <activity
+            android:name=".principaltemp.Tablet"
+            android:exported="true"></activity>
+        <activity
+            android:name=".principaltemp.Display"
+            android:exported="true" />
+        <activity
+            android:name=".aplicaciones.DispensadorTurno"
+            android:exported="true" />
+        <activity
+            android:name=".principaltemp.MensajeActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity android:name=".principaltemp.notificador.Supervisor" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -180,10 +152,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths" />
         </provider>
+    </application>
 
-
-              </application>
-
-
-
-          </manifest>
+</manifest>

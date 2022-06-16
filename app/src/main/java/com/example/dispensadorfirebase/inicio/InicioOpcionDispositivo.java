@@ -46,10 +46,6 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         password = findViewById(R.id.editPassword);
 
 
-        supervisor = getIntent().getStringExtra("supervisor");
-
-
-
         abriraplicacion();
 
         ocultarbarra();
@@ -70,12 +66,7 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
                         guardarSharePreferencePrincipal();
 
                         Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
-                        if (supervisor.equals("SI")){
-                            intent.putExtra("DISPOSITIVO", "SUPERVISOR");
-                        }else{
-                            intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
-                        }
-
+                        intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
                         intent.putExtra("CLIENTE",nombrecliente.getText().toString());
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -92,7 +83,6 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         });
 
 
-
     }
 
     private void guardarSharePreferencePrincipal() {
@@ -103,8 +93,6 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         editor.putString("DISPOSITIVO", dispositivo_seleccionado);
         editor.putString("CLIENTE", nombrecliente.getText().toString());
         editor.apply();
-
-
     }
 
     private boolean validaryguardar(){

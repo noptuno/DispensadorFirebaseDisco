@@ -132,7 +132,7 @@ private ImageView img;
                 String est = "true";
                 String logo = "null";
                 String logoimpresion = "null";
-                Local local=new Local("ACTIVO","1",logo,logoimpresion,nom,num);
+                Local local=new Local(true,"1",logo,logoimpresion,nom,num);
 
 
                 if (!logoimpreLocal.toString().isEmpty() && !logoLocal.toString().isEmpty()){

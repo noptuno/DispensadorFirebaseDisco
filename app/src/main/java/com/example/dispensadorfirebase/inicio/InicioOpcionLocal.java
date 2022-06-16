@@ -353,7 +353,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                 list.clear();
 
                 for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
-
                     Local local = objSnaptshot.getValue(Local.class);
                     list.add(local);
                 }
@@ -371,8 +370,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         });
 
     }
-
-
+    
     public void actualizarReciclerView() {
         adapter.setNotes(list);
         adapter.notifyDataSetChanged();

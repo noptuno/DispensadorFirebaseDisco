@@ -127,7 +127,7 @@ private LinearLayout layout;
 
             nombre.setText(local.getNombreLocal());
             numero.setText("" +local.getNumeroLocal());
-            estado.setText(local.getEstado());
+            estado.setText(""+local.getEstado());
 
             String a = local.getLogo();
             if (!a.equals("sin imagen")){

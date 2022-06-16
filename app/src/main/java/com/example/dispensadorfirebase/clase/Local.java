@@ -4,7 +4,7 @@ public class Local {
     String idLocal;
     String nombreLocal;
     int numeroLocal;
-    String estado;
+    boolean estado;
     String logo;
     String logoImpreso;
 
@@ -32,11 +32,11 @@ public class Local {
         this.numeroLocal = numeroLocal;
     }
 
-    public String getEstado() {
+    public boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(boolean estado) {
         this.estado = estado;
     }
 
@@ -59,7 +59,7 @@ public class Local {
     public Local() {
     }
 
-    public Local(String estado, String idLocal, String logo, String logoImpreso, String nombreLocal, int numeroLocal) {
+    public Local(boolean estado, String idLocal, String logo, String logoImpreso, String nombreLocal, int numeroLocal) {
 
         this.estado = estado;
         this.idLocal = idLocal;
