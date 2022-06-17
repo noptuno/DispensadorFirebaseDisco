@@ -1,7 +1,7 @@
 package com.example.dispensadorfirebase.app;
 
 public class variables {
-
+    public static final String ROOTINTERNO= "dmrmilrollos";
 
     public static final String NOMBREBASEDEDATOSFIREBASE= "PRINCIPAL";
     public static final String NOMBRETABLACLIENTES= "CLIENTES";

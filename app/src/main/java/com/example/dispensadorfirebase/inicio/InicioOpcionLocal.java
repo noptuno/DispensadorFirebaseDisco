@@ -4,6 +4,7 @@ package com.example.dispensadorfirebase.inicio;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
+import static com.example.dispensadorfirebase.app.variables.ROOTINTERNO;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -51,6 +52,9 @@ import com.example.dispensadorfirebase.aplicaciones.supervisor.Supervisor_Princi
 import com.example.dispensadorfirebase.app.variables;
 import com.example.dispensadorfirebase.clase.Local;
 import com.google.android.gms.dynamic.IFragmentWrapper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,7 +63,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InicioOpcionLocal extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
@@ -242,14 +248,20 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                     if (!userAnswer.equals("") && userAnswer.getText().length()>0){
 
                         if (validaryguardar(userAnswer.getText().toString())){
+
                             guardarSharePreferencePrincipal();
                             Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionDispositivo.class);
                             startActivity(intent);
                             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                             InicioOpcionLocal.this.finish();
+
                         }else{
-                            Toast.makeText(InicioOpcionLocal.this, "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                            validar(userAnswer.getText().toString());
                         }
+
+
+
+
                     }
 
                 }
@@ -265,7 +277,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
     private boolean validaryguardar(String pass){
         boolean v = false;
-        if (pass.equals("dmr")){
+        if (pass.equals(ROOTINTERNO)){
             v = true;
         }
 
@@ -327,6 +339,46 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
             actionBar.hide();
         }
     }
+
+
+    private void validar(String password) {
+
+        databaseReferencelocales.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child("CONFIGURACION").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+
+                    Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                    Map<String, String> stars  = (Map<String, String>) task.getResult().getValue();
+                    for (Map.Entry<String, String> entry : stars.entrySet()) {
+
+                       if(password.equals(entry.getValue())){
+
+                               guardarSharePreferencePrincipal();
+                               Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionDispositivo.class);
+                               startActivity(intent);
+                               overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                               InicioOpcionLocal.this.finish();
+                               break;
+                       }else{
+
+                           Log.d("base", "False");
+                       }
+
+                        //entry.getKey() + "=" + entry.getValue();
+                    }
+
+
+
+
+                }
+            }
+        });
+    }
+
 
 
     private void cargarLista() {
