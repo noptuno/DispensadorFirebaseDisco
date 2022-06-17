@@ -47,6 +47,7 @@ import com.example.dispensadorfirebase.aplicaciones.DisplayGrande;
 import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
 import com.example.dispensadorfirebase.aplicaciones.TabletDispensador;
 import com.example.dispensadorfirebase.aplicaciones.supervisor.Supervisor_Flash;
+import com.example.dispensadorfirebase.aplicaciones.supervisor.Supervisor_Principal;
 import com.example.dispensadorfirebase.app.variables;
 import com.example.dispensadorfirebase.clase.Local;
 import com.google.android.gms.dynamic.IFragmentWrapper;
@@ -130,7 +131,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         String estado = pref.getString("ESTADO", "NO");
         String configuracion = pref.getString("CONFIGURACIONDMR", "NO");
 
-
         if (configuracion.equals("SI")){
 
             CLIENTE = pref.getString("CLIENTE", "NO");
@@ -155,6 +155,8 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                     } else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")) {
                         intent = new Intent(InicioOpcionLocal.this, DispensadorTurno.class);
 
+                    } else if   (NOMBREDELDISPOSITIVO.equals("SUPERVISOR")) {
+                        intent = new Intent(InicioOpcionLocal.this, Supervisor_Principal.class);
                     }
 
                     startActivity(intent);
@@ -162,16 +164,8 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                     InicioOpcionLocal.this.finish();
 
                 }
-
             }
-
-
-
-
         }
-
-
-
     }
 
 
@@ -227,10 +221,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
     private void botonregresar() {
 
-
-        if(NOMBREDELDISPOSITIVO.equals("SUPERVISOR")){
-            finish();
-        }else{
             // load the dialog_promt_user.xml layout and inflate to view
             LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
             View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
@@ -268,10 +258,7 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
             // all set and time to build and show up!
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
-
             userAnswer.requestFocus();
-
-        }
 
     }
 

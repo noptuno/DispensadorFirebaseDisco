@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".inicio.InicioSesion">
 
+    <Button
+        android:id="@+id/btnSalir"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:background="@android:drawable/ic_delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
+
     <TextView
         android:id="@+id/textomenu3"
         android:layout_width="match_parent"
@@ -38,20 +49,20 @@
         app:srcCompat="@drawable/logo_dmr_milrollos" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/edtcorreo"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:ems="10"
-        android:hint="Usuario@"
         android:inputType="textPersonName"
         android:minHeight="48dp"
+        android:text="dgarcia@dmr.com.uy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textomenu3" />
 
     <EditText
-        android:id="@+id/editTextTextPassword"
+        android:id="@+id/edtpassword"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -59,9 +70,10 @@
         android:hint="Password"
         android:inputType="textPassword"
         android:minHeight="48dp"
+        android:text="123456"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+        app:layout_constraintTop_toBottomOf="@+id/edtcorreo" />
 
     <Button
         android:id="@+id/btnConfirmar"
@@ -69,19 +81,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:text="Iniciar"
-        app:layout_constraintEnd_toStartOf="@+id/btnSalir"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
-
-    <Button
-        android:id="@+id/btnSalir"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="Salir"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnConfirmar"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtpassword" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

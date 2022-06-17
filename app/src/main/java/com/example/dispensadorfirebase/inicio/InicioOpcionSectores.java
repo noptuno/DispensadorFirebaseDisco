@@ -251,8 +251,6 @@ private TextView localseleccionado, dispositivoseleccionado;
         }
 
 
-
-
     }
 
     private void cargarListaSectoresLocales() {

@@ -625,7 +625,7 @@ public class DispensadorTurno extends AppCompatActivity{
                     String ultimaFecha = tabla.getUltimaFecha();
 
                     if (!ultimaFecha.equals(fechaCorta)){
-                        tabla.setVariableNumero(0);
+                        tabla.setVariableNumero(1);
                     }
 
                     if(tabla.getCantidadEspera()> tabla.getLimite()){

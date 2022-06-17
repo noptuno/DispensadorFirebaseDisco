@@ -1,6 +1,8 @@
 package com.example.dispensadorfirebase.aplicaciones.supervisor;
 
+import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -33,13 +36,17 @@ public class MyIntentServiceSupervisor extends IntentService {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private SectorLocal sectorlocal;
-    String NOMBRELOCALSELECCIONADO=null;
+
+    String IDNOMBRELOCALSELECCIONADO=null;
+    String CLIENTE=null;
+
 
 
     private final static String CHANNEL_ID = "NOTIFICACION";
 
     public MyIntentServiceSupervisor() {
         super("MyIntentServiceSupervisor");
+
     }
 
 
@@ -48,12 +55,28 @@ public class MyIntentServiceSupervisor extends IntentService {
             if (intent != null) {
                 final String action = intent.getAction();
 
-                if (com.example.dispensadorfirebase.aplicaciones.supervisor.Constants.ACTION_RUN_ISERVICE.equals(action)) {
-                    cargardatos();
-                }
+                IDNOMBRELOCALSELECCIONADO = intent.getExtras().getString("ID","NO");
+                CLIENTE = intent.getExtras().getString("CLI","NO");
 
+                intent.getDataString();
+
+                if (com.example.dispensadorfirebase.aplicaciones.supervisor.Constants.ACTION_RUN_ISERVICE.equals(action)) {
+
+                    if (!IDNOMBRELOCALSELECCIONADO.equals("NO") && !CLIENTE.equals("NO")){
+                        cargardatos();
+                    }else{
+
+                        Intent localIntent = new Intent(Constants.ACTION_PROGRESS_EXIT);
+                        sendBroadcast(localIntent);
+                    }
+
+
+                }
         }
     }
+
+
+
 
     private void cargardatos() {
 
@@ -62,7 +85,7 @@ public class MyIntentServiceSupervisor extends IntentService {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child("DISCO").child("SECTORES").addValueEventListener(new ValueEventListener() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 

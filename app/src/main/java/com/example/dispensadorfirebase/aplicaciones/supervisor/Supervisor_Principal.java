@@ -146,7 +146,7 @@ public class Supervisor_Principal extends AppCompatActivity {
                                 editor.putString("ESTADO", "NO");
                                 editor.apply();
 
-                                Intent intent = new Intent(Supervisor_Principal.this, Supervisor_Flash.class);
+                                Intent intent = new Intent(Supervisor_Principal.this, InicioOpcionLocal.class);
                                 startActivity(intent);
                                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                                Supervisor_Principal.this.finish();
@@ -205,19 +205,18 @@ public class Supervisor_Principal extends AppCompatActivity {
         });
 
 
-        IntentFilter filter = new IntentFilter(
-                com.example.dispensadorfirebase.aplicaciones.supervisor.Constants.ACTION_RUN_ISERVICE);
-
+        IntentFilter filter = new IntentFilter(com.example.dispensadorfirebase.aplicaciones.supervisor.Constants.ACTION_RUN_ISERVICE);
 
         filter.addAction(com.example.dispensadorfirebase.aplicaciones.supervisor.Constants.ACTION_PROGRESS_EXIT);
-
 
         Supervisor_Principal.ResponseReceiver receiver = new Supervisor_Principal.ResponseReceiver();
         registerReceiver(receiver,filter);
 
-
         Intent intent = new Intent(this, MyIntentServiceSupervisor.class);
         intent.setAction(Constants.ACTION_RUN_ISERVICE);
+
+        intent.putExtra("ID",IDNOMBRELOCALSELECCIONADO);
+        intent.putExtra("CLI",CLIENTE);
         startService(intent);
 
     }
@@ -243,7 +242,7 @@ public class Supervisor_Principal extends AppCompatActivity {
                     break;
 
                 case Constants.ACTION_PROGRESS_EXIT:
-
+                    Toast.makeText(Supervisor_Principal.this, "error base datos", Toast.LENGTH_LONG).show();
                     break;
             }
         }
@@ -369,7 +368,7 @@ public class Supervisor_Principal extends AppCompatActivity {
                 db = new SectorDB(this);
 
 
-                SectoresElegidos sec = db.validarSector(sectores.getNombreSector());
+                SectoresElegidos sec = db.validarSector(sectores.getIdsector());
 
                 if (sec!=null){
 
@@ -391,7 +390,8 @@ public class Supervisor_Principal extends AppCompatActivity {
                         sectores.setLlamarsupervisor(0);
 
                         // actualizarReciclerView();
-                        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(sectores.getNombreSector()).setValue(sectores);
+
+                        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(sectores.getIdsector()).setValue(sectores);
 
                         // nobuscar = true;
                         //databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(sectores.getNombreSector()).setValue(sectores);

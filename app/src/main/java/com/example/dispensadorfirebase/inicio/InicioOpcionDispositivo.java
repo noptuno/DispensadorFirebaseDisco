@@ -21,12 +21,12 @@ import com.example.dispensadorfirebase.aplicaciones.DisplayGrande;
 import com.example.dispensadorfirebase.aplicaciones.DisplayPequeño;
 import com.example.dispensadorfirebase.aplicaciones.TabletDispensador;
 import com.google.android.gms.dynamic.IFragmentWrapper;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class InicioOpcionDispositivo extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private String NOMBREDELDISPOSITIVO;
-    private EditText password,nombrecliente;
-    Button btnconfirmar;
+    Button btnconfirmar,btncerrarsesion;
     Spinner dispositivo;
     String dispositivo_seleccionado= null;
     ActionBar actionBar;
@@ -34,16 +34,40 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     private String estado = "NO";
     private String CLIENTE;
     private String supervisor = "NO";
-
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_opcion_dispositivo);
 
         btnconfirmar = findViewById(R.id.btnconfirmar);
-        nombrecliente = findViewById(R.id.editcliente);
         dispositivo = findViewById(R.id.spinner_dispositivo);
-        password = findViewById(R.id.editPassword);
+        btncerrarsesion = findViewById(R.id.btncerrarSesion);
+
+        mAuth = FirebaseAuth.getInstance();
+
+
+
+        btncerrarsesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                mAuth.signOut();
+                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("ESTADOSESION", "NO");
+                editor.apply();
+
+                Intent intent = new Intent(InicioOpcionDispositivo.this, InicioSesion.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+
+
+
+            }
+        });
 
 
         abriraplicacion();
@@ -55,30 +79,20 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         btnconfirmar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (dispositivo_seleccionado.equals("Seleccione") && nombrecliente.getText().toString().length()==0){
 
-                    Toast.makeText(InicioOpcionDispositivo.this, "Debe Seleccionar el Dispositivo", Toast.LENGTH_LONG).show();
 
+                if (dispositivo_seleccionado.equals("Seleccione")){
+
+                    Toast.makeText(InicioOpcionDispositivo.this, "Elegir dispositivo", Toast.LENGTH_LONG).show();
                 }else{
-
-                    if (validaryguardar()){
-
-                        guardarSharePreferencePrincipal();
-
-                        Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
-                        intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
-                        intent.putExtra("CLIENTE",nombrecliente.getText().toString());
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
-                        finish();
-
-                    }else{
-
-                        Toast.makeText(InicioOpcionDispositivo.this, "Error de contraseña", Toast.LENGTH_LONG).show();
-
-                    }
+                    guardarSharePreferencePrincipal();
+                    Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
+                    intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    finish();
                 }
+
             }
         });
 
@@ -91,33 +105,16 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("CONFIGURACIONDMR", "SI");
         editor.putString("DISPOSITIVO", dispositivo_seleccionado);
-        editor.putString("CLIENTE", nombrecliente.getText().toString());
         editor.apply();
     }
-
-    private boolean validaryguardar(){
-        boolean v = false;
-        String pass = password.getText().toString();
-
-
-        if (pass.equals("dmr")){
-            v = true;
-        }
-
-
-            return v;
-    }
-
 
 
     private void abriraplicacion() {
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-        String estado = pref.getString("ESTADO", "NO");
         String configuracion = pref.getString("CONFIGURACIONDMR", "NO");
 
         if (configuracion.equals("SI")){
-
 
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             CLIENTE = pref.getString("CLIENTE", "NO");

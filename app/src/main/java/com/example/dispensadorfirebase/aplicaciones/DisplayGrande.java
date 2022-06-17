@@ -3,6 +3,7 @@ package com.example.dispensadorfirebase.aplicaciones;
 
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -62,6 +63,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class DisplayGrande extends AppCompatActivity {
+
     MediaPlayer mp;
     Button b1;
     int posicion = 0;
@@ -75,6 +77,8 @@ public class DisplayGrande extends AppCompatActivity {
     DatabaseReference databaseReference;
     String NOMBRELOCALSELECCIONADO=null;
     String NOMBREDELDISPOSITIVO=null;
+    String IDNOMBRELOCALSELECCIONADO=null;
+    String CLIENTE = null;
     private AlertDialog Adialog;
     AdapterDisplayGrande adapter;
     ArrayList<SectorLocal> list = new ArrayList<>();;
@@ -234,6 +238,9 @@ private ImageView logolocal;
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
             LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
+            CLIENTE= pref.getString("CLIENTE","NO");
+            IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
+
         }
 
 
@@ -295,7 +302,7 @@ private ImageView logolocal;
 
         try {
 
-            SectoresElegidos sec = db.validarSector(sectores.getNombreSector());
+            SectoresElegidos sec = db.validarSector(sectores.getIdsector());
 
             if (sec!=null){
 
@@ -359,8 +366,7 @@ private ImageView logolocal;
 
         setProgressDialog();
 
-
-        this.   databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener()  {
+        this.databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener()  {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
