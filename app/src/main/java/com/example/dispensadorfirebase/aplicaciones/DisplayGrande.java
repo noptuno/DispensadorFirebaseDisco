@@ -4,6 +4,7 @@ package com.example.dispensadorfirebase.aplicaciones;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
+import static com.example.dispensadorfirebase.app.variables.ROOTINTERNO;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -51,6 +52,8 @@ import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
 import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
 import com.google.android.gms.dynamic.IFragmentWrapper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -61,6 +64,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class DisplayGrande extends AppCompatActivity {
 
@@ -197,11 +201,11 @@ private ImageView logolocal;
 
                         DisplayGrande.this.finish();
 
-
                     }else{
-
-                        Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                        validar(userAnswer.getText().toString());
                     }
+
+
                 }
 
             }
@@ -215,6 +219,47 @@ private ImageView logolocal;
 
 
     }
+
+    private void validar(String password) {
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child("CONFIGURACION").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+
+                    Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                    Map<String, String> stars  = (Map<String, String>) task.getResult().getValue();
+                    for (Map.Entry<String, String> entry : stars.entrySet()) {
+
+                        if(password.equals(entry.getValue())){
+
+
+                            SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString("ESTADO", "NO");
+                            editor.apply();
+
+                            Intent intent= new Intent(DisplayGrande.this, InicioOpcionLocal.class);
+                            startActivity(intent);
+
+                            DisplayGrande.this.finish();
+                            break;
+                        }
+
+                        //entry.getKey() + "=" + entry.getValue();
+                    }
+
+                }
+            }
+        });
+    }
+
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -248,7 +293,7 @@ private ImageView logolocal;
 
     private boolean validaryguardar(String pass){
         boolean v = false;
-        if (pass.equals("dmr")){
+        if (pass.equals(ROOTINTERNO)){
             v = true;
         }
 

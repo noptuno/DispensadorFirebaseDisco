@@ -244,7 +244,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                 public void onClick(DialogInterface dialog, int id) {
                     // and display the username on main activity layout
 
-
                     if (!userAnswer.equals("") && userAnswer.getText().length()>0){
 
                         if (validaryguardar(userAnswer.getText().toString())){
@@ -258,9 +257,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
                         }else{
                             validar(userAnswer.getText().toString());
                         }
-
-
-
 
                     }
 
@@ -370,9 +366,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
                         //entry.getKey() + "=" + entry.getValue();
                     }
-
-
-
 
                 }
             }

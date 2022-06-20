@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class InicioOpcionDispositivo extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private String NOMBREDELDISPOSITIVO;
+    private String NOMBREUBICACIONDISPOSITIVO = "NO";
     Button btnconfirmar,btncerrarsesion;
     Spinner dispositivo;
     String dispositivo_seleccionado= null;
@@ -35,6 +37,12 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     private String CLIENTE;
     private String supervisor = "NO";
     private FirebaseAuth mAuth;
+
+    LinearLayout linearubicacion;
+    EditText ubicacion;
+    boolean habilitarUbicacion = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +51,10 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         btnconfirmar = findViewById(R.id.btnconfirmar);
         dispositivo = findViewById(R.id.spinner_dispositivo);
         btncerrarsesion = findViewById(R.id.btncerrarSesion);
+
+        linearubicacion= findViewById(R.id.linear_ubicacion);
+        ubicacion= findViewById(R.id.edtUbicacion);
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -64,8 +76,6 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
 
-
-
             }
         });
 
@@ -80,17 +90,27 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
             @Override
             public void onClick(View view) {
 
-
                 if (dispositivo_seleccionado.equals("Seleccione")){
-
                     Toast.makeText(InicioOpcionDispositivo.this, "Elegir dispositivo", Toast.LENGTH_LONG).show();
                 }else{
-                    guardarSharePreferencePrincipal();
-                    Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
-                    intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    finish();
+
+                    if (habilitarUbicacion){
+
+                        if (ubicacion.length()>0){
+
+                            NOMBREUBICACIONDISPOSITIVO = ubicacion.getText().toString();
+                            guardarAvanzar();
+
+                        }else{
+                            ubicacion.requestFocus();
+                            Toast.makeText(InicioOpcionDispositivo.this, "Escribir Nombre del Dispositivo", Toast.LENGTH_LONG).show();
+                        }
+
+                    } else{
+
+                        guardarAvanzar();
+                    }
+
                 }
 
             }
@@ -99,14 +119,26 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
 
     }
 
-    private void guardarSharePreferencePrincipal() {
+
+    private void guardarAvanzar(){
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("CONFIGURACIONDMR", "SI");
         editor.putString("DISPOSITIVO", dispositivo_seleccionado);
+        editor.putString("NOMBREUBICACIONDISPOSITIVO",NOMBREUBICACIONDISPOSITIVO);
         editor.apply();
+
+        Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
+        intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
+
+
     }
+
+
 
 
     private void abriraplicacion() {
@@ -146,6 +178,22 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     {
         String item = parent.getItemAtPosition(pos).toString();
         dispositivo_seleccionado = item;
+
+
+
+        if  (dispositivo_seleccionado.equals("DISPENSADOR")){
+
+            linearubicacion.setVisibility(View.VISIBLE);
+            ubicacion.setText("");
+            habilitarUbicacion = true;
+
+        }else{
+            linearubicacion.setVisibility(View.GONE);
+            ubicacion.setText("");
+            habilitarUbicacion = false;
+        }
+
+
     }
 
     @Override

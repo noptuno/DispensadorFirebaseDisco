@@ -3,6 +3,7 @@ package com.example.dispensadorfirebase.aplicaciones;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
+import static com.example.dispensadorfirebase.app.variables.ROOTINTERNO;
 
 import android.Manifest;
 import android.app.Activity;
@@ -71,9 +72,12 @@ import com.example.dispensadorfirebase.clase.ClaseHistorico;
 import com.example.dispensadorfirebase.clase.SectorHistorico;
 import com.example.dispensadorfirebase.clase.SectorLocal;
 import com.example.dispensadorfirebase.clase.SectoresElegidos;
+import com.example.dispensadorfirebase.inicio.InicioOpcionDispositivo;
 import com.example.dispensadorfirebase.inicio.InicioOpcionLocal;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -103,6 +107,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class DispensadorTurno extends AppCompatActivity{
 
@@ -133,7 +138,7 @@ public class DispensadorTurno extends AppCompatActivity{
     String NOMBRELOCALSELECCIONADO=null;
     String CLIENTE=null;
     String NOMBREDELDISPOSITIVO=null;
-
+    String NOMBREUBICACIONDISPOSITIVO=null;
     String IDNOMBRELOCALSELECCIONADO=null;
     String LOGOLOCAL=null;
     String LOGOLOCALIMPRE=null;
@@ -556,7 +561,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
     private boolean validaryguardar(String pass){
         boolean v = false;
-        if (pass.equals("dmr")){
+        if (pass.equals(ROOTINTERNO)){
             v = true;
         }
 
@@ -582,6 +587,7 @@ public class DispensadorTurno extends AppCompatActivity{
             iddispositivo = pref.getString("ID","NO");
             IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
             BDCARGADO = pref.getString("BDCARGADO","NO");
+            NOMBREUBICACIONDISPOSITIVO = pref.getString("NOMBREUBICACIONDISPOSITIVO","NO");
         }
 
     }
@@ -680,7 +686,7 @@ public class DispensadorTurno extends AppCompatActivity{
         datos.setIdSector(sector.getIdsector());
         datos.setNombreSector(sector.getNombreSector());
         datos.setIdDispositivo(iddispositivo);
-        datos.setNombreDispositivo(iddispositivo);
+        datos.setNombreDispositivo(NOMBREUBICACIONDISPOSITIVO);
         datos.setNumeroDispensado(sector.getUltimoNumeroDispensador());
         datos.setFecha_entrega(fecha);
         datos.setHora_entrega(hora);
@@ -751,9 +757,10 @@ public class DispensadorTurno extends AppCompatActivity{
                         DispensadorTurno.this.finish();
 
                     }else{
-
-                        Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                        validar(userAnswer.getText().toString());
                     }
+
+
                 }
 
             }
@@ -787,6 +794,44 @@ public class DispensadorTurno extends AppCompatActivity{
        return builder.create();
 
     }
+
+
+    private void validar(String password) {
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child("CONFIGURACION").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+
+                    Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                    Map<String, String> stars  = (Map<String, String>) task.getResult().getValue();
+                    for (Map.Entry<String, String> entry : stars.entrySet()) {
+
+                        if(password.equals(entry.getValue())){
+
+                            SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString("ESTADO", "NO");
+                            editor.apply();
+
+                            Intent intent= new Intent(DispensadorTurno.this, InicioOpcionLocal.class);
+                            startActivity(intent);
+
+                            DispensadorTurno.this.finish();
+                            break;
+                        }
+
+                        //entry.getKey() + "=" + entry.getValue();
+                    }
+
+                }
+            }
+        });
+    }
+
 
 
 
