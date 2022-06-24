@@ -3,6 +3,7 @@ package com.example.dispensadorfirebase.aplicaciones;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLAREPORTE;
 import static com.example.dispensadorfirebase.app.variables.ROOTINTERNO;
 
 import androidx.annotation.NonNull;
@@ -565,11 +566,12 @@ private ImageView logolocal;
     private void registrarHistoricoDispensadorFirebase(SectorLocal sector,String fecha,String hora) {
 
         String nombrefecha = (fecha.replace("/","-")).trim();
+
         int variable = sector.getVariableNumero();
+
         String idReporte = sector.getIdsector()+"-"+sector.getNumeroatendiendo()+"-"+variable;
 
-
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("REPORTE").child(nombrefecha).child(idReporte).runTransaction(new Transaction.Handler() {
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBRETABLAREPORTE).child(IDNOMBRELOCALSELECCIONADO).child(nombrefecha).child(idReporte).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
 

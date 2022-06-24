@@ -15,7 +15,30 @@ public class SectorHistorico {
     String hora_entrega;
     String fecha_atencion;
     String hora_atencion;
+    String idLocal;
     int limite_superado;
+
+    public SectorHistorico(String idSector, String nombreSector, String idDispositivo, String nombreDispositivo, int numeroDispensado, String fecha_entrega, String hora_entrega, String fecha_atencion, String hora_atencion, String idLocal, int limite_superado) {
+        this.idSector = idSector;
+        this.nombreSector = nombreSector;
+        this.idDispositivo = idDispositivo;
+        this.nombreDispositivo = nombreDispositivo;
+        this.numeroDispensado = numeroDispensado;
+        this.fecha_entrega = fecha_entrega;
+        this.hora_entrega = hora_entrega;
+        this.fecha_atencion = fecha_atencion;
+        this.hora_atencion = hora_atencion;
+        this.idLocal = idLocal;
+        this.limite_superado = limite_superado;
+    }
+
+    public String getIdLocal() {
+        return idLocal;
+    }
+
+    public void setIdLocal(String idLocal) {
+        this.idLocal = idLocal;
+    }
 
     public int getLimite_superado() {
         return limite_superado;
@@ -28,18 +51,7 @@ public class SectorHistorico {
     public SectorHistorico() {
     }
 
-    public SectorHistorico(String idSector, String nombreSector, String idDispositivo, String nombreDispositivo, int numeroDispensado, String fecha_entrega, String hora_entrega, String fecha_atencion, String hora_atencion,int limite_superado) {
-        this.idSector = idSector;
-        this.nombreSector = nombreSector;
-        this.idDispositivo = idDispositivo;
-        this.nombreDispositivo = nombreDispositivo;
-        this.numeroDispensado = numeroDispensado;
-        this.fecha_entrega = fecha_entrega;
-        this.hora_entrega = hora_entrega;
-        this.fecha_atencion = fecha_atencion;
-        this.hora_atencion = hora_atencion;
-        this.limite_superado = limite_superado;
-    }
+
 
     public String getIdSector() {
         return idSector;

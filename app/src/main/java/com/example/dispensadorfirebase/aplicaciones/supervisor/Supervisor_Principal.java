@@ -300,57 +300,6 @@ public class Supervisor_Principal extends AppCompatActivity {
 
     }
 
-   void actualziar(){
-
-       // cantidad.setText(""+datos.getCantidadEspera());
-      //  sector.setText(""+datos.getNombreSector());
-      //  sector.setBackgroundColor(Color.parseColor(datos.getColorSector()));
-
-
-
-   }
-
-    private void CargarDatos() {
-
-
-        setProgressDialog();
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child("SECTORES").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                Log.e("---> Consulta Base", "ENTRO: ");
-
-                list.clear();
-
-                for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
-
-                    SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
-
-                    if (sectores.getEstado()==1){
-
-                       // leerSectoresLocales(sectores);
-
-                    }
-                }
-
-                if (!(listtemp.size() >0)){
-                    regresarConfiguracion();
-                }
-
-                Adialog.dismiss();
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Supervisor_Principal.this, "Hubo un Problema con la red", Toast.LENGTH_LONG).show();
-                Adialog.dismiss();
-
-            }
-        });
-
-
-    }
 
     public void actualizarReciclerView() {
         adapter.setNotes(list);
@@ -366,7 +315,6 @@ public class Supervisor_Principal extends AppCompatActivity {
 
             try {
                 db = new SectorDB(this);
-
 
                 SectoresElegidos sec = db.validarSector(sectores.getIdsector());
 
@@ -391,7 +339,7 @@ public class Supervisor_Principal extends AppCompatActivity {
 
                         // actualizarReciclerView();
 
-                        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(sectores.getIdsector()).setValue(sectores);
+                        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(sectores.getIdsector()).setValue(sectores);
 
                         // nobuscar = true;
                         //databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRELOCALSELECCIONADO).child(sectores.getNombreSector()).setValue(sectores);

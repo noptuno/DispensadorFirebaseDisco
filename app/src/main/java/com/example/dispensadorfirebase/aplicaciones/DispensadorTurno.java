@@ -3,6 +3,7 @@ package com.example.dispensadorfirebase.aplicaciones;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLAREPORTE;
 import static com.example.dispensadorfirebase.app.variables.ROOTINTERNO;
 
 import android.Manifest;
@@ -692,10 +693,14 @@ public class DispensadorTurno extends AppCompatActivity{
         datos.setHora_entrega(hora);
         datos.setFecha_atencion("");
         datos.setHora_atencion("");
+        datos.setIdLocal(IDNOMBRELOCALSELECCIONADO);
         datos.setLimite_superado(sector.getNotificacion());
 
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("REPORTE").child(nombre).child(idReporte).setValue(datos);
+        //databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("REPORTE").child(nombre).child(idReporte).setValue(datos);
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBRETABLAREPORTE).child(IDNOMBRELOCALSELECCIONADO).child(nombre).child(idReporte).setValue(datos);
+
+
     }
 
 
@@ -808,24 +813,29 @@ public class DispensadorTurno extends AppCompatActivity{
 
                     Log.d("firebase", String.valueOf(task.getResult().getValue()));
                     Map<String, String> stars  = (Map<String, String>) task.getResult().getValue();
-                    for (Map.Entry<String, String> entry : stars.entrySet()) {
 
-                        if(password.equals(entry.getValue())){
+                    if (task.getResult().getValue()!=null){
 
-                            SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = pref.edit();
-                            editor.putString("ESTADO", "NO");
-                            editor.apply();
+                        for (Map.Entry<String, String> entry : stars.entrySet()) {
 
-                            Intent intent= new Intent(DispensadorTurno.this, InicioOpcionLocal.class);
-                            startActivity(intent);
+                            if(password.equals(entry.getValue())){
 
-                            DispensadorTurno.this.finish();
-                            break;
+                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("ESTADO", "NO");
+                                editor.apply();
+
+                                Intent intent= new Intent(DispensadorTurno.this, InicioOpcionLocal.class);
+                                startActivity(intent);
+
+                                DispensadorTurno.this.finish();
+                                break;
+                            }
+
+                            //entry.getKey() + "=" + entry.getValue();
                         }
-
-                        //entry.getKey() + "=" + entry.getValue();
                     }
+
 
                 }
             }
