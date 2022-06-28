@@ -72,12 +72,10 @@ private Button configurar;
     ActionBar actionBar;
 private TextView localseleccionado, dispositivoseleccionado;
     String NOMBRELOCALSELECCIONADO=null;
-    String NOMBREDELDISPOSITIVO=null;
+    String DISPOSITIVO=null;
     String CLIENTE=null;
-    String LOGOLOCAL=null;
-    String LOGOLOCALIMPRE=null;
     String IDLOCALSELECCIONADO=null;
-
+    private SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,20 +85,22 @@ private TextView localseleccionado, dispositivoseleccionado;
         inicializarFirebase();
         ocultarbarra();
 
-        CLIENTE= getIntent().getStringExtra("CLIENTE");
-        NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
-        NOMBRELOCALSELECCIONADO = getIntent().getStringExtra("LOCALSELECCIONADO");
-        IDLOCALSELECCIONADO = getIntent().getStringExtra("IDLOCALSELECCIONADO");
-        LOGOLOCAL = getIntent().getStringExtra("LOGOLOCAL");
-        LOGOLOCALIMPRE = getIntent().getStringExtra("LOGOLOCALIMPRE");
+        pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        CLIENTE= pref.getString("CLIENTE", "NO");
+        DISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
+        NOMBRELOCALSELECCIONADO = pref.getString("NOMBRELOCALSELECCIONADO", "NO");
+        IDLOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
 
+        if (CLIENTE.equals("NO") || DISPOSITIVO.equals("NO") || IDLOCALSELECCIONADO.equals("NO")){
+            finish();
+        }
 
 
         configurar = findViewById(R.id.btnGuardarConfig);
         localseleccionado = findViewById(R.id.txtlocal);
         dispositivoseleccionado= findViewById(R.id.txtdispositivo);
         localseleccionado.setText(NOMBRELOCALSELECCIONADO);
-        dispositivoseleccionado.setText(NOMBREDELDISPOSITIVO);
+        dispositivoseleccionado.setText(DISPOSITIVO);
 
         maximoSectores= findViewById(R.id.txtmaximosectores);
        cantidadsectoreselegidos= findViewById(R.id.txtcantelegidos);
@@ -120,20 +120,20 @@ private TextView localseleccionado, dispositivoseleccionado;
 
                     Intent intent = null;
 
-                    if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")){
+                    if (DISPOSITIVO.equals("DISPLAY 21PLG")){
                         intent  = new Intent(InicioOpcionSectores.this, DisplayGrande.class);
 
-                    } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")){
+                    } else if (DISPOSITIVO.equals("DISPLAY 15PLG")){
                          intent = new Intent(InicioOpcionSectores.this, DisplayPequeño.class);
 
-                    }else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")){
+                    }else if (DISPOSITIVO.equals("TABLET 10PLG")){
 
                          intent = new Intent(InicioOpcionSectores.this, TabletDispensador.class);
                     }
-                    else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")){
+                    else if (DISPOSITIVO.equals("DISPENSADOR")){
                          intent = new Intent(InicioOpcionSectores.this, DispensadorTurno.class);
 
-                    } else if (NOMBREDELDISPOSITIVO.equals("SUPERVISOR")){
+                    } else if (DISPOSITIVO.equals("SUPERVISOR")){
 
                          intent = new Intent(InicioOpcionSectores.this, Supervisor_Principal.class);
                     }
@@ -141,20 +141,14 @@ private TextView localseleccionado, dispositivoseleccionado;
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
-
                         try {
 
                             String id = Secure.getString(getBaseContext().getContentResolver(), Secure.ANDROID_ID);
                             SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = pref.edit();
-                            editor.putString("ESTADO","SI");
-                            editor.putString("CLIENTE",CLIENTE);
-                            editor.putString("LOCAL",NOMBRELOCALSELECCIONADO);
-                            editor.putString("IDLOCAL",IDLOCALSELECCIONADO);
-                            editor.putString("DISPOSITIVO",NOMBREDELDISPOSITIVO);
-                            editor.putString("LOGOLOCAL",LOGOLOCAL);
-                            editor.putString("LOGOLOCALIMPRE",LOGOLOCALIMPRE);
+                            editor.putString("COMPLETADO","SI");
                             editor.putString("ID",id);
+
                             editor.apply();
 
 
@@ -166,10 +160,7 @@ private TextView localseleccionado, dispositivoseleccionado;
                         }catch (Exception e){
 
                             Toast.makeText(InicioOpcionSectores.this, "Hubo un Error", Toast.LENGTH_LONG).show();
-
                         }
-
-
 
                 }else{
                     Toast.makeText(InicioOpcionSectores.this, "Debe Elegir menos Sectores para Este Dispositivo", Toast.LENGTH_LONG).show();
@@ -227,24 +218,24 @@ private TextView localseleccionado, dispositivoseleccionado;
     private void limitesectores() {
 
 
-        if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")){
+        if (DISPOSITIVO.equals("DISPLAY 21PLG")){
             cantidadmaxima = 3;
             maximoSectores.setText("3");
 
-        } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")){
+        } else if (DISPOSITIVO.equals("DISPLAY 15PLG")){
             cantidadmaxima = 1;
             maximoSectores.setText("1");
 
-        }else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")){
+        }else if (DISPOSITIVO.equals("TABLET 10PLG")){
             cantidadmaxima = 1;
             maximoSectores.setText("1");
 
         }
-        else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")){
+        else if (DISPOSITIVO.equals("DISPENSADOR")){
             cantidadmaxima = 3;
             maximoSectores.setText("3");
 
-        } else if (NOMBREDELDISPOSITIVO.equals("SUPERVISOR")){
+        } else if (DISPOSITIVO.equals("SUPERVISOR")){
             cantidadmaxima = 6;
             maximoSectores.setText("6");
 

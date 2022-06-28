@@ -80,7 +80,8 @@ public class DisplayGrande extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     String NOMBRELOCALSELECCIONADO=null;
-    String NOMBREDELDISPOSITIVO=null;
+    String DISPOSITIVO=null;
+    String COMPLETADO=null;
     String IDNOMBRELOCALSELECCIONADO=null;
     String CLIENTE = null;
     private AlertDialog Adialog;
@@ -193,7 +194,7 @@ private ImageView logolocal;
 
                         SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = pref.edit();
-                        editor.putString("ESTADO", "NO");
+                        editor.putString("COMPLETADO", "NO");
                         editor.apply();
 
                         Intent intent= new Intent(DisplayGrande.this, InicioOpcionLocal.class);
@@ -272,22 +273,30 @@ private ImageView logolocal;
     }
 
 
+
     private void validarConfiguracion() {
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-        String estado = pref.getString("ESTADO", "NO");
+        String estado = pref.getString("COMPLETADO", "NO");
+
         if (estado.equals("NO")){
+
             regresarConfiguracion();
+
         }else{
 
-            NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
-            NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
-            LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
+            DISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             CLIENTE= pref.getString("CLIENTE","NO");
+            NOMBRELOCALSELECCIONADO = pref.getString("NOMBRELOCALSELECCIONADO", "NO");
             IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
+            LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
+            COMPLETADO = pref.getString("COMPLETADO","NO");
 
+            if (CLIENTE.equals("NO") || IDNOMBRELOCALSELECCIONADO.equals("NO")){
+
+                regresarConfiguracion();
+            }
         }
-
 
     }
 
@@ -307,7 +316,7 @@ private ImageView logolocal;
 
         SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("ESTADO", "NO");
+        editor.putString("COMPLETADO", "NO");
         editor.apply();
         Intent intent= new Intent(DisplayGrande.this, InicioOpcionLocal.class);
         startActivity(intent);

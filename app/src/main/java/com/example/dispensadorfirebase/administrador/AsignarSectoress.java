@@ -164,8 +164,8 @@ public class AsignarSectoress extends AppCompatActivity {
                 String fondoV = setor.getFondoV();
                 String fondoH= setor.getFondoH();
 
-                SectorLocal datos = new SectorLocal("0",0,0,0,limite,0,nombre,color,0,0,1,0,fondoH,fondoV,1,"00/00/0000");
-                databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(setor.getNombre()).setValue(datos);
+              //  SectorLocal datos = new SectorLocal("0",0,0,0,limite,0,nombre,color,0,0,1,0,fondoH,fondoV,1,"00/00/0000",1);
+              //  databaseReference.child(variables.NOMBREBASEDEDATOSFIREBASE).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(NOMBRELOCALSELECCIONADO).child("SECTORES").child(setor.getNombre()).setValue(datos);
 
 
             }

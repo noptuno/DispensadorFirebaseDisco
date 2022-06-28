@@ -78,7 +78,7 @@ public class TabletDispensador extends AppCompatActivity {
     LinearLayout layoutsupervisor;
     LinearLayout layoutrollo;
 
-    int limiteretroceder = 10;
+    int limiteretroceder = 5;
     int retrocesos = 0;
     String IDNOMBRELOCALSELECCIONADO=null;
     private SectorDB db = new SectorDB(this);
@@ -87,11 +87,16 @@ public class TabletDispensador extends AppCompatActivity {
     int  Numero_Actual = 0,Cantidad_Espera = 10, Ultimo_numero = 0, limite_espera = 8;
     SectorLocal datos = new SectorLocal();
     String NOMBRELOCALSELECCIONADO=null;
-    String NOMBREDELDISPOSITIVO=null;
+    String DISPOSITIVO=null;
     private SharedPreferences pref;
     ArrayList<SectoresElegidos> listtemp = new ArrayList<>();;
     private Button configurarnuevamente;
     String LOGOLOCAL=null;
+    String COMPLETADO=null;
+
+    int variabletablet = 1;
+    int variabledispensador = 1;
+
 private ImageView logolocal;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +135,7 @@ private ImageView logolocal;
 
         inicializarFirebase();
 
+       // regresarConfiguracion();
         conectarFirebase();
 
 
@@ -140,8 +146,6 @@ private ImageView logolocal;
 
 
                 datos.setLlamarsupervisor(1);
-
-
                 sumar.setEnabled(false);
                 restar.setEnabled(false);
                 reset.setEnabled(false);
@@ -150,7 +154,6 @@ private ImageView logolocal;
 
                 // setProgressDialog();
                 delay();
-
 
                 databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).setValue(datos);
 
@@ -247,7 +250,7 @@ private ImageView logolocal;
                     if (validaryguardar(userAnswer.getText().toString())){
                         SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = pref.edit();
-                        editor.putString("ESTADO", "NO");
+                        editor.putString("COMPLETADO", "NO");
                         editor.apply();
 
                         Intent intent= new Intent(TabletDispensador.this, InicioOpcionLocal.class);
@@ -289,7 +292,7 @@ private ImageView logolocal;
 
                                 SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = pref.edit();
-                                editor.putString("ESTADO", "NO");
+                                editor.putString("COMPLETADO", "NO");
                                 editor.apply();
 
                                 Intent intent= new Intent(TabletDispensador.this, InicioOpcionLocal.class);
@@ -328,7 +331,44 @@ private ImageView logolocal;
         return v;
     }
 
+
+
+    void conectarFirebaseUnicaVez(){
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
+
+                    SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
+                    if (sectores.getEstado()==1){
+                        for (SectoresElegidos sec : listtemp) {
+                            if (sec.getIdSectorFirebase().equals(sectores.getIdsector())){
+                                variabletablet = sectores.getVariableNumero();
+
+                                break;
+                            }
+                            Log.i("---> Base de ds: ", sectores.toString());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                regresarConfiguracion();
+
+            }
+
+        });
+
+    }
+
+
     void conectarFirebase(){
+
+
 
 
         setProgressDialog();
@@ -344,6 +384,7 @@ private ImageView logolocal;
 
                         for (SectoresElegidos sec : listtemp) {
                             if (sec.getIdSectorFirebase().equals(sectores.getIdsector())){
+
                                 datos = sectores;
                                 Actualizar();
                                 break;
@@ -413,7 +454,7 @@ private ImageView logolocal;
 
     void sumar(){
 
-        if (datos.sumar()){
+        if (datos.sumarTablet()){
 
             sumar.setEnabled(false);
             restar.setEnabled(false);
@@ -433,22 +474,22 @@ private ImageView logolocal;
     void restar(){
 
 
-        if (datos.restar()){
 
-            sumar.setEnabled(false);
-            restar.setEnabled(false);
-            reset.setEnabled(false);
+               if (datos.restar()){
 
-            //setProgressDialog();
-            click2.start();
-            delay();
-            retrocesos++;
+                   sumar.setEnabled(false);
+                   restar.setEnabled(false);
+                   reset.setEnabled(false);
 
-            Registrar(false);
-        }else{
-            Toast.makeText(TabletDispensador.this, "No hay Clientes en Esperando", Toast.LENGTH_LONG).show();
-        }
+                   //setProgressDialog();
+                   click2.start();
+                   delay();
+                   retrocesos++;
 
+                   Registrar(false);
+               }else{
+                   Toast.makeText(TabletDispensador.this, "No hay Clientes en Esperando", Toast.LENGTH_LONG).show();
+               }
 
     }
 
@@ -557,18 +598,19 @@ private ImageView logolocal;
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).setValue(datos);
 
-        if (sum == true){
+        if (sum){
             registrarHistoricoDispensadorFirebase(datos,fechaCorta,horaCorta);
         }
 
     }
 
+
     private void registrarHistoricoDispensadorFirebase(SectorLocal sector,String fecha,String hora) {
 
         String nombrefecha = (fecha.replace("/","-")).trim();
 
-        int variable = sector.getVariableNumero();
 
+        int variable = sector.getVariableNumeroTablet();
         String idReporte = sector.getIdsector()+"-"+sector.getNumeroatendiendo()+"-"+variable;
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBRETABLAREPORTE).child(IDNOMBRELOCALSELECCIONADO).child(nombrefecha).child(idReporte).runTransaction(new Transaction.Handler() {
@@ -687,21 +729,26 @@ private ImageView logolocal;
     private void validarConfiguracion() {
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-        String estado = pref.getString("ESTADO", "NO");
+        String estado = pref.getString("COMPLETADO", "NO");
+
         if (estado.equals("NO")){
+
             regresarConfiguracion();
+
         }else{
-            NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
-            NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
-            LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
 
+            DISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
             CLIENTE= pref.getString("CLIENTE","NO");
+            NOMBRELOCALSELECCIONADO = pref.getString("NOMBRELOCALSELECCIONADO", "NO");
             IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
+            LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
+            COMPLETADO = pref.getString("COMPLETADO","NO");
 
+            if (CLIENTE.equals("NO") || IDNOMBRELOCALSELECCIONADO.equals("NO")){
 
-
+                regresarConfiguracion();
+            }
         }
-
 
     }
 
@@ -709,7 +756,7 @@ private ImageView logolocal;
 
         SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("ESTADO", "NO");
+        editor.putString("COMPLETADO", "NO");
         editor.apply();
         Toast.makeText(getApplicationContext(), "No hay registro guardado", Toast.LENGTH_LONG).show();
 

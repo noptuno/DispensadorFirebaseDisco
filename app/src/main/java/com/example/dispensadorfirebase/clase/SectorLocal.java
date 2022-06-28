@@ -19,6 +19,36 @@ public class SectorLocal implements Serializable {
             String idsector;
             int variableNumero;
             String ultimaFecha;
+            int variableNumeroTablet;
+
+    public SectorLocal(int numeroatendiendo, int ultimoNumeroDispensador, int cantidadEspera, int limite, int numeroDispensador, String nombreSector, String colorSector, int notificacion, int notificaciondeshabilitar, int estado, int llamarsupervisor, String fondoSectorH, String fondoSectorV, String idsector, int variableNumero, String ultimaFecha, int variableNumeroTablet) {
+        this.numeroatendiendo = numeroatendiendo;
+        this.ultimoNumeroDispensador = ultimoNumeroDispensador;
+        this.cantidadEspera = cantidadEspera;
+        this.limite = limite;
+        this.numeroDispensador = numeroDispensador;
+        this.nombreSector = nombreSector;
+        ColorSector = colorSector;
+        this.notificacion = notificacion;
+        this.notificaciondeshabilitar = notificaciondeshabilitar;
+        this.estado = estado;
+        this.llamarsupervisor = llamarsupervisor;
+        this.fondoSectorH = fondoSectorH;
+        this.fondoSectorV = fondoSectorV;
+        this.idsector = idsector;
+        this.variableNumero = variableNumero;
+        this.ultimaFecha = ultimaFecha;
+        this.variableNumeroTablet = variableNumeroTablet;
+    }
+
+
+    public int getVariableNumeroTablet() {
+        return variableNumeroTablet;
+    }
+
+    public void setVariableNumeroTablet(int variableNumeroTablet) {
+        this.variableNumeroTablet = variableNumeroTablet;
+    }
 
     public String getUltimaFecha() {
         return ultimaFecha;
@@ -148,32 +178,12 @@ public class SectorLocal implements Serializable {
         this.idsector = idsector;
     }
 
-    public SectorLocal(String idSector, int numeroatendiendo, int ultimoNumeroDispensador, int cantidadEspera, int limite, int numeroDispensador, String nombreSector, String colorSector, int notificacion, int notificaciondeshabilitar, int estado, int llamarsupervisor, String fondoh, String fondov, int variableNumero,String ultimaFecha) {
-
-        this.idsector = idSector;
-        this.numeroatendiendo = numeroatendiendo;
-        this.ultimoNumeroDispensador = ultimoNumeroDispensador;
-        this.cantidadEspera = cantidadEspera;
-        this.limite = limite;
-        this.numeroDispensador = numeroDispensador;
-        this.nombreSector = nombreSector;
-        this.ColorSector = colorSector;
-        this.notificacion = notificacion;
-        this.notificaciondeshabilitar = notificaciondeshabilitar;
-        this.estado = estado;
-        this.llamarsupervisor = llamarsupervisor;
-        this.fondoSectorH = fondoh;
-        this.fondoSectorV = fondov;
-        this.variableNumero = variableNumero;
-        this.ultimaFecha = ultimaFecha;
-
-    }
 
 
     public SectorLocal() {
     }
 
-    public boolean sumar(){
+    public boolean sumarTablet(){
 
         boolean a = false;
 
@@ -183,6 +193,7 @@ public class SectorLocal implements Serializable {
 
                 this.numeroatendiendo = 1;
                 this.cantidadEspera--;
+                this.variableNumeroTablet++;
 
             }else {
                 this.numeroatendiendo++;
@@ -219,18 +230,17 @@ public class SectorLocal implements Serializable {
 
         if (cantidadEspera<ultimoNumeroDispensador){
 
-            if (numeroatendiendo<2){
+            if (numeroatendiendo==1){
 
                 this.numeroatendiendo = 99;
                 this.cantidadEspera++;
-                this.variableNumero--;
+                this.variableNumeroTablet--;
 
             }else {
                 this.numeroatendiendo--;
                 this.cantidadEspera++;
 
             }
-
             a = true;
         }
 
@@ -248,6 +258,7 @@ public class SectorLocal implements Serializable {
         this.notificacion=0;
         this.notificaciondeshabilitar=0;
         this.variableNumero++;
+        this.variableNumeroTablet = variableNumero;
     }
 
 

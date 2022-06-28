@@ -26,16 +26,14 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class InicioOpcionDispositivo extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private String NOMBREDELDISPOSITIVO;
+    private String DISPOSITIVO;
     private String NOMBREUBICACIONDISPOSITIVO = "NO";
     Button btnconfirmar,btncerrarsesion;
     Spinner dispositivo;
     String dispositivo_seleccionado= null;
     ActionBar actionBar;
     private SharedPreferences pref;
-    private String estado = "NO";
     private String CLIENTE;
-    private String supervisor = "NO";
     private FirebaseAuth mAuth;
 
     LinearLayout linearubicacion;
@@ -64,17 +62,8 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
             @Override
             public void onClick(View view) {
 
+                CerrarSesion();
 
-                mAuth.signOut();
-                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("ESTADOSESION", "NO");
-                editor.apply();
-
-                Intent intent = new Intent(InicioOpcionDispositivo.this, InicioSesion.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
 
             }
         });
@@ -99,7 +88,11 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
                         if (ubicacion.length()>0){
 
                             NOMBREUBICACIONDISPOSITIVO = ubicacion.getText().toString();
-                            guardarAvanzar();
+                            if(!CLIENTE.equals("NO")){
+                                guardarAvanzar();
+                            }
+
+
 
                         }else{
                             ubicacion.requestFocus();
@@ -120,6 +113,21 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     }
 
 
+    private void CerrarSesion(){
+
+        mAuth.signOut();
+        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("ESTADOSESION", "NO");
+        editor.apply();
+
+        Intent intent = new Intent(InicioOpcionDispositivo.this, InicioSesion.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
+
+    }
+
     private void guardarAvanzar(){
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
@@ -128,9 +136,7 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
         editor.putString("DISPOSITIVO", dispositivo_seleccionado);
         editor.putString("NOMBREUBICACIONDISPOSITIVO",NOMBREUBICACIONDISPOSITIVO);
         editor.apply();
-
         Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
-        intent.putExtra("DISPOSITIVO", dispositivo_seleccionado);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finish();
@@ -144,26 +150,24 @@ public class InicioOpcionDispositivo extends AppCompatActivity implements Adapte
     private void abriraplicacion() {
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+        CLIENTE = pref.getString("CLIENTE", "NO");
+        DISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
+        NOMBREUBICACIONDISPOSITIVO = pref.getString("NOMBREUBICACIONDISPOSITIVO", "NO");
         String configuracion = pref.getString("CONFIGURACIONDMR", "NO");
 
-        if (configuracion.equals("SI")){
+        if (!CLIENTE.equals("NO")){
 
-            NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
-            CLIENTE = pref.getString("CLIENTE", "NO");
-
-            if (!NOMBREDELDISPOSITIVO.equals("NO") && !CLIENTE.equals("NO")){
+            if (configuracion.equals("SI")){
 
                     Intent intent = new Intent(InicioOpcionDispositivo.this, InicioOpcionLocal.class);
-                    intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
-                    intent.putExtra("CLIENTE", CLIENTE);
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     finish();
 
-            }
-
+                }
+        }else{
+            CerrarSesion();
         }
-
     }
 
     private void ocultarbarra() {

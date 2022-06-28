@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -76,7 +77,8 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReferencelocales;
     ActionBar actionBar;
-    String NOMBREDELDISPOSITIVO=null;
+    String DISPOSITIVO=null;
+    String IDLOCALSELECCIONADO=null;
     String CLIENTE = null;
     private SharedPreferences pref;
 
@@ -90,9 +92,6 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         list = new ArrayList<>();
         adapter = new AdapterLocal();
 
-        NOMBREDELDISPOSITIVO = getIntent().getStringExtra("DISPOSITIVO");
-        CLIENTE = getIntent().getStringExtra("CLIENTE");
-
         // funcionaldiades
 
         adapter.setOnNoteSelectedListener(new AdapterLocal.OnNoteSelectedListener() {
@@ -102,12 +101,20 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
 
                 Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionSectores.class);
 
-                intent.putExtra("LOCALSELECCIONADO", note.getNombreLocal());
-                intent.putExtra("IDLOCALSELECCIONADO", note.getIdLocal());
-                intent.putExtra("DISPOSITIVO", NOMBREDELDISPOSITIVO);
-                intent.putExtra("CLIENTE", CLIENTE);
-                intent.putExtra("LOGOLOCAL",note.getLogo());
-                intent.putExtra("LOGOLOCALIMPRE",note.getLogoImpreso());
+
+                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("CLIENTE",CLIENTE);
+                editor.putString("NOMBRELOCALSELECCIONADO", note.getNombreLocal());
+                editor.putString("IDLOCAL",note.getIdLocal());
+                editor.putString("DISPOSITIVO",DISPOSITIVO);
+                editor.putString("LOGOLOCAL",note.getLogo());
+                editor.putString("LOGOLOCALIMPRE",note.getLogoImpreso());
+
+                editor.apply();
+
+
+
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
@@ -125,7 +132,11 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerElegirLocal);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
-        cargarLista();
+
+        if (!CLIENTE.equals("NO")){
+            cargarLista();
+        }
+
 
     }
 
@@ -134,44 +145,59 @@ public class InicioOpcionLocal extends AppCompatActivity implements SearchView.O
     private void abriraplicacion() {
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-        String estado = pref.getString("ESTADO", "NO");
-        String configuracion = pref.getString("CONFIGURACIONDMR", "NO");
 
-        if (configuracion.equals("SI")){
+        String completado = pref.getString("COMPLETADO", "NO");
+        CLIENTE= pref.getString("CLIENTE", "NO");
+        IDLOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
+        DISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
 
-            CLIENTE = pref.getString("CLIENTE", "NO");
-            NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
+        if(!CLIENTE.equals("NO") && !DISPOSITIVO.equals("NO") ){
 
-            if (!NOMBREDELDISPOSITIVO.equals("NO") && !CLIENTE.equals("NO")){
+            if (completado.equals("SI")){
 
+                    if (!IDLOCALSELECCIONADO.equals("NO")){
 
-                if (estado.equals("SI")) {
+                        Intent intent = null;
 
-                    Intent intent = null;
+                        if (DISPOSITIVO.equals("DISPLAY 21PLG")) {
+                            intent = new Intent(InicioOpcionLocal.this, DisplayGrande.class);
 
-                    if (NOMBREDELDISPOSITIVO.equals("DISPLAY 21PLG")) {
-                        intent = new Intent(InicioOpcionLocal.this, DisplayGrande.class);
+                        } else if (DISPOSITIVO.equals("DISPLAY 15PLG")) {
+                            intent = new Intent(InicioOpcionLocal.this, DisplayPequeño.class);
 
-                    } else if (NOMBREDELDISPOSITIVO.equals("DISPLAY 15PLG")) {
-                        intent = new Intent(InicioOpcionLocal.this, DisplayPequeño.class);
+                        } else if (DISPOSITIVO.equals("TABLET 10PLG")) {
 
-                    } else if (NOMBREDELDISPOSITIVO.equals("TABLET 10PLG")) {
+                            intent = new Intent(InicioOpcionLocal.this, TabletDispensador.class);
+                        } else if (DISPOSITIVO.equals("DISPENSADOR")) {
+                            intent = new Intent(InicioOpcionLocal.this, DispensadorTurno.class);
 
-                        intent = new Intent(InicioOpcionLocal.this, TabletDispensador.class);
-                    } else if (NOMBREDELDISPOSITIVO.equals("DISPENSADOR")) {
-                        intent = new Intent(InicioOpcionLocal.this, DispensadorTurno.class);
-
-                    } else if   (NOMBREDELDISPOSITIVO.equals("SUPERVISOR")) {
-                        intent = new Intent(InicioOpcionLocal.this, Supervisor_Principal.class);
+                        } else if   (DISPOSITIVO.equals("SUPERVISOR")) {
+                            intent = new Intent(InicioOpcionLocal.this, Supervisor_Principal.class);
+                        }
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        InicioOpcionLocal.this.finish();
                     }
 
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    InicioOpcionLocal.this.finish();
-
-                }
             }
+
+        }else{
+
+            Intent intent = new Intent(InicioOpcionLocal.this, InicioOpcionDispositivo.class);
+            startActivity(intent);
+            pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("CONFIGURACIONDMR", "NO");
+            editor.putString("DISPOSITIVO", "NO");
+            editor.apply();
+
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            InicioOpcionLocal.this.finish();
+
         }
+
+
+
     }
 
 

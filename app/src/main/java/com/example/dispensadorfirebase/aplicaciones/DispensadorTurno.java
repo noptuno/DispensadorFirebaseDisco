@@ -138,13 +138,12 @@ public class DispensadorTurno extends AppCompatActivity{
     int numeroactual;
     String NOMBRELOCALSELECCIONADO=null;
     String CLIENTE=null;
-    String NOMBREDELDISPOSITIVO=null;
+    String DISPOSITIVO=null;
     String NOMBREUBICACIONDISPOSITIVO=null;
     String IDNOMBRELOCALSELECCIONADO=null;
     String LOGOLOCAL=null;
     String LOGOLOCALIMPRE=null;
-    String BDCARGADO = null;
-    String BDFECHACARGADO = null;
+    String COMPLETADO = null;
     AdapterDispensador adapter;
     ArrayList<SectorLocal> list;
     ArrayList<SectoresElegidos> listtemp= new ArrayList<>();
@@ -572,7 +571,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private void validarConfiguracion() {
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-        String estado = pref.getString("ESTADO", "NO");
+        String estado = pref.getString("COMPLETADO", "NO");
 
         if (estado.equals("NO")){
 
@@ -580,15 +579,21 @@ public class DispensadorTurno extends AppCompatActivity{
 
         }else{
 
-            NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
-            NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
+            DISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
+            NOMBREUBICACIONDISPOSITIVO = pref.getString("NOMBREUBICACIONDISPOSITIVO","NO");
+            CLIENTE= pref.getString("CLIENTE","NO");
+            NOMBRELOCALSELECCIONADO = pref.getString("NOMBRELOCALSELECCIONADO", "NO");
+            IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
             LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
             LOGOLOCALIMPRE= pref.getString("LOGOLOCALIMPRE","NO");
-            CLIENTE= pref.getString("CLIENTE","NO");
             iddispositivo = pref.getString("ID","NO");
-            IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
-            BDCARGADO = pref.getString("BDCARGADO","NO");
-            NOMBREUBICACIONDISPOSITIVO = pref.getString("NOMBREUBICACIONDISPOSITIVO","NO");
+            COMPLETADO = pref.getString("COMPLETADO","NO");
+
+
+            if (CLIENTE.equals("NO") || IDNOMBRELOCALSELECCIONADO.equals("NO")){
+
+                regresarConfiguracion();
+            }
         }
 
     }
@@ -596,7 +601,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private void regresarConfiguracion(){
         SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("ESTADO", "NO");
+        editor.putString("COMPLETADO", "NO");
         editor.apply();
 
         Intent intent= new Intent(DispensadorTurno.this, InicioOpcionLocal.class);
@@ -696,7 +701,6 @@ public class DispensadorTurno extends AppCompatActivity{
         datos.setIdLocal(IDNOMBRELOCALSELECCIONADO);
         datos.setLimite_superado(sector.getNotificacion());
 
-
         //databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("REPORTE").child(nombre).child(idReporte).setValue(datos);
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBRETABLAREPORTE).child(IDNOMBRELOCALSELECCIONADO).child(nombre).child(idReporte).setValue(datos);
 
@@ -746,14 +750,13 @@ public class DispensadorTurno extends AppCompatActivity{
             public void onClick(DialogInterface dialog, int id) {
                 // and display the username on main activity layout
 
-
                 if (!userAnswer.equals("") && userAnswer.getText().length()>0){
 
                     if (validaryguardar(userAnswer.getText().toString())){
 
                         SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = pref.edit();
-                        editor.putString("ESTADO", "NO");
+                        editor.putString("COMPLETADO", "NO");
                         editor.apply();
 
                         Intent intent= new Intent(DispensadorTurno.this, InicioOpcionLocal.class);
@@ -1115,7 +1118,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
             List<SectorHistorico> tickets = new ArrayList<>();
             tickets.add(datos);
-            ClaseHistorico historico = new ClaseHistorico(NOMBREDELDISPOSITIVO, tickets);
+            ClaseHistorico historico = new ClaseHistorico(DISPOSITIVO, tickets);
             String JSON = gson.toJson(historico);
             grabar(JSON,nombre);
 
