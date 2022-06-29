@@ -611,9 +611,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
     }
 
-
     private void GuardarFirebaseTransaccion(SectorLocal datos) {
-
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
         SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -623,6 +621,7 @@ public class DispensadorTurno extends AppCompatActivity{
         String fechaCompleta = dateFormat.format(date);
         String fechaCorta = dateFormatcorta.format(date);
         String horaCorta = horaFormatcorta.format(date);
+
         datos.setUltimaFecha(fechaCorta);
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).runTransaction(new Transaction.Handler() {
@@ -634,9 +633,11 @@ public class DispensadorTurno extends AppCompatActivity{
                     if ( tabla == null) {
                         return Transaction.success(mutableData);
                     }
+
                     String ultimaFecha = tabla.getUltimaFecha();
 
                     if (!ultimaFecha.equals(fechaCorta)){
+                        tabla.setVariableNumeroTablet(1);
                         tabla.setVariableNumero(1);
                     }
 
@@ -647,12 +648,11 @@ public class DispensadorTurno extends AppCompatActivity{
                     tabla.setUltimaFecha(fechaCorta);
                     tabla.sumarDispensdor();
 
-
                     mutableData.setValue(tabla);
 
                     return Transaction.success(mutableData);
-
                 }
+
 
                 @Override
                 public void onComplete(DatabaseError databaseError, boolean committed,

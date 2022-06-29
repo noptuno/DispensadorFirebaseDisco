@@ -3,6 +3,7 @@ package com.example.dispensadorfirebase.aplicaciones.supervisor;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
+import static com.example.dispensadorfirebase.app.variables.ROOTINTERNO;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -62,6 +63,8 @@ import com.example.dispensadorfirebase.principaltemp.notificador.Constants;
 import com.example.dispensadorfirebase.principaltemp.notificador.FlashSupervisor;
 import com.example.dispensadorfirebase.principaltemp.notificador.MyIntentService;
 import com.example.dispensadorfirebase.principaltemp.notificador.Supervisor;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -70,6 +73,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Supervisor_Principal extends AppCompatActivity {
 
@@ -78,9 +82,6 @@ public class Supervisor_Principal extends AppCompatActivity {
     ActionBar actionBar;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
-
-    boolean nobuscar = false;
-    private Button deshabilitar;
 
     private String color = "#F44336";
     private String colordos = "#4CAF50";
@@ -99,12 +100,11 @@ public class Supervisor_Principal extends AppCompatActivity {
 
     private Button regresar;
 
-    Boolean Solicitud = false;
     String CLIENTE=null;
     String IDNOMBRELOCALSELECCIONADO=null;
     String LOGOLOCAL=null;
     String LOGOLOCALIMPRE=null;
-    String BDCARGADO = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +117,6 @@ public class Supervisor_Principal extends AppCompatActivity {
         regresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
                 // load the dialog_promt_user.xml layout and inflate to view
                 LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
@@ -136,29 +135,23 @@ public class Supervisor_Principal extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         // and display the username on main activity layout
 
-
                         if (!userAnswer.equals("") && userAnswer.getText().length()>0){
 
                             if (validaryguardar(userAnswer.getText().toString())){
 
                                 SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = pref.edit();
-                                editor.putString("ESTADO", "NO");
+                                editor.putString("COMPLETADO", "NO");
                                 editor.apply();
 
-                                Intent intent = new Intent(Supervisor_Principal.this, InicioOpcionLocal.class);
+                                Intent intent= new Intent(Supervisor_Principal.this, InicioOpcionLocal.class);
                                 startActivity(intent);
-                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                               Supervisor_Principal.this.finish();
-
-
+                                Supervisor_Principal.this.finish();
 
                             }else{
-
-                                Toast.makeText(getApplicationContext(), "Contraseña Incorrecta", Toast.LENGTH_LONG).show();
+                                validar(userAnswer.getText().toString());
                             }
                         }
-
                     }
                 });
 
@@ -170,7 +163,6 @@ public class Supervisor_Principal extends AppCompatActivity {
 
             }
         });
-
 
 
 
@@ -220,6 +212,50 @@ public class Supervisor_Principal extends AppCompatActivity {
         startService(intent);
 
     }
+
+
+    private void validar(String password) {
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child("CONFIGURACION").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+
+                    Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                    Map<String, String> stars  = (Map<String, String>) task.getResult().getValue();
+
+                    if (task.getResult().getValue()!=null){
+
+                        for (Map.Entry<String, String> entry : stars.entrySet()) {
+
+                            if(password.equals(entry.getValue())){
+
+                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("ESTADO", "NO");
+                                editor.apply();
+
+                                Intent intent= new Intent(Supervisor_Principal.this, InicioOpcionLocal.class);
+                                startActivity(intent);
+
+                                Supervisor_Principal.this.finish();
+                                break;
+                            }
+
+                            //entry.getKey() + "=" + entry.getValue();
+                        }
+                    }
+
+
+                }
+            }
+        });
+    }
+
+
     private class ResponseReceiver extends BroadcastReceiver {
 
         // Sin instancias
@@ -252,36 +288,33 @@ public class Supervisor_Principal extends AppCompatActivity {
     private boolean validaryguardar(String pass) {
 
             boolean v = false;
-            if (pass.equals("dmr")){
+            if (pass.equals(ROOTINTERNO)){
                 v = true;
             }
 
             return v;
-
-
     }
 
     private void validarConfiguracion() {
 
         pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-        String estado = pref.getString("ESTADO", "NO");
+        String estado = pref.getString("COMPLETADO", "NO");
         if (estado.equals("NO")){
             regresarConfiguracion();
         }else{
             NOMBREDELDISPOSITIVO = pref.getString("DISPOSITIVO", "NO");
-            NOMBRELOCALSELECCIONADO = pref.getString("LOCAL", "NO");
+            NOMBRELOCALSELECCIONADO = pref.getString("NOMBRELOCALSELECCIONADO", "NO");
             LOGOLOCAL = pref.getString("LOGOLOCAL","NO");
             LOGOLOCALIMPRE= pref.getString("LOGOLOCALIMPRE","NO");
             CLIENTE= pref.getString("CLIENTE","NO");
             IDNOMBRELOCALSELECCIONADO = pref.getString("IDLOCAL", "NO");
-            BDCARGADO = pref.getString("BDCARGADO","NO");
+
+            if (CLIENTE.equals("NO") || IDNOMBRELOCALSELECCIONADO.equals("NO")){
+
+                regresarConfiguracion();
+            }
+
         }
-
-
-
-
-
-
 
     }
 
@@ -290,7 +323,7 @@ public class Supervisor_Principal extends AppCompatActivity {
 
         SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("ESTADO", "NO");
+        editor.putString("COMPLETADO", "NO");
         editor.apply();
 
         Intent intent= new Intent(Supervisor_Principal.this, InicioOpcionLocal.class);

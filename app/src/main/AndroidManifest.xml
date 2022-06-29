@@ -22,7 +22,7 @@
     <application
         android:name=".app.Myapp"
         android:allowBackup="true"
-        android:icon="@drawable/ic_logo_dmrcirculo"
+        android:icon="@mipmap/logodiscoicono"
         android:label="Notificación Disco"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"

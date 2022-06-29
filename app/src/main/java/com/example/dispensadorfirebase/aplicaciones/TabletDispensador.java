@@ -333,42 +333,8 @@ private ImageView logolocal;
 
 
 
-    void conectarFirebaseUnicaVez(){
-
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
-
-                    SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
-                    if (sectores.getEstado()==1){
-                        for (SectoresElegidos sec : listtemp) {
-                            if (sec.getIdSectorFirebase().equals(sectores.getIdsector())){
-                                variabletablet = sectores.getVariableNumero();
-
-                                break;
-                            }
-                            Log.i("---> Base de ds: ", sectores.toString());
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                regresarConfiguracion();
-
-            }
-
-        });
-
-    }
-
 
     void conectarFirebase(){
-
-
 
 
         setProgressDialog();
@@ -521,8 +487,7 @@ private ImageView logolocal;
             public void onClick(View view) {
                 if (!mPassword.getText().toString().isEmpty()) {
 
-
-                    String PASSWORD = "dmr";
+                    String PASSWORD = ROOTINTERNO;
                     String PASSWORDROOT = "dmrmilrollos";
 
                     if (mPassword.getText().toString().equals(PASSWORD) || mPassword.getText().toString().equals(PASSWORDROOT) ){
@@ -548,9 +513,6 @@ private ImageView logolocal;
                 }
             }
         });
-
-
-
     }
 
 
@@ -575,9 +537,11 @@ private ImageView logolocal;
 
     void Registrar(boolean sum){
 
+
         click2.start();
         txtnumeroactual.setText(""+datos.getNumeroatendiendo());
         txtcantidadespera.setText(""+datos.getCantidadEspera());
+
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
         SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -585,6 +549,7 @@ private ImageView logolocal;
         Date date = new Date();
 
         String fechaCompleta = dateFormat.format(date);
+
         String fechaCorta = dateFormatcorta.format(date);
         String horaCorta = horaFormatcorta.format(date);
 
@@ -592,7 +557,6 @@ private ImageView logolocal;
             datos.setNotificacion(0);
             datos.setNotificaciondeshabilitar(0);
         }else{
-
             datos.setNotificacion(1);
         }
 

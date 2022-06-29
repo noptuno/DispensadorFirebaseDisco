@@ -157,23 +157,18 @@ public class SectorLocal implements Serializable {
     public String getFondoSectorH() {
         return fondoSectorH;
     }
-
     public void setFondoSectorH(String fondoSectorH) {
         this.fondoSectorH = fondoSectorH;
     }
-
     public String getFondoSectorV() {
         return fondoSectorV;
     }
-
     public void setFondoSectorV(String fondoSectorV) {
         this.fondoSectorV = fondoSectorV;
     }
-
     public String getIdsector() {
         return idsector;
     }
-
     public void setIdsector(String idsector) {
         this.idsector = idsector;
     }
@@ -188,6 +183,7 @@ public class SectorLocal implements Serializable {
         boolean a = false;
 
         if (cantidadEspera>0){
+
 
             if (numeroatendiendo==99){
 
@@ -216,10 +212,13 @@ public class SectorLocal implements Serializable {
             this.numeroDispensador = 1;
             this.ultimoNumeroDispensador = 99;
             this.variableNumero++;
+
         }else{
+
             this.cantidadEspera++;
             this.numeroDispensador++;
             this.ultimoNumeroDispensador = numeroDispensador-1;
+
         }
     }
 
@@ -229,17 +228,13 @@ public class SectorLocal implements Serializable {
         boolean a = false;
 
         if (cantidadEspera<ultimoNumeroDispensador){
-
             if (numeroatendiendo==1){
-
                 this.numeroatendiendo = 99;
                 this.cantidadEspera++;
                 this.variableNumeroTablet--;
-
             }else {
                 this.numeroatendiendo--;
                 this.cantidadEspera++;
-
             }
             a = true;
         }
