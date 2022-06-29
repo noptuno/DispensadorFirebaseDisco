@@ -119,47 +119,7 @@ public class Supervisor_Principal extends AppCompatActivity {
             public void onClick(View view) {
 
                 // load the dialog_promt_user.xml layout and inflate to view
-                LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
-                View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
-
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Supervisor_Principal.this);
-
-                alertDialogBuilder.setView(promptUserView);
-
-                final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
-
-                alertDialogBuilder.setTitle("Usuario Administrador: ");
-
-                // prompt for username
-                alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // and display the username on main activity layout
-
-                        if (!userAnswer.equals("") && userAnswer.getText().length()>0){
-
-                            if (validaryguardar(userAnswer.getText().toString())){
-
-                                SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.putString("COMPLETADO", "NO");
-                                editor.apply();
-
-                                Intent intent= new Intent(Supervisor_Principal.this, InicioOpcionLocal.class);
-                                startActivity(intent);
-                                Supervisor_Principal.this.finish();
-
-                            }else{
-                                validar(userAnswer.getText().toString());
-                            }
-                        }
-                    }
-                });
-
-                // all set and time to build and show up!
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-
-                userAnswer.requestFocus();
+                Regresar();
 
             }
         });
@@ -214,6 +174,52 @@ public class Supervisor_Principal extends AppCompatActivity {
     }
 
 
+    void Regresar(){
+
+        LayoutInflater layoutinflater = LayoutInflater.from(getApplicationContext());
+        View promptUserView = layoutinflater.inflate(R.layout.dialog_activity_pass, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Supervisor_Principal.this);
+
+        alertDialogBuilder.setView(promptUserView);
+
+        final EditText userAnswer = (EditText) promptUserView.findViewById(R.id.username);
+
+        alertDialogBuilder.setTitle("Usuario Administrador: ");
+
+        // prompt for username
+        alertDialogBuilder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // and display the username on main activity layout
+
+                if (!userAnswer.equals("") && userAnswer.getText().length()>0){
+
+                    if (validaryguardar(userAnswer.getText().toString())){
+
+                        SharedPreferences pref = getSharedPreferences("CONFIGURAR", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString("COMPLETADO", "NO");
+                        editor.apply();
+
+                        Intent intent= new Intent(Supervisor_Principal.this, InicioOpcionLocal.class);
+                        startActivity(intent);
+                        Supervisor_Principal.this.finish();
+
+                    }else{
+                        validar(userAnswer.getText().toString());
+                    }
+                }
+            }
+        });
+
+        // all set and time to build and show up!
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+        userAnswer.requestFocus();
+
+    }
+
     private void validar(String password) {
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child("CONFIGURACION").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -255,6 +261,11 @@ public class Supervisor_Principal extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+        Regresar();
+    }
 
     private class ResponseReceiver extends BroadcastReceiver {
 
