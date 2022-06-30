@@ -158,8 +158,6 @@ public class DispensadorTurno extends AppCompatActivity{
     private AlertDialog dialogImpresora;
 
 
-
-
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -644,12 +642,9 @@ public class DispensadorTurno extends AppCompatActivity{
                     if(tabla.getCantidadEspera()> tabla.getLimite()){
                         tabla.setNotificacion(1);
                     }
-
                     tabla.setUltimaFecha(fechaCorta);
                     tabla.sumarDispensdor();
-
                     mutableData.setValue(tabla);
-
                     return Transaction.success(mutableData);
                 }
 
@@ -666,19 +661,43 @@ public class DispensadorTurno extends AppCompatActivity{
 
                         byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
 
-                        if(Imprimir(escpos)){
-
-                            //registrarHistorico(tabla,fechaCorta,horaCorta);
-
-                        }else{
-
+                        /*
+                        if(!Imprimir(escpos)){
                             impresorapapel=false;
-                            //todo dialog mensaje
                         }
+                        */
 
+
+                    }else{
+                        registrarErrorDispensador(tabla,fechaCorta,horaCorta);
                     }
                 }
             });
+    }
+
+    private void registrarErrorDispensador(SectorLocal sector,String fecha,String hora) {
+
+
+        String nombre = (fecha.replace("/","-")).trim();
+        int variable = sector.getVariableNumero();
+        String idReporte = sector.getIdsector()+"-"+sector.getUltimoNumeroDispensador()+"-"+variable;
+        SectorHistorico datos = new SectorHistorico();
+
+        datos.setIdSector(sector.getIdsector());
+        datos.setNombreSector(sector.getNombreSector());
+        datos.setIdDispositivo(iddispositivo);
+        datos.setNombreDispositivo(NOMBREUBICACIONDISPOSITIVO);
+        datos.setNumeroDispensado(sector.getUltimoNumeroDispensador());
+        datos.setFecha_entrega(fecha);
+        datos.setHora_entrega(hora);
+        datos.setFecha_atencion("");
+        datos.setHora_atencion("");
+        datos.setIdLocal(IDNOMBRELOCALSELECCIONADO);
+        datos.setLimite_superado(sector.getNotificacion());
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child("ERRORES").child(IDNOMBRELOCALSELECCIONADO).child(nombre).child("DISP").child(idReporte).setValue(datos);
+
+
     }
 
 

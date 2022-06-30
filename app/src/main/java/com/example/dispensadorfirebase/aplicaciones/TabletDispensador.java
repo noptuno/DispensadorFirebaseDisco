@@ -18,10 +18,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,6 +100,8 @@ public class TabletDispensador extends AppCompatActivity {
     int variabletablet = 1;
     int variabledispensador = 1;
 
+    private AlertDialog dialogInternet;
+
 private ImageView logolocal;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,14 +166,21 @@ private ImageView logolocal;
         });
 
 
+        dialogInternet = ConstruirDialog("INTERNET");
+
+
         sumar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                sumar();
+                if (isNetDisponible()){
+                    sumar();
 
-                if (retrocesos>0){
-                    retrocesos--;
+                    if (retrocesos>0){
+                        retrocesos--;
+                    }
+                }else{
+                    dialogInternet.show();
                 }
 
             }
@@ -179,15 +191,24 @@ private ImageView logolocal;
             public void onClick(View view) {
 
 
-                if (retrocesos < limiteretroceder){
+                if (isNetDisponible()){
 
-                    restar();
+                    if (retrocesos < limiteretroceder){
 
+                        restar();
+
+                    }else{
+
+                        Toast.makeText(TabletDispensador.this, "El limite es de 10 turnos para retroceder", Toast.LENGTH_LONG).show();
+
+                    }
                 }else{
 
-                    Toast.makeText(TabletDispensador.this, "El limite es de 10 turnos para retroceder", Toast.LENGTH_LONG).show();
-
+                    dialogInternet.show();
                 }
+
+
+
             }
         });
 
@@ -216,11 +237,42 @@ private ImageView logolocal;
 */
     }
 
+    private boolean isNetDisponible() {
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
+
+        return (actNetInfo != null && actNetInfo.isConnected());
+    }
+
+
     private void cargarLogo(String LinkLogo) {
 
         Uri fondo = Uri.parse(LinkLogo);
         Glide.with(getApplicationContext()).load(fondo).into(logolocal);
 
+
+    }
+
+    AlertDialog ConstruirDialog(String a){
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.myDialog));
+
+        builder.setCancelable(false);
+
+
+        builder.setMessage("INTERNET: " + a)
+                .setPositiveButton("Reintentar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+
+                    }
+                });
+        // Create the AlertDialog object and return it
+        return builder.create();
 
     }
 
@@ -420,17 +472,23 @@ private ImageView logolocal;
 
     void sumar(){
 
+
+
         if (datos.sumarTablet()){
 
+
+            txtnumeroactual.setText(""+datos.getNumeroatendiendo());
+            txtcantidadespera.setText(""+datos.getCantidadEspera());
             sumar.setEnabled(false);
             restar.setEnabled(false);
             reset.setEnabled(false);
-
             click2.start();
             // setProgressDialog();
             delay();
 
             Registrar(true);
+
+
         }else{
             Toast.makeText(TabletDispensador.this, "No hay Clientes para atender", Toast.LENGTH_LONG).show();
         }
@@ -538,17 +596,10 @@ private ImageView logolocal;
     void Registrar(boolean sum){
 
 
-        click2.start();
-        txtnumeroactual.setText(""+datos.getNumeroatendiendo());
-        txtcantidadespera.setText(""+datos.getCantidadEspera());
-
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
         SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         SimpleDateFormat horaFormatcorta = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         Date date = new Date();
-
-        String fechaCompleta = dateFormat.format(date);
 
         String fechaCorta = dateFormatcorta.format(date);
         String horaCorta = horaFormatcorta.format(date);
@@ -562,6 +613,7 @@ private ImageView logolocal;
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).setValue(datos);
 
+
         if (sum){
             registrarHistoricoDispensadorFirebase(datos,fechaCorta,horaCorta);
         }
@@ -573,9 +625,9 @@ private ImageView logolocal;
 
         String nombrefecha = (fecha.replace("/","-")).trim();
 
-
         int variable = sector.getVariableNumeroTablet();
         String idReporte = sector.getIdsector()+"-"+sector.getNumeroatendiendo()+"-"+variable;
+
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBRETABLAREPORTE).child(IDNOMBRELOCALSELECCIONADO).child(nombrefecha).child(idReporte).runTransaction(new Transaction.Handler() {
             @Override
@@ -598,8 +650,39 @@ private ImageView logolocal;
             public void onComplete(DatabaseError databaseError, boolean committed,
                                    DataSnapshot currentData) {
 
+                SectorLocal tabla = currentData.getValue(SectorLocal.class);
+
+                if(tabla==null){
+
+                    registrarErrorDispensador(sector,fecha,hora);
+                }
+
+
             }
         });
+
+    }
+
+    private void registrarErrorDispensador(SectorLocal sector,String fecha,String hora) {
+
+
+        String nombre = (fecha.replace("/","-")).trim();
+        int variable = sector.getVariableNumero();
+        String idReporte = sector.getIdsector()+"-"+sector.getNumeroatendiendo()+"-"+variable;
+        SectorHistorico datostemp = new SectorHistorico();
+
+        datostemp.setIdSector(sector.getIdsector());
+        datostemp.setNombreSector(sector.getNombreSector());
+        datostemp.setNumeroDispensado(sector.getUltimoNumeroDispensador());
+        datostemp.setFecha_entrega(fecha);
+        datostemp.setHora_entrega(hora);
+        datostemp.setFecha_atencion("");
+        datostemp.setHora_atencion("");
+        datostemp.setIdLocal(IDNOMBRELOCALSELECCIONADO);
+        datostemp.setLimite_superado(sector.getNotificacion());
+
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child("ERRORES").child(IDNOMBRELOCALSELECCIONADO).child(nombre).child("TABLET").child(idReporte).setValue(datostemp);
+
 
     }
 

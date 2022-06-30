@@ -13,6 +13,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -59,6 +61,8 @@ public class InicioSesion extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private SharedPreferences pref;
 
+    private TextView txtversion;
+
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -70,11 +74,17 @@ public class InicioSesion extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_sesion);
 
-
+        txtversion = findViewById(R.id.txtversion);
       btnconfirmar = findViewById(R.id.btnConfirmar);
       btnsalir= findViewById(R.id.btnSalir);
       edtcorreo= findViewById(R.id.edtcorreo);
       edtpassword= findViewById(R.id.edtpassword);
+
+
+
+
+   versionCode();
+
 
       inicializarFirebase();
 
@@ -121,6 +131,17 @@ finish();
             }
         });
 
+
+    }
+
+    private void versionCode() {
+        PackageInfo pinfo;
+        try {
+            pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            txtversion.setText("Version: "+pinfo.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
     }
 
