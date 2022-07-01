@@ -3,6 +3,7 @@ package com.example.dispensadorfirebase.aplicaciones;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLAERROR;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLAREPORTE;
 import static com.example.dispensadorfirebase.app.variables.ROOTINTERNO;
 
@@ -156,12 +157,45 @@ public class DispensadorTurno extends AppCompatActivity{
     private AlertDialog dialogError;
     private AlertDialog dialogInternet;
     private AlertDialog dialogImpresora;
+    private boolean fechaaceptada = false;
 
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
 
+       // valdiarFecha();
+
+    }
+
+    private void valdiarFecha() {
+
+        SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Date date = new Date();
+        String fechaCorta = dateFormatcorta.format(date);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+
+        builder.setTitle("¿Puede confirmar si la fecha del dispositivo esta correcta?\r\n"+
+                            "Fecha: "+ fechaCorta);
+        builder.setIcon(R.drawable.ic_time);
+        builder.setPositiveButton("Correcto", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+
+                fechaaceptada = true;
+
+            }
+        });
+        builder.setNegativeButton("Incorrecto", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                fechaaceptada = false;
+            }
+        });
+        AlertDialog dialogt = builder.create();
+
+        dialogt.show();
     }
 
 
@@ -341,10 +375,7 @@ public class DispensadorTurno extends AppCompatActivity{
                     }
 
                 }catch (Exception e){
-                    Log.e("Hubo Error",e.toString());
-                    note.setLlamarsupervisor(1);
-                    databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getIdsector()).setValue(note);
-
+                    dialogError.show();
                 }
 
                     //dialog mensaje internet
@@ -620,8 +651,6 @@ public class DispensadorTurno extends AppCompatActivity{
         String fechaCorta = dateFormatcorta.format(date);
         String horaCorta = horaFormatcorta.format(date);
 
-        datos.setUltimaFecha(fechaCorta);
-
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).runTransaction(new Transaction.Handler() {
                 @Override
                 public Transaction.Result doTransaction(MutableData mutableData) {
@@ -637,13 +666,15 @@ public class DispensadorTurno extends AppCompatActivity{
                     if (!ultimaFecha.equals(fechaCorta)){
                         tabla.setVariableNumeroTablet(1);
                         tabla.setVariableNumero(1);
+                        tabla.setUltimaFecha(fechaCorta);
                     }
 
                     if(tabla.getCantidadEspera()> tabla.getLimite()){
                         tabla.setNotificacion(1);
                     }
-                    tabla.setUltimaFecha(fechaCorta);
+
                     tabla.sumarDispensdor();
+
                     mutableData.setValue(tabla);
                     return Transaction.success(mutableData);
                 }
@@ -661,12 +692,9 @@ public class DispensadorTurno extends AppCompatActivity{
 
                         byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
 
-                        /*
                         if(!Imprimir(escpos)){
                             impresorapapel=false;
                         }
-                        */
-
 
                     }else{
                         registrarErrorDispensador(tabla,fechaCorta,horaCorta);
@@ -695,7 +723,7 @@ public class DispensadorTurno extends AppCompatActivity{
         datos.setIdLocal(IDNOMBRELOCALSELECCIONADO);
         datos.setLimite_superado(sector.getNotificacion());
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child("ERRORES").child(IDNOMBRELOCALSELECCIONADO).child(nombre).child("DISP").child(idReporte).setValue(datos);
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBRETABLAERROR).child(IDNOMBRELOCALSELECCIONADO).child(nombre).child("DISP").child(idReporte).setValue(datos);
 
 
     }
@@ -923,7 +951,7 @@ public class DispensadorTurno extends AppCompatActivity{
 
                     SectorLocal sectores = objSnaptshot.getValue(SectorLocal.class);
 
-                    if (sectores.getEstado()==1){
+                    if ((sectores != null ? sectores.getEstado() : 0) ==1){
 
                         for (SectoresElegidos sec : listtemp) {
 

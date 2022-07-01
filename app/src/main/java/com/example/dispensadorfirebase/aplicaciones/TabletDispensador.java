@@ -3,6 +3,7 @@ package com.example.dispensadorfirebase.aplicaciones;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDATOSLOCALES;
 import static com.example.dispensadorfirebase.app.variables.NOMBREBASEDEDATOSFIREBASE;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLACLIENTES;
+import static com.example.dispensadorfirebase.app.variables.NOMBRETABLAERROR;
 import static com.example.dispensadorfirebase.app.variables.NOMBRETABLAREPORTE;
 import static com.example.dispensadorfirebase.app.variables.ROOTINTERNO;
 
@@ -596,12 +597,12 @@ private ImageView logolocal;
     void Registrar(boolean sum){
 
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
-        SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+       // SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
+       // SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         SimpleDateFormat horaFormatcorta = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         Date date = new Date();
 
-        String fechaCorta = dateFormatcorta.format(date);
+       // String fechaCorta = dateFormatcorta.format(date);
         String horaCorta = horaFormatcorta.format(date);
 
         if (datos.getCantidadEspera()<baselimite){
@@ -615,16 +616,16 @@ private ImageView logolocal;
 
 
         if (sum){
-            registrarHistoricoDispensadorFirebase(datos,fechaCorta,horaCorta);
+            registrarHistoricoDispensadorFirebase(datos,horaCorta);
         }
 
     }
 
 
-    private void registrarHistoricoDispensadorFirebase(SectorLocal sector,String fecha,String hora) {
+    private void registrarHistoricoDispensadorFirebase(SectorLocal sector,String hora) {
 
-        String nombrefecha = (fecha.replace("/","-")).trim();
-
+        String fechaDispensador = sector.getUltimaFecha();
+        String nombrefecha = (fechaDispensador.replace("/","-")).trim();
         int variable = sector.getVariableNumeroTablet();
         String idReporte = sector.getIdsector()+"-"+sector.getNumeroatendiendo()+"-"+variable;
 
@@ -639,7 +640,7 @@ private ImageView logolocal;
                     return Transaction.success(mutableData);
                 }
 
-                tablaHistorico.setFecha_atencion(fecha);
+                tablaHistorico.setFecha_atencion(fechaDispensador);
                 tablaHistorico.setHora_atencion(hora);
                 mutableData.setValue(tablaHistorico);
                 return Transaction.success(mutableData);
@@ -649,14 +650,15 @@ private ImageView logolocal;
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed,
                                    DataSnapshot currentData) {
-
                 SectorLocal tabla = currentData.getValue(SectorLocal.class);
 
                 if(tabla==null){
 
-                    registrarErrorDispensador(sector,fecha,hora);
+                    SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    Date date = new Date();
+                    String fechaTablet = dateFormatcorta.format(date);
+                    registrarErrorDispensador(sector,fechaTablet,hora);
                 }
-
 
             }
         });
@@ -681,7 +683,7 @@ private ImageView logolocal;
         datostemp.setIdLocal(IDNOMBRELOCALSELECCIONADO);
         datostemp.setLimite_superado(sector.getNotificacion());
 
-        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child("ERRORES").child(IDNOMBRELOCALSELECCIONADO).child(nombre).child("TABLET").child(idReporte).setValue(datostemp);
+        databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBRETABLAERROR).child(IDNOMBRELOCALSELECCIONADO).child(nombre).child("TABLET").child(idReporte).setValue(datostemp);
 
 
     }

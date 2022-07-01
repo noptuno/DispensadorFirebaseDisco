@@ -9,5 +9,6 @@ public class variables {
     public static final String BASEDATOSSECTORESTEMP= "SECTORESTEMP";
     public static final String NOMBRETABLAUSUARIO= "USUARIOS";
     public static final String NOMBRETABLAREPORTE= "REPORTE";
+    public static final String NOMBRETABLAERROR= "ERRORES";
 
 }
