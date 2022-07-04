@@ -689,13 +689,13 @@ public class DispensadorTurno extends AppCompatActivity{
                     if(tabla!=null){
 
                         registrarHistoricoDispensadorFirebase(tabla,fechaCorta,horaCorta);
-
+                        /*
                         byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
 
                         if(!Imprimir(escpos)){
                             impresorapapel=false;
                         }
-
+                        */
                     }else{
                         registrarErrorDispensador(tabla,fechaCorta,horaCorta);
                     }

@@ -596,13 +596,13 @@ private ImageView logolocal;
 
     void Registrar(boolean sum){
 
-
        // SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault());
-       // SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
         SimpleDateFormat horaFormatcorta = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         Date date = new Date();
 
-       // String fechaCorta = dateFormatcorta.format(date);
+       String fechaCorta = dateFormatcorta.format(date);
         String horaCorta = horaFormatcorta.format(date);
 
         if (datos.getCantidadEspera()<baselimite){
@@ -614,21 +614,18 @@ private ImageView logolocal;
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(datos.getIdsector()).setValue(datos);
 
-
         if (sum){
-            registrarHistoricoDispensadorFirebase(datos,horaCorta);
+            registrarHistoricoDispensadorFirebase(datos,horaCorta,fechaCorta);
         }
 
     }
 
 
-    private void registrarHistoricoDispensadorFirebase(SectorLocal sector,String hora) {
+    private void registrarHistoricoDispensadorFirebase(SectorLocal sector,String hora,String fechatcorta) {
 
-        String fechaDispensador = sector.getUltimaFecha();
-        String nombrefecha = (fechaDispensador.replace("/","-")).trim();
+        String nombrefecha = (fechatcorta.replace("/","-")).trim();
         int variable = sector.getVariableNumeroTablet();
         String idReporte = sector.getIdsector()+"-"+sector.getNumeroatendiendo()+"-"+variable;
-
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBRETABLAREPORTE).child(IDNOMBRELOCALSELECCIONADO).child(nombrefecha).child(idReporte).runTransaction(new Transaction.Handler() {
             @Override
@@ -640,7 +637,7 @@ private ImageView logolocal;
                     return Transaction.success(mutableData);
                 }
 
-                tablaHistorico.setFecha_atencion(fechaDispensador);
+                tablaHistorico.setFecha_atencion(fechatcorta);
                 tablaHistorico.setHora_atencion(hora);
                 mutableData.setValue(tablaHistorico);
                 return Transaction.success(mutableData);
@@ -654,10 +651,7 @@ private ImageView logolocal;
 
                 if(tabla==null){
 
-                    SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                    Date date = new Date();
-                    String fechaTablet = dateFormatcorta.format(date);
-                    registrarErrorDispensador(sector,fechaTablet,hora);
+                    registrarErrorDispensador(sector,fechatcorta,hora);
                 }
 
             }
@@ -685,23 +679,17 @@ private ImageView logolocal;
 
         databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBRETABLAERROR).child(IDNOMBRELOCALSELECCIONADO).child(nombre).child("TABLET").child(idReporte).setValue(datostemp);
 
-
     }
 
-
-
     void Actualizar(){
-
 
         txtnumeroactual.setText(""+datos.getNumeroatendiendo());
         txtcantidadespera.setText(""+datos.getCantidadEspera());
         baselimite = datos.getLimite();
         txtsector.setText(datos.getNombreSector());
-      //  txtsector.setBackgroundColor(Color.parseColor(datos.getColorSector()));
+      //txtsector.setBackgroundColor(Color.parseColor(datos.getColorSector()));
 
     }
-
-
 
     private void inicializarFirebase() {
         FirebaseApp.initializeApp(this);
@@ -710,8 +698,6 @@ private ImageView logolocal;
         //firebaseDatabase.setPersistenceEnabled(true);
         databaseReference = firebaseDatabase.getReference();
     }
-
-
 
 
     public void setProgressDialog() {
