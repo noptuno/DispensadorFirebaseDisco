@@ -113,12 +113,9 @@ import java.util.Map;
 
 public class DispensadorTurno extends AppCompatActivity{
 
-    public static boolean isConnected = false;
-    private Handler m_handler = new Handler(); // Main thread
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     private boolean permisosimpresora = false;
     private boolean impresoraactiva = false;
-    private boolean impresorapapel = false;
     private UsbDeviceConnection connection;
     private UsbInterface usbInterface;
     private UsbEndpoint usbEndpointIn = null;
@@ -154,50 +151,7 @@ public class DispensadorTurno extends AppCompatActivity{
     private ImageView logo;
     private String iddispositivo;
     private  StorageReference mstorage;
-    private AlertDialog dialogError;
-    private AlertDialog dialogInternet;
-    private AlertDialog dialogImpresora;
-    private boolean fechaaceptada = false;
-
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-
-       // valdiarFecha();
-
-    }
-
-    private void valdiarFecha() {
-
-        SimpleDateFormat dateFormatcorta = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        Date date = new Date();
-        String fechaCorta = dateFormatcorta.format(date);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-
-        builder.setTitle("¿Puede confirmar si la fecha del dispositivo esta correcta?\r\n"+
-                            "Fecha: "+ fechaCorta);
-        builder.setIcon(R.drawable.ic_time);
-        builder.setPositiveButton("Correcto", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-
-                fechaaceptada = true;
-
-            }
-        });
-        builder.setNegativeButton("Incorrecto", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-                fechaaceptada = false;
-            }
-        });
-        AlertDialog dialogt = builder.create();
-
-        dialogt.show();
-    }
-
+    private AlertDialog dialogErrorPrinter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,7 +164,6 @@ public class DispensadorTurno extends AppCompatActivity{
 
         leerSectoresLocales();
 
-        //pedir_permiso_escritura();
 
         configurarnuevamente = findViewById(R.id.btn_salir);
 
@@ -223,11 +176,6 @@ public class DispensadorTurno extends AppCompatActivity{
             }
         });
 
-        dialogError = ConstruirDialog("PAPEL");
-
-        dialogInternet = ConstruirDialog("INTERNET");
-
-        dialogImpresora = ConstruirDialog("IMPRESORA ERROR");
 
         logo = findViewById(R.id.imviewlogolocal);
 
@@ -356,29 +304,48 @@ public class DispensadorTurno extends AppCompatActivity{
 
                     if (isNetDisponible()){
                         if (impresoraactiva){
-                            if (getCurrentStatus()){
-                                impresorapapel = true;
+                          //  if (getCurrentStatus()){
+                            int i = newGetCurrentStatus();
+                            if (i == 0) {
+                                XLog.i("TAG", "NORMAL");
                                 click2.start();
                                 habilitar_boton_imprimir = false;
                                 GuardarFirebaseTransaccion(note);
-                            }else{
-                                impresorapapel = false;
-                                dialogError.show();
-                                note.setLlamarsupervisor(1);
-                                databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getIdsector()).setValue(note);
+                                //byte[] escpos = PrepararDocumento(note,"11/07/2022");
+                              //  Imprimir(escpos);
+
+
+                            } else if (i == -1) {
+                                XLog.i("TAG", "escribir err");
+                               dialogErrorPrintet("Escribir Impresora");
+                            } else if (i == -2) {
+                                XLog.i("TAG", "sin papel");
+                              dialogErrorPrintet("Sin Papel");
+                            } else if (i == -3) {
+                                XLog.i("TAG", "se esta acabando");
+                               dialogErrorPrintet("Poco Papel");
+                            } else if (i == -4) {
+                                XLog.i("TAG", "abrir cubierta");
+                              dialogErrorPrintet("Tapa Abierta");
+                            } else if (i == -5) {
+                                XLog.i("TAG", "enviar datos err");
+                              dialogErrorPrintet("Leer Impresora");
                             }
+
+                               // note.setLlamarsupervisor(1);
+                               // databaseReference.child(NOMBREBASEDEDATOSFIREBASE).child(NOMBRETABLACLIENTES).child(CLIENTE).child(NOMBREBASEDATOSLOCALES).child(IDNOMBRELOCALSELECCIONADO).child("SECTORES").child(note.getIdsector()).setValue(note);
+
                         }else{
                             usb();
                         }
                     }else{
-                        dialogInternet.show();
+                        dialogErrorPrintet("Sin Internet");
                     }
 
                 }catch (Exception e){
-                    dialogError.show();
+                    dialogErrorPrintet("Reiniciar");
                 }
 
-                    //dialog mensaje internet
             }
 
         });
@@ -404,6 +371,26 @@ public class DispensadorTurno extends AppCompatActivity{
 
     }
 
+
+    private void dialogErrorPrintet(String mensaje){
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.myDialog);
+                builder.setCancelable(false);
+                builder.setMessage("ERROR: " + mensaje)
+                        .setPositiveButton("Reintentar", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+                dialogErrorPrinter = builder.create();
+                dialogErrorPrinter.show();
+
+
+
+
+
+    }
+
     private boolean isNetDisponible() {
 
         ConnectivityManager connectivityManager = (ConnectivityManager)
@@ -417,33 +404,35 @@ public class DispensadorTurno extends AppCompatActivity{
 
 
     private int escribirimpresora(byte[] printData){
-        int ret = 0;
+        int ret = -1;
         try {
-            if (connection!=null){
+            if (connection==null) {
+                ret = -1;
+            }else{
                 int result = connection.bulkTransfer(usbEndpointOut, printData, printData.length, 1000);
-                if (result != -1) {
-                    ret = result;
-
+                if (result <0) {
+                    ret = -3;
                 } else {
-                    ret = result;
-
-
+                    ret = printData.length;
                 }
             }
+
         } catch (Exception e) {
             ret = -1;
         }
         return ret;
     }
+
 
     private int leerimpresora(byte[] printData){
-        int ret = 0;
+        int ret = -1;
         try {
-            if (connection!=null){
+            if (connection==null) {
+                ret = -1;
+            }else{
                 int result = connection.bulkTransfer(usbEndpointIn, printData, printData.length, 1000);
-                if (result != -1) {
-                    ret = result;
-
+                if (result <0) {
+                    ret = -3;
                 } else {
                     ret = result;
 
@@ -455,28 +444,52 @@ public class DispensadorTurno extends AppCompatActivity{
         return ret;
     }
 
+
+    public int newGetCurrentStatus() {
+
+        byte uncapData = this.getDatas(2);
+      //  XLog.d("PrinterInstance", "TAPA" + uncapData);
+
+        if (uncapData == -1) {
+            return -1;
+        } else if (uncapData == -2) {
+
+            return -5;
+        } else if ((uncapData & 4) != 0) {
+
+            return -4;
+        } else {
+            byte paperData = this.getDatas(4);
+            if (paperData == -1) {
+                return -1;
+            } else if (paperData == -2) {
+                return -5;
+            } else if ((paperData & 96) == 96) {
+                return -2;
+            } else if ((paperData & 12) == 12) {
+                return -3;
+            } else {
+                return 0;
+            }
+
+        }
+    }
+
+
+/*
     public boolean getCurrentStatus() {
        boolean correcto;
         int isSendSuccess = 0;
         try {
             byte[] tempReadBytes = new byte[512];
             int oldDateReadLen = leerimpresora(tempReadBytes);
-
             if (oldDateReadLen != 0) {
-
                 if (oldDateReadLen < 0){
                     XLog.d("PrinterInstance", "LEER OK negativo= " + oldDateReadLen);
-
                     //bloquear
-
                 }else{
-
-
                     XLog.d("PrinterInstance", "LEER OK  positivo= " + oldDateReadLen);
-
-
                 }
-
             }
 
             for(int i = 0; i < 3; ++i) {
@@ -484,9 +497,6 @@ public class DispensadorTurno extends AppCompatActivity{
                 if (isSendSuccess > 0) {
                     XLog.d("PrinterInstance", "ESCRIBIR OK = " + isSendSuccess);
                     break;
-                }else{
-
-
                 }
             }
 
@@ -531,7 +541,7 @@ public class DispensadorTurno extends AppCompatActivity{
         return correcto;
     }
 
-
+*/
     public byte getDatas(int statusType) {
 
         int readLength = -1;
@@ -689,13 +699,9 @@ public class DispensadorTurno extends AppCompatActivity{
                     if(tabla!=null){
 
                         registrarHistoricoDispensadorFirebase(tabla,fechaCorta,horaCorta);
-                        /*
-                        byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
 
-                        if(!Imprimir(escpos)){
-                            impresorapapel=false;
-                        }
-                        */
+                        byte[] escpos = PrepararDocumento(tabla,fechaCompleta);
+                        Imprimir(escpos);
                     }else{
                         registrarErrorDispensador(tabla,fechaCorta,horaCorta);
                     }
@@ -904,23 +910,31 @@ public class DispensadorTurno extends AppCompatActivity{
 
     private void cargarLogo(String logolocal,String logoimpre) {
 
-        Uri templogolocal = Uri.parse(logolocal);
-        Uri templogolocalimpre = Uri.parse(logoimpre);
+        try {
 
-        Glide.with(getApplicationContext()).load(templogolocal).into(logo);
-        Glide.with(getApplicationContext()).load(templogolocalimpre).into(new SimpleTarget<Drawable>() {
-            @Override
-            public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+            Uri templogolocal = Uri.parse(logolocal);
+            Uri templogolocalimpre = Uri.parse(logoimpre);
 
-                Bitmap bitmap = ((BitmapDrawable)resource).getBitmap();
+            Glide.with(getApplicationContext()).load(templogolocal).into(logo);
+            Glide.with(getApplicationContext()).load(templogolocalimpre).into(new SimpleTarget<Drawable>() {
+                @Override
+                public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
 
-                if (bitmap!=null){
-                    starLogoImage = bitmap;
-                }else{
-                    starLogoImage = null;
+                    Bitmap bitmap = ((BitmapDrawable)resource).getBitmap();
+
+                    if (bitmap!=null){
+                        starLogoImage = bitmap;
+                    }else{
+                        starLogoImage = null;
+                    }
                 }
-            }
-        });
+            });
+
+        }catch (Exception e){
+            dialogErrorPrintet("Logos Incorrectos");
+            starLogoImage = null;
+        }
+
 
     }
 
@@ -961,7 +975,6 @@ public class DispensadorTurno extends AppCompatActivity{
                                 break;
 
                             }
-
                             Log.i("---> Base de ds: ", sectores.toString());
                         }
                     }
@@ -1254,18 +1267,15 @@ public class DispensadorTurno extends AppCompatActivity{
 
             if (connection != null && connection.claimInterface(usbInterface, true)) {
                 impresoraactiva = true;
-                Toast.makeText(DispensadorTurno.this, "Conectado", Toast.LENGTH_SHORT).show();
 
             }else{
                 impresoraactiva = false;
-                //todo dialog mensaje
+                dialogErrorPrintet("No Impresora Reiniciar");
             }
 
         } catch (Exception var2) {
-
             impresoraactiva = false;
-            dialogImpresora.show();
-            Toast.makeText(DispensadorTurno.this, "ERROR D conectar", Toast.LENGTH_SHORT).show();
+            dialogErrorPrintet("No Impresora Reiniciar");
         }
 
 
